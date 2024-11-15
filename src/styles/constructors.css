@@ -1,0 +1,6 @@
+.container-contructors {
+    display: flex;
+    background: linear-gradient(to bottom, #252525, black);
+    height: 100vh;
+    flex-direction: column;
+}

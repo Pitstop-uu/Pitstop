@@ -1,24 +1,15 @@
-"use client"
-
-import Image from "next/image";
 import Header from "@/components/Header";
-import banner from "@/../../public/banner.jpg"
-import logo from "@/../../public/pitstop_logo_white.png";
+import Hero from "@/components/Hero";
+import Link from "next/link";
+import "@/styles/homepage.css";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <>
     <section>
     <div className="container">
       <Header />
-      <div className="banner">
-      <Image src={banner} alt="Banner" layout="fill" quality={100} sizes="100vw" objectFit="cover" className="bannerImage opacity-0" onLoadingComplete={(image => image.classList.remove("opacity-0"))}/>
-        
-        <div className="logoWrapper">
-          <Image quality={100} src={logo} alt="Logo" width={200} height={100} />
-        </div>
-      </div>
-      
+      <Hero />
     </div>
     </section>
 
@@ -27,15 +18,30 @@ export default function Home() {
         <div className="content">
           <span> <span className="highlight">WHAT IS PITSTOP?</span> A FORMULA 1 TOOL ASSISTING IN VISUALIZING HISTORICAL DATA RANGING ALL THE WAY FROM THE BEGINNING OF THE SPORT’S HISTORY - 1950.</span>
         </div>
-        <div>
-          <span className="content-description"> IT IS A FORMULA 1 TOOL ASSISTING IN VISUALIZING HISTORICAL DATA RANGING ALL THE WAY FROM START OF THE SPORT’S HISTORY - 1950. HERE YOU CAN LOOK AT HISTROICAL DATA FROM THE FASTEST LAP TIMES FOR EVERY DRIVER ON A SPECIFIC CIRCUIT THROUGHOUT SEASONS</span>
-        </div>
+        <span className="content-description-text"> IT IS A FORMULA 1 TOOL ASSISTING IN VISUALIZING HISTORICAL DATA RANGING ALL THE WAY FROM START OF THE SPORT’S HISTORY - 1950. HERE YOU CAN LOOK AT HISTROICAL DATA FROM THE FASTEST LAP TIMES FOR EVERY DRIVER ON A SPECIFIC CIRCUIT THROUGHOUT SEASONS</span>
       </div>
     </section>
 
     <section>
       <div className="preview-section">
         <span className="preview-title">SEARCH. DISCOVER. COMPARE</span>
+      </div>
+    </section>
+
+    <section>
+      <div className="link-section">
+        <span className="link-title">GET STARTED NOW</span>
+        <div className="link-bottom">
+          <Link href="/constructors" className="link-button">
+            Constructor Standings
+          </Link>
+          <Link href="/drivers" className="link-button">
+            Driver Standings
+          </Link>
+          <Link href="/fastest-lap" className="link-button">
+            Fastest Laps
+          </Link>
+        </div>
       </div>
     </section>
     </>

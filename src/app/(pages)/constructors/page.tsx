@@ -1,8 +1,17 @@
-export default function AboutPage() {
+import Header from "@/components/Header";
+import "@/styles/constructors.css";
+
+export default function ConstructorsPage() {
   return (
-    <div>
-      <h1>Constructors</h1>
-      <p>This is the about page of our Next.js app.</p>
+    <>
+    <section>
+    
+    <div className="container-contructors">
+    <Header />
+      Constructors
+      
     </div>
+    </section>
+    </>
   );
 }

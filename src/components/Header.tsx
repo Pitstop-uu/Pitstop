@@ -2,7 +2,7 @@ import React from "react";
 import  Link  from 'next/link';
 import Image from "next/image";
 import logo from "@/../../public/pitstop_logo_white.png";
-import "@/styles/homepage.css";
+import "@/styles/header.css";
 
 const Header = () => (
     <header id="header">

@@ -1,0 +1,24 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1.5rem;
+    align-items: center;
+    background-color: black;   
+    border-bottom: 1px solid #888;
+}
+
+@media (min-width: 1300px) {
+    .header {
+        padding: 1rem;
+    }
+    .links {
+        gap: 20rem !important;
+    }
+}
+
+.links {
+    display: flex;
+    justify-content: center;
+    flex-grow: 1;
+    gap: 5rem;
+}
