@@ -2,10 +2,11 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Link from "next/link";
 import "@/styles/homepage.css";
+import ScrollContext from "@/components/ScrollContext";
 
 export default function HomePage() {
   return (
-    <>
+    <ScrollContext>
     <section>
     <div className="container">
       <Header />
@@ -44,7 +45,7 @@ export default function HomePage() {
         </div>
       </div>
     </section>
-    </>
+    </ScrollContext>
   );
 }
 
