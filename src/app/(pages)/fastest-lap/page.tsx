@@ -1,12 +1,12 @@
 import Header from "@/components/Header";
-import "@/styles/constructors.css";
+import "@/styles/page.css";
 
 export default function FastestLapsPage() {
   return (
     <>
     <section>
     
-    <div className="container-contructors">
+    <div className="container-page">
     <Header />
       Fastest Laps
       

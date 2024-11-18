@@ -1,8 +1,8 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import Link from "next/link";
 import "@/styles/homepage.css";
 import ScrollContext from "@/components/ScrollContext";
+import LinksBottom from "@/components/LinksBottom";
 
 export default function HomePage() {
   return (
@@ -30,20 +30,7 @@ export default function HomePage() {
     </section>
 
     <section>
-      <div className="link-section">
-        <span className="link-title">GET STARTED NOW</span>
-        <div className="link-bottom">
-          <Link href="/constructors" className="link-button">
-            Constructor Standings
-          </Link>
-          <Link href="/drivers" className="link-button">
-            Driver Standings
-          </Link>
-          <Link href="/fastest-lap" className="link-button">
-            Fastest Laps
-          </Link>
-        </div>
-      </div>
+      <LinksBottom />
     </section>
     </ScrollContext>
   );

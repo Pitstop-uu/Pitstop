@@ -40,36 +40,3 @@
     padding: 100px;
     display: flex;    
 }
-
-
-.link-section {
-    height: 50vh;
-}
-
-.link-title {
-    font-size: 40px;
-    font-weight: bold;
-    text-align: center;
-    justify-content: center;
-    display: flex;
-    padding-top: 80px;
-}
-
-.link-bottom {
-    text-align: center;
-    justify-content: space-between;
-    display: flex; 
-    padding: 0 180px;
-    padding-top: 100px;
-    font-size: 20px;
-    gap: 20px;
-}
-
-.link-button {
-    background-color: #008080;
-    width: 360px;
-    height: 92px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}

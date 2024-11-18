@@ -13,13 +13,13 @@ const Header = () => (
           </Link>
         </div>
         <div className="links">
-          <Link href="/constructors">
+          <Link href="/constructors" className="navLink">
             Constructor Standings
           </Link>
-          <Link href="/drivers">
+          <Link href="/drivers" className="navLink">
             Driver Standings
           </Link>
-          <Link href="/fastest-lap">
+          <Link href="/fastest-lap" className="navLink">
             Fastest Laps
           </Link>
         </div>

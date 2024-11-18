@@ -1,15 +1,13 @@
 import Header from "@/components/Header";
-import "@/styles/constructors.css";
+import "@/styles/page.css";
 
 export default function DriversPage() {
   return (
     <>
     <section>
-    
-    <div className="container-contructors">
+    <div className="container-page">
     <Header />
-      Drivers
-      
+      Drivers   
     </div>
     </section>
     </>
