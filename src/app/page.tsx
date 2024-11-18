@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <ScrollContext>
     <section>
-    <div className="container">
+    <div className="container-new">
       <Header />
       <Hero />
     </div>

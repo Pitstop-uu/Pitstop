@@ -1,3 +1,4 @@
+import { DropdownMenuCheckboxes } from "@/components/DropDownFilter";
 import Header from "@/components/Header";
 import "@/styles/page.css";
 
@@ -7,7 +8,12 @@ export default function DriversPage() {
     <section>
     <div className="container-page">
     <Header />
-      Drivers   
+      Drivers
+
+    <h1 className="font-bold underline text-3xl ml-20">
+      Hello world!
+    </h1>   
+    <DropdownMenuCheckboxes />
     </div>
     </section>
     </>
