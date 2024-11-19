@@ -67,25 +67,52 @@ export default function AboutPage() {
     fetchData();
   }, [years])
 
+  const labelizeKey = (key: string): string => {
+
+    const exceptions: { [key: string]:string } = {
+      'rb': 'RB',
+      'alphatauri': 'AlphaTauri',
+    };
+
+    if (exceptions[key]) {
+      return exceptions[key];
+    }
+
+    const formattedKey = key.replace(/-/g, ' ');
+    return formattedKey
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+  }
+
   const CustomTooltipContent = (props: any) => {
     const { axisValue } = props;
     const data = constructors.find((entry) => entry.year === axisValue);
-    if (!data){
+
+    if (!data) {
       return null;
     }
+
+    const { year, ...rest } = data;
+
     return (
-      <Paper sx={{ padding: 3 }}>
+      <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
+        <p style={{ textAlign: 'center' }} >{year}</p>
+        <hr style={{ height: '1px', marginBottom: '2px' }} />
         {
-          Object.keys(data || {}).map((key, i) => {
-           return <p key={i}>{`${key}: ${data[key]}`}</p> 
-          })
-        }
+          Object.entries(rest)
+            .sort(([, a], [, b]) => Number(b) - Number(a))
+            .map(([key, value], i) => {
+              const labelizedKey = labelizeKey(key)
+              return <p key={i}>{`${labelizedKey}: ${value}`}</p>
+            }
+        )}
       </Paper>
     );
   };
 
   return (
-    <div className="container-constructors" style={{color: "white"}}>
+    <div className="container-constructors" style={{ color: "white" }}>
       <h1>Constructors</h1>
       <p>This is the about page of our Next.js app.</p>
       <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
@@ -99,26 +126,26 @@ export default function AboutPage() {
       {
         !loading && (
           <LineChart
-          dataset={constructors}
-          xAxis={[{dataKey: "year", scaleType: "point"}]}
-          series={allConstructors.map((constructor) => ({
-            dataKey: constructor, 
-            label: constructor,
-          }))}
-          tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-          width={800}
-          height={400}
-          sx = {() => ({
-            [`.${axisClasses.root}`]: {
-              [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                stroke: 'white',
-                strokeWidth: 3,
+            dataset={constructors}
+            xAxis={[{ dataKey: "year", scaleType: "point" }]}
+            series={allConstructors.map((constructor) => ({
+              dataKey: constructor,
+              label: constructor,
+            }))}
+            tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+            width={800}
+            height={400}
+            sx={() => ({
+              [`.${axisClasses.root}`]: {
+                [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                  stroke: 'white',
+                  strokeWidth: 3,
+                },
+                [`.${axisClasses.tickLabel}`]: {
+                  fill: 'white',
+                },
               },
-              [`.${axisClasses.tickLabel}`]: {
-                fill: 'white',
-              },
-            },
-          })}
+            })}
           />
         )
       }
