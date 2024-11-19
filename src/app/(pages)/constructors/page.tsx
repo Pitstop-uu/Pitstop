@@ -9,8 +9,6 @@ interface ConstructorItem {
   constructor_id: string;
   year: number;
   total_points: string | number;
-  full_name: string;
-  [key: string]: any;
 }
 
 type ConstructorResult = {
