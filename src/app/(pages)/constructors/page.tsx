@@ -9,6 +9,7 @@ interface ConstructorItem {
   constructor_id: string;
   year: number;
   total_points: string | number;
+  full_name: string;
   [key: string]: any;
 }
 
@@ -30,9 +31,20 @@ export default function AboutPage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      console.log('years', years);
-      const response = await window.fetch(`/api/constructors?year=${years}`);
-      const constructors = await response.json();
+      /*
+        för att hämta standings för specifika constructors kan man också
+        skicka med en lista med constructor-idn i request bodyn.
+        T.ex. { from: 2020, to: 2024, constructors: [ 'mclaren', 'kick-sauber' ] }
+      */
+      const response = await window.fetch(
+        `/api/constructors/getStandings`,
+        {
+          method: 'POST',
+          body: JSON.stringify({ from: years[0], to: years[1] })
+        }
+      )
+      const responseJson = await response.json();
+      const constructors = responseJson.data;
 
       const constructorList: string[] = [];
       const transformedData = constructors.reduce((acc: ConstructorResult[], { year, constructor_id, total_points }: ConstructorItem) => {

@@ -1,33 +1,27 @@
-import { PrismaClient, Prisma } from '@prisma/client'
-import { NextRequest, NextResponse } from 'next/server';
-
-const prisma = new PrismaClient()
+import { PrismaClient } from '@prisma/client'
+import { NextRequest, NextResponse } from "next/server";
+import response from '@/utils/api/jsonResponse';
 
 export async function GET(req: NextRequest, res: NextResponse) {
-    const url = new URL(req.url);
-    const year = url.searchParams.get('year');
-    const years = year ? year.split(',').map(Number) : [];
-    let lowerBound: number | undefined;
-    let upperBound: number | undefined;
-    if (year) {
-      const yearRange = year.split(',').map(Number).sort((a, b) => a - b); 
-      lowerBound = yearRange[0];
-      upperBound = yearRange[1] || lowerBound; 
-  }
-    //const items = await prisma.$queryRaw<{ id: string, name: string}[]>`SELECT id, name FROM constructor`;
-    //const items = await prisma.$queryRaw<{ constructor_id: string}[]>`SELECT constructor_id, total_points, year FROM season_constructor WHERE year=${year}`;
-    //const items = await prisma.$queryRaw<{ constructor_id: string, total_points: string, year: number }[]>`
-    //SELECT constructor_id, total_points, year 
-    //FROM season_constructor 
-    //WHERE year IN (${Prisma.join(years)})
-    //`;
-    const items = await prisma.$queryRaw<{ constructor_id: string, total_points: string, year: number }[]>`
-    SELECT constructor_id, total_points, year 
-    FROM season_constructor 
-    WHERE year BETWEEN ${lowerBound} AND ${upperBound}`;
+    const params = req.nextUrl.searchParams;
+    const from = params.get('from');
+    const to = params.get('to');
+    const stringIsNr = (str: string) => str.match(/^\d+$/)
+    if(!(from && stringIsNr(from)) || !(to && stringIsNr(to))) {
+        return response(false, 400, []);
+    }
 
-    return new Response(JSON.stringify(items), {
-      headers: { "Content-Type": "application/json" },
-      status: 200,
-    });
-  }
+    const queryResult = await new PrismaClient().$queryRaw<{
+        id: string, full_name: string
+    }[]>`
+    SELECT
+        constructor.id,
+        constructor.full_name
+    FROM constructor
+    WHERE EXISTS (SELECT 1
+        FROM season_constructor
+        WHERE season_constructor.constructor_id = constructor.id
+        AND season_constructor.year BETWEEN ${from} AND ${to})`;
+
+    return response(true, 200, queryResult);
+}
