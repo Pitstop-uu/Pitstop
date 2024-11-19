@@ -12,27 +12,10 @@ interface ConstructorItem {
   [key: string]: any;
 }
 
-interface ConstructorData {
-  label: string;
-  data: number[];
-}
-
-type ConstructorDataPoint = {
-  year: number;
-  total_points: number;
-}
-
-type ConstructorRecord = Record<string, {
-  label: string;
-  data: ConstructorDataPoint[];
-}>
-
 type ConstructorResult = {
   year: number;
   [key: string]: number;
 }
-
-
 
 export default function AboutPage() {
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
