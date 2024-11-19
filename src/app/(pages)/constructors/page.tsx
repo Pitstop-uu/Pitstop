@@ -1,8 +1,10 @@
 "use client"
-import { useEffect, useState } from "react";
-import { LineChart } from "@mui/x-charts";
 import "@/styles/constructors.css";
-import { axisClasses } from '@mui/x-charts/ChartsAxis';
+import { useEffect, useState } from "react";
+import { LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
+import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
+import { axisClasses } from "@mui/x-charts/ChartsAxis";
+import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
 
 interface ConstructorItem {
@@ -19,20 +21,21 @@ type ConstructorResult = {
 export default function AboutPage() {
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
   const [constructors, setConstructors] = useState<ConstructorResult[]>([]);
-  const [years, setYears] = useState([2023, 2024]);
-  const [firstYear, setFirstYear] = useState(2023);
+  const [years, setYears] = useState([2020, 2024]);
+  const [firstYear, setFirstYear] = useState(2020);
   const [lastYear, setLastYear] = useState(2024);
   const [loading, setLoading] = useState(false);
   const minYear = 1950;
   const maxYear = 2024;
-
+  const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
+  
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       /*
-        för att hämta standings för specifika constructors kan man också
-        skicka med en lista med constructor-idn i request bodyn.
-        T.ex. { from: 2020, to: 2024, constructors: [ 'mclaren', 'kick-sauber' ] }
+      för att hämta standings för specifika constructors kan man också
+      skicka med en lista med constructor-idn i request bodyn.
+      T.ex. { from: 2020, to: 2024, constructors: [ 'mclaren', 'kick-sauber' ] }
       */
       const response = await window.fetch(
         `/api/constructors/getStandings`,
@@ -156,6 +159,7 @@ export default function AboutPage() {
     'kick-sauber': '#000000',
   }
 
+
   return (
     <div className="container-constructors" style={{ color: "white" }}>
       <h1>Constructors</h1>
@@ -175,18 +179,42 @@ export default function AboutPage() {
             xAxis={[{ dataKey: "year", scaleType: "point" }]}
             series={allConstructors.map((constructor) => {
 
-              const constructorColor = constructor in constructorColors 
-                ? constructorColors[constructor as keyof typeof constructorColors] 
+              const constructorColor = constructor in constructorColors
+                ? constructorColors[constructor as keyof typeof constructorColors]
                 : '#888';
 
               return {
                 dataKey: constructor,
                 label: labelizeKey(constructor),
                 color: constructorColor,
+                curve: 'linear',
+                showMark: false,
+                highlightScope: { highlight: 'item', fade: 'global' },
               };
             })}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-            height={400}
+            axisHighlight={{ x: 'line' }}
+            height={600}
+            margin={{ bottom: 120 }}
+            highlightedItem={highlightedItem}
+            onHighlightChange={setHighLightedItem}
+            grid={{ vertical: true, horizontal: true }}
+            slotProps={{
+              legend: {
+                position: {
+                  vertical: 'bottom',
+                  horizontal: 'middle',
+                },
+                labelStyle: {
+                  fontSize: 16,
+                  fill: 'white',
+                },
+                itemMarkWidth: 24,
+                itemMarkHeight: 3,
+                markGap: 10,
+                itemGap: 20,
+              }
+            }}
             sx={() => ({
               [`.${axisClasses.root}`]: {
                 [`.${axisClasses.tick}, .${axisClasses.line}`]: {
@@ -196,6 +224,14 @@ export default function AboutPage() {
                 [`.${axisClasses.tickLabel}`]: {
                   fill: 'white',
                 },
+              },
+              [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                strokeWidth: 4,
+              },
+              [`.${chartsGridClasses.line}`]: { 
+                strokeDasharray: '5 3', 
+                strokeWidth: 1,
+                stroke: 'rgba(255, 255, 255, 0.12)',
               },
             })}
           />

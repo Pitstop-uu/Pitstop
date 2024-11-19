@@ -4,3 +4,7 @@
     height: 100vh;
     flex-direction: column;
 }
+
+.MuiChartsAxisHighlight-root {
+    stroke: white !important;
+}
