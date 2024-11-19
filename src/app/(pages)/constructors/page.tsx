@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { LineChart } from "@mui/x-charts";
 import "@/styles/constructors.css";
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
-import { AxisConfig } from '@mui/x-charts'
+import Paper from "@mui/material/Paper";
 
 interface ConstructorItem {
   constructor_id: string;
@@ -27,9 +27,16 @@ type ConstructorRecord = Record<string, {
   data: ConstructorDataPoint[];
 }>
 
+type ConstructorResult = {
+  year: number;
+  [key: string]: number;
+}
+
+
 
 export default function AboutPage() {
-  const [constructors, setConstructors] = useState<ConstructorData[]>([]);
+  const [allConstructors, setAllConstructors] = useState<string[]>([]);
+  const [constructors, setConstructors] = useState<ConstructorResult[]>([]);
   const [years, setYears] = useState([2023, 2024]);
   const [firstYear, setFirstYear] = useState(2023);
   const [lastYear, setLastYear] = useState(2024);
@@ -44,33 +51,43 @@ export default function AboutPage() {
       const response = await window.fetch(`/api/constructors?year=${years}`);
       const constructors = await response.json();
 
-      const constructorDataMap = constructors.reduce((acc: ConstructorRecord, constructor: ConstructorItem) => {
-        const { constructor_id, year, total_points } = constructor;
-        if (!acc[constructor_id]) {
-          acc[constructor_id] = { label: constructor_id, data: [] };
+      const constructorList: string[] = [];
+      const transformedData = constructors.reduce((acc: ConstructorResult[], { year, constructor_id, total_points }: ConstructorItem) => {
+        if (!constructorList.find((c_id) => c_id === constructor_id)) {
+          constructorList.push(constructor_id);
         }
-
-        acc[constructor_id].data.push({ year, total_points: Number(total_points) });
-        acc[constructor_id].data.sort((a, b) => a.year - b.year);
+        const yearEntry = acc.find((entry) => entry.year === year);
+        if (yearEntry) {
+          yearEntry[constructor_id] = Number(total_points);
+        } else {
+          acc.push({ year, [constructor_id]: Number(total_points) });
+        }
         return acc;
-      }, {} as ConstructorRecord);
+      }, []);
 
-      const constructorSeries = [];
-      for (const key in constructorDataMap) {
-        const { label, data } = constructorDataMap[key];
-        constructorSeries.push(
-          { label, data: data.map((dataPoint: ConstructorDataPoint) => dataPoint.total_points) }
-        )
-      }
-
-      setConstructors(constructorSeries);
-      console.log(constructorSeries);
+      setAllConstructors(constructorList)
+      setConstructors(transformedData);
       setLoading(false);
     }
     fetchData();
   }, [years])
 
-  
+  const CustomTooltipContent = (props: any) => {
+    const { axisValue } = props;
+    const data = constructors.find((entry) => entry.year === axisValue);
+    if (!data){
+      return null;
+    }
+    return (
+      <Paper sx={{ padding: 3 }}>
+        {
+          Object.keys(data || {}).map((key, i) => {
+           return <p key={i}>{`${key}: ${data[key]}`}</p> 
+          })
+        }
+      </Paper>
+    );
+  };
 
   return (
     <div className="container-constructors" style={{color: "white"}}>
@@ -87,8 +104,13 @@ export default function AboutPage() {
       {
         !loading && (
           <LineChart
-          xAxis={[{data: Array.from({ length: years[1] - years[0] + 1 }, (_, i) => years[0] + i), scaleType: "point"}]}
-          series={constructors}
+          dataset={constructors}
+          xAxis={[{dataKey: "year", scaleType: "point"}]}
+          series={allConstructors.map((constructor) => ({
+            dataKey: constructor, 
+            label: constructor,
+          }))}
+          tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
           width={800}
           height={400}
           sx = {() => ({
