@@ -67,9 +67,24 @@ export default function AboutPage() {
     fetchData();
   }, [years])
 
+/**
+ * Converts a key into a human-readable format with proper capitalization.
+ * 
+ * This function checks if the key is listed in a set of exceptions (e.g., 
+ * "rb" -> "RB", "alphatauri" -> "AlphaTauri"). If the key is not in the 
+ * exceptions list, the function will replace hyphens with spaces and capitalize 
+ * the first letter of each word in the string.
+ * 
+ * @param {string} key - The key to be formatted.
+ * @returns {string} - The formatted string with capitalized words, or the special transformation for exception keys.
+ * 
+ * @example
+ * // If key is "some-key"
+ * labelizeKey("some-key"); // Returns "Some Key"
+ */
   const labelizeKey = (key: string): string => {
 
-    const exceptions: { [key: string]:string } = {
+    const exceptions: { [key: string]: string } = {
       'rb': 'RB',
       'alphatauri': 'AlphaTauri',
     };
@@ -80,11 +95,30 @@ export default function AboutPage() {
 
     const formattedKey = key.replace(/-/g, ' ');
     return formattedKey
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
   }
 
+
+/**
+ * Custom Tooltip Component for rendering data in a tooltip.
+ * 
+ * This component renders a custom tooltip that displays key-value pairs for 
+ * a specific year, with special formatting for certain keys. The `year` key 
+ * is displayed separately with centered text, while the rest of the keys are 
+ * shown in descending order.
+ * 
+ * @param {Object} props - The component's props.
+ * @param {string} props.axisValue - The year value used to retrieve the corresponding data.
+ * 
+ * @returns {JSX.Element | null} - Returns a Paper component containing the tooltip content,
+ *                                  or `null` if no data is found for the specified year.
+ * 
+ * @example
+ * // When year is "2022"
+ * <CustomTooltipContent axisValue="2022" />
+ */
   const CustomTooltipContent = (props: any) => {
     const { axisValue } = props;
     const data = constructors.find((entry) => entry.year === axisValue);
@@ -106,7 +140,7 @@ export default function AboutPage() {
               const labelizedKey = labelizeKey(key)
               return <p key={i}>{`${labelizedKey}: ${value}`}</p>
             }
-        )}
+            )}
       </Paper>
     );
   };
