@@ -65,21 +65,21 @@ export default function AboutPage() {
     fetchData();
   }, [years])
 
-/**
- * Converts a key into a human-readable format with proper capitalization.
- * 
- * This function checks if the key is listed in a set of exceptions (e.g., 
- * "rb" -> "RB", "alphatauri" -> "AlphaTauri"). If the key is not in the 
- * exceptions list, the function will replace hyphens with spaces and capitalize 
- * the first letter of each word in the string.
- * 
- * @param {string} key - The key to be formatted.
- * @returns {string} - The formatted string with capitalized words, or the special transformation for exception keys.
- * 
- * @example
- * // If key is "some-key"
- * labelizeKey("some-key"); // Returns "Some Key"
- */
+  /**
+   * Converts a key into a human-readable format with proper capitalization.
+   * 
+   * This function checks if the key is listed in a set of exceptions (e.g., 
+   * "rb" -> "RB", "alphatauri" -> "AlphaTauri"). If the key is not in the 
+   * exceptions list, the function will replace hyphens with spaces and capitalize 
+   * the first letter of each word in the string.
+   * 
+   * @param {string} key - The key to be formatted.
+   * @returns {string} - The formatted string with capitalized words, or the special transformation for exception keys.
+   * 
+   * @example
+   * // If key is "some-key"
+   * labelizeKey("some-key"); // Returns "Some Key"
+   */
   const labelizeKey = (key: string): string => {
 
     const exceptions: { [key: string]: string } = {
@@ -99,24 +99,24 @@ export default function AboutPage() {
   }
 
 
-/**
- * Custom Tooltip Component for rendering data in a tooltip.
- * 
- * This component renders a custom tooltip that displays key-value pairs for 
- * a specific year, with special formatting for certain keys. The `year` key 
- * is displayed separately with centered text, while the rest of the keys are 
- * shown in descending order.
- * 
- * @param {Object} props - The component's props.
- * @param {string} props.axisValue - The year value used to retrieve the corresponding data.
- * 
- * @returns {JSX.Element | null} - Returns a Paper component containing the tooltip content,
- *                                  or `null` if no data is found for the specified year.
- * 
- * @example
- * // When year is "2022"
- * <CustomTooltipContent axisValue="2022" />
- */
+  /**
+   * Custom Tooltip Component for rendering data in a tooltip.
+   * 
+   * This component renders a custom tooltip that displays key-value pairs for 
+   * a specific year, with special formatting for certain keys. The `year` key 
+   * is displayed separately with centered text, while the rest of the keys are 
+   * shown in descending order.
+   * 
+   * @param {Object} props - The component's props.
+   * @param {string} props.axisValue - The year value used to retrieve the corresponding data.
+   * 
+   * @returns {JSX.Element | null} - Returns a Paper component containing the tooltip content,
+   *                                  or `null` if no data is found for the specified year.
+   * 
+   * @example
+   * // When year is "2022"
+   * <CustomTooltipContent axisValue="2022" />
+   */
   const CustomTooltipContent = (props: any) => {
     const { axisValue } = props;
     const data = constructors.find((entry) => entry.year === axisValue);
@@ -143,6 +143,19 @@ export default function AboutPage() {
     );
   };
 
+  const constructorColors = {
+    'mclaren': '#FF8000',
+    'ferrari': '#E80020',
+    'red-bull': '#3671C6',
+    'mercedes': '#27F4D2',
+    'aston-martin': '#229971',
+    'alpine': '#0093CC',
+    'haas': '#B6BABD',
+    'rb': '#6692FF',
+    'williams': '#64C4FF',
+    'kick-sauber': '#000000',
+  }
+
   return (
     <div className="container-constructors" style={{ color: "white" }}>
       <h1>Constructors</h1>
@@ -160,12 +173,19 @@ export default function AboutPage() {
           <LineChart
             dataset={constructors}
             xAxis={[{ dataKey: "year", scaleType: "point" }]}
-            series={allConstructors.map((constructor) => ({
-              dataKey: constructor,
-              label: constructor,
-            }))}
+            series={allConstructors.map((constructor) => {
+
+              const constructorColor = constructor in constructorColors 
+                ? constructorColors[constructor as keyof typeof constructorColors] 
+                : '#888';
+
+              return {
+                dataKey: constructor,
+                label: labelizeKey(constructor),
+                color: constructorColor,
+              };
+            })}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-            width={800}
             height={400}
             sx={() => ({
               [`.${axisClasses.root}`]: {
