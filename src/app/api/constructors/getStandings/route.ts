@@ -1,6 +1,7 @@
 import { PrismaClient, Prisma } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server';
 import response from '@/utils/api/jsonResponse';
+import getConstructorMap from '@/utils/api/constructorMap';
 
 interface ConstructorStandingsRequest {
 	from: number;
@@ -16,7 +17,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		return response(false, 400, []);
 	}
 
-	const queryResult = await new PrismaClient().$queryRaw<{
+	const prisma = new PrismaClient();
+	const queryResult = await prisma.$queryRaw<{
 		constructor_id: string;
 		total_points: number;
 		year: number;
@@ -44,5 +46,17 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		s_c_subset
 		LEFT JOIN constructor ON constructor.id = s_c_subset.constructor_id`
 
-	return response(true, 200, queryResult);
+	/*
+	TODO: Fix so that the 'full_name' property is updated.
+	      Currently, only 'constructor_id' is updated correctly.
+	*/
+	const constructorMap = await getConstructorMap(prisma, requestBody.from, requestBody.to);
+	const constructorStandings = queryResult.map((record) => {
+		const constructorMapping = constructorMap[record.constructor_id];
+		return constructorMapping
+			? { ...record, constructor_id: constructorMapping.other_constructor_id }
+			: record;
+	}, []);
+
+	return response(true, 200, constructorStandings);
 }
