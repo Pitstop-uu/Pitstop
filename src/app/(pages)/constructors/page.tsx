@@ -162,6 +162,7 @@ export default function AboutPage() {
 
 
   return (
+    <section>
     <div className="container-constructors container-page" style={{ color: "white" }}>
       <Header />
       <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
@@ -240,6 +241,5 @@ export default function AboutPage() {
 
     </div>
     </section>
-    </>
   );
 }
