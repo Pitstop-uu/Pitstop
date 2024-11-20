@@ -1,15 +1,16 @@
 import Header from "@/components/Header";
-import "@/styles/constructors.css";
+import "@/styles/page.css";
+import Filters from "@/components/Filters";
 
 export default function ConstructorsPage() {
   return (
     <>
     <section>
     
-    <div className="container-contructors">
+    <div className="container-page">
     <Header />
       Constructors
-      
+    <Filters />
     </div>
     </section>
     </>
