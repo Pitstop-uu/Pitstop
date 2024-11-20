@@ -14,12 +14,19 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
-    "next": "^15.0.3",
-    "node": "^18.20.5",
-    "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7"
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.7",
+    "@mui/x-charts": "^7.22.2",
+    "@prisma/client": "^5.22.0",
+    "next": "^15.0.3",
+    "node": "^20.9.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -28,8 +35,10 @@
     "autoprefixer": "^10.4.20",
     "eslint": "^8",
     "eslint-config-next": "15.0.3",
+
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.15",
+    "prisma": "^5.22.0",
     "typescript": "^5"
   }
 }
