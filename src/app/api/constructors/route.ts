@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from "next/server";
 import response from '@/utils/api/jsonResponse';
+import getConstructorMap from '@/utils/api/constructorMap';
 
 export async function GET(req: NextRequest, res: NextResponse) {
     const params = req.nextUrl.searchParams;
@@ -11,7 +12,8 @@ export async function GET(req: NextRequest, res: NextResponse) {
         return response(false, 400, []);
     }
 
-    const queryResult = await new PrismaClient().$queryRaw<{
+    const prisma = new PrismaClient();
+    const queryResult = await prisma.$queryRaw<{
         id: string, full_name: string
     }[]>`
     SELECT
@@ -23,5 +25,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
         WHERE season_constructor.constructor_id = constructor.id
         AND season_constructor.year BETWEEN ${from} AND ${to})`;
 
-    return response(true, 200, queryResult);
+    const constructorMap = await getConstructorMap(prisma, Number(from), Number(to));
+    const filteredConstructors = queryResult.filter(({ id }) => {
+        return constructorMap[id]
+            ? constructorMap[id].other_constructor_id === id
+            : true;
+    });
+
+    return response(true, 200, filteredConstructors);
 }
