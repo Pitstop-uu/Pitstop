@@ -1,5 +1,6 @@
 "use client"
 import "@/styles/constructors.css";
+import Header from "@/components/Header";
 import { useEffect, useState } from "react";
 import { LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
 import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
@@ -161,9 +162,8 @@ export default function AboutPage() {
 
 
   return (
-    <div className="container-constructors" style={{ color: "white" }}>
-      <h1>Constructors</h1>
-      <p>This is the about page of our Next.js app.</p>
+    <div className="container-constructors container-page" style={{ color: "white" }}>
+      <Header />
       <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
       <input type="number" value={lastYear} min={minYear} max={maxYear} onChange={e => setLastYear(Number(e.target.value))}></input>
 
@@ -239,5 +239,7 @@ export default function AboutPage() {
       }
 
     </div>
+    </section>
+    </>
   );
 }

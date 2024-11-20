@@ -1,0 +1,48 @@
+
+.link-section {
+    height: 50vh;
+}
+
+.link-title {
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    justify-content: center;
+    display: flex;
+    padding-top: 80px;
+}
+
+.link-bottom {
+    text-align: center;
+    justify-content: space-between;
+    display: flex; 
+    padding: 0 180px;
+    padding-top: 100px;
+    font-size: 20px;
+    gap: 20px;
+}
+
+.link-button {
+    position: relative;
+    background-color: #008080;
+    width: 360px;
+    height: 92px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.link-button .icon {
+    margin-left: 20px;
+    font-weight: bold;
+    transition: transform 0.2s ease;
+}
+
+.link-button:hover {
+    background-color: #006666; 
+    transform: scale(1.01);
+}
+
+.link-button:hover .icon {
+    transform: translateX(5px); 
+}

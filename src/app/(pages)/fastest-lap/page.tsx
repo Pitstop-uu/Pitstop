@@ -1,8 +1,17 @@
-export default function AboutPage() {
-    return (
-      <div>
-        <h1>Fastest Lap</h1>
-        <p>This is the about page of our Next.js app.</p>
-      </div>
-    );
-  }
+import Header from "@/components/Header";
+import "@/styles/page.css";
+
+export default function FastestLapsPage() {
+  return (
+    <>
+    <section>
+    
+    <div className="container-page">
+    <Header />
+      Fastest Laps
+      
+    </div>
+    </section>
+    </>
+  );
+}

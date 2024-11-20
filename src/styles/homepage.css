@@ -1,0 +1,42 @@
+.container-new {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content-section{
+    padding-bottom: 80px;
+    background-color: black;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    background-color: black;
+    font-size: 64px;
+    display: flex;
+    padding: 100px;
+}
+
+.highlight {
+    color: #008080;
+}
+
+.content-description-text {
+    font-size: 24px;
+    padding: 0 100px;
+    display: flex;
+}
+
+.preview-section {
+    height: 100vh;
+    background-color: #333333;
+    font-weight: bold;
+
+}
+
+.preview-title {
+    font-size: 64px;
+    padding: 100px;
+    display: flex;    
+}
