@@ -7,6 +7,7 @@ import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
+import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 
 interface ConstructorItem {
   constructor_id: string;
@@ -89,7 +90,13 @@ export default function AboutPage() {
     const exceptions: { [key: string]: string } = {
       'rb': 'RB',
       'alphatauri': 'AlphaTauri',
-      'mclaren': 'McLaren'
+      'mclaren': 'McLaren',
+      'hrt': 'HRT',
+      'bmw-sauber': 'BMW Sauber',
+      'ags': 'AGS',
+      'first': 'FIRST',
+      'ram': 'RAM',
+      'ats-wheels': 'ATS Wheels',
     };
 
     if (exceptions[key]) {
@@ -160,7 +167,7 @@ export default function AboutPage() {
     };
 
     const { seriesId } = highlightedItem;
-    const index = Number(String(seriesId).slice(-1));
+    const index = Number(String(seriesId).match(/\d+/g));
     const constructorName: string = allConstructors[index];
 
     const constructorData = constructors
@@ -191,18 +198,7 @@ export default function AboutPage() {
     );
   };
 
-  const constructorColors = {
-    'mclaren': '#FF8000',
-    'ferrari': '#E80020',
-    'red-bull': '#3671C6',
-    'mercedes': '#27F4D2',
-    'aston-martin': '#229971',
-    'alpine': '#0093CC',
-    'haas': '#B6BABD',
-    'rb': '#6692FF',
-    'williams': '#64C4FF',
-    'kick-sauber': '#52E252',
-  }
+  
 
 
   return (
