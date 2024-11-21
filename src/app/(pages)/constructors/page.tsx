@@ -167,7 +167,7 @@ export default function AboutPage() {
     };
 
     const { seriesId } = highlightedItem;
-    const index = Number(String(seriesId).slice(-1));
+    const index = Number(String(seriesId).match(/\d+/g));
     const constructorName: string = allConstructors[index];
 
     const constructorData = constructors
