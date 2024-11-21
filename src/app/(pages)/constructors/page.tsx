@@ -29,7 +29,7 @@ export default function AboutPage() {
   const minYear = 1950;
   const maxYear = 2024;
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -89,6 +89,7 @@ export default function AboutPage() {
     const exceptions: { [key: string]: string } = {
       'rb': 'RB',
       'alphatauri': 'AlphaTauri',
+      'mclaren': 'McLaren'
     };
 
     if (exceptions[key]) {
@@ -101,7 +102,6 @@ export default function AboutPage() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
-
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -123,26 +123,70 @@ export default function AboutPage() {
    */
   const CustomTooltipContent = (props: any) => {
     const { axisValue } = props;
-    const data = constructors.find((entry) => entry.year === axisValue);
 
-    if (!data) {
-      return null;
-    }
+    if (!highlightedItem) {
+      const data = constructors.find((entry) => entry.year === axisValue);
 
-    const { year, ...rest } = data;
+      if (!data) {
+        return null;
+      }
+
+      const { year, ...rest } = data;
+
+      return (
+        <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
+          <p style={{ textAlign: 'center' }} >{year}</p>
+          <hr style={{ height: '1px', marginBottom: '2px' }} />
+          {
+            Object.entries(rest)
+              .sort(([, a], [, b]) => Number(b) - Number(a))
+              .map(([key, value], i) => {
+                const labelizedKey = labelizeKey(key)
+
+                const constructorColor = key in constructorColors
+                  ? constructorColors[key as keyof typeof constructorColors]
+                  : '#888';
+
+                return (
+                  <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: constructorColor, marginRight: 5, marginTop: 2, }} />
+                    {`${labelizedKey}: ${value} pts`}
+                  </p>
+                )
+              }
+              )}
+        </Paper>
+      );
+    };
+
+    const { seriesId } = highlightedItem;
+    const index = Number(String(seriesId).slice(-1));
+    const constructorName: string = allConstructors[index];
+
+    const constructorData = constructors
+      .filter(entry => entry[constructorName])
+      .map(entry => ({
+        year: entry.year,
+        points: entry[constructorName],
+      }));
+
+    const constructorColor = constructorName in constructorColors
+      ? constructorColors[constructorName as keyof typeof constructorColors]
+      : '#888';
 
     return (
       <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
-        <p style={{ textAlign: 'center' }} >{year}</p>
+        <p style={{ textAlign: 'center' }} >{labelizeKey(constructorName)}</p>
         <hr style={{ height: '1px', marginBottom: '2px' }} />
-        {
-          Object.entries(rest)
-            .sort(([, a], [, b]) => Number(b) - Number(a))
-            .map(([key, value], i) => {
-              const labelizedKey = labelizeKey(key)
-              return <p key={i}>{`${labelizedKey}: ${value}`}</p>
-            }
-            )}
+        {constructorData.reverse().map((entry, i) => {
+          const isCurrentYear = entry.year === axisValue;
+          return (
+            <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+              {`${entry.year}: ${entry.points} pts`}
+            </p>
+          );
+        })}
       </Paper>
     );
   };
@@ -157,89 +201,89 @@ export default function AboutPage() {
     'haas': '#B6BABD',
     'rb': '#6692FF',
     'williams': '#64C4FF',
-    'kick-sauber': '#000000',
+    'kick-sauber': '#52E252',
   }
 
 
   return (
     <section>
-    <div className="container-constructors container-page" style={{ color: "white" }}>
-      <Header />
-      <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
-      <input type="number" value={lastYear} min={minYear} max={maxYear} onChange={e => setLastYear(Number(e.target.value))}></input>
+      <div className="container-constructors container-page" style={{ color: "white" }}>
+        <Header />
+        <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
+        <input type="number" value={lastYear} min={minYear} max={maxYear} onChange={e => setLastYear(Number(e.target.value))}></input>
 
-      <button onClick={(_) => {
-        setConstructors([]);
-        setYears([firstYear, lastYear]);
-      }}>Search</button>
+        <button onClick={(_) => {
+          setConstructors([]);
+          setYears([firstYear, lastYear]);
+        }}>Search</button>
 
-      {
-        !loading && (
-          <LineChart
-            dataset={constructors}
-            xAxis={[{ dataKey: "year", scaleType: "point" }]}
-            series={allConstructors.map((constructor) => {
+        {
+          !loading && (
+            <LineChart
+              dataset={constructors}
+              xAxis={[{ dataKey: "year", scaleType: "point" }]}
+              series={allConstructors.map((constructor) => {
 
-              const constructorColor = constructor in constructorColors
-                ? constructorColors[constructor as keyof typeof constructorColors]
-                : '#888';
+                const constructorColor = constructor in constructorColors
+                  ? constructorColors[constructor as keyof typeof constructorColors]
+                  : '#888';
 
-              return {
-                dataKey: constructor,
-                label: labelizeKey(constructor),
-                color: constructorColor,
-                curve: 'linear',
-                showMark: false,
-                highlightScope: { highlight: 'item', fade: 'global' },
-              };
-            })}
-            tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-            axisHighlight={{ x: 'line' }}
-            height={600}
-            margin={{ bottom: 120 }}
-            highlightedItem={highlightedItem}
-            onHighlightChange={setHighLightedItem}
-            grid={{ vertical: true, horizontal: true }}
-            slotProps={{
-              legend: {
-                position: {
-                  vertical: 'bottom',
-                  horizontal: 'middle',
+                return {
+                  dataKey: constructor,
+                  label: labelizeKey(constructor),
+                  color: constructorColor,
+                  curve: 'linear',
+                  showMark: false,
+                  highlightScope: { highlight: 'item', fade: 'global' },
+                };
+              })}
+              tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+              axisHighlight={{ x: 'line' }}
+              height={600}
+              margin={{ bottom: 120 }}
+              highlightedItem={highlightedItem}
+              onHighlightChange={setHighLightedItem}
+              grid={{ vertical: true, horizontal: true }}
+              slotProps={{
+                legend: {
+                  position: {
+                    vertical: 'bottom',
+                    horizontal: 'middle',
+                  },
+                  labelStyle: {
+                    fontSize: 16,
+                    fill: 'white',
+                  },
+                  itemMarkWidth: 24,
+                  itemMarkHeight: 3,
+                  markGap: 10,
+                  itemGap: 20,
+                }
+              }}
+              sx={() => ({
+                [`.${axisClasses.root}`]: {
+                  [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                    stroke: 'white',
+                    strokeWidth: 3,
+                  },
+                  [`.${axisClasses.tickLabel}`]: {
+                    fill: 'white',
+                  },
                 },
-                labelStyle: {
-                  fontSize: 16,
-                  fill: 'white',
+                [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                  strokeWidth: 4,
                 },
-                itemMarkWidth: 24,
-                itemMarkHeight: 3,
-                markGap: 10,
-                itemGap: 20,
-              }
-            }}
-            sx={() => ({
-              [`.${axisClasses.root}`]: {
-                [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                  stroke: 'white',
-                  strokeWidth: 3,
+                [`.${chartsGridClasses.line}`]: {
+                  strokeDasharray: '5 3',
+                  strokeWidth: 1,
+                  stroke: 'rgba(255, 255, 255, 0.12)',
                 },
-                [`.${axisClasses.tickLabel}`]: {
-                  fill: 'white',
-                },
-              },
-              [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
-                strokeWidth: 4,
-              },
-              [`.${chartsGridClasses.line}`]: { 
-                strokeDasharray: '5 3', 
-                strokeWidth: 1,
-                stroke: 'rgba(255, 255, 255, 0.12)',
-              },
-            })}
-          />
-        )
-      }
+              })}
+            />
+          )
+        }
 
-    </div>
+      </div>
     </section>
   );
 }
