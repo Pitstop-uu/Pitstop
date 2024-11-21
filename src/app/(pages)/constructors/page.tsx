@@ -95,6 +95,8 @@ export default function AboutPage() {
       'bmw-sauber': 'BMW Sauber',
       'ags': 'AGS',
       'first': 'FIRST',
+      'ram': 'RAM',
+      'ats-wheels': 'ATS Wheels',
     };
 
     if (exceptions[key]) {

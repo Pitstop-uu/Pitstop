@@ -64,13 +64,23 @@ export const constructorColors = {
     'rial': '#5B9BD5',
     'zakspeed': '#C00000',
     'first': '#FF0000',
+    'spirit': '#4472C4',
+    'toleman': '#404040',
+    'ram': '#70AD47',
+    'ats-wheels': '#FFC000',
+    'theodore': '#FF0000',
+    'ensign': '#FFC000',
+    'fittipaldi': '#FFFF00',
+    'shadow': '#000000',
 };
 
-// 65/184 teams covered
-// 1989->2024 covered
+// 73/184 teams covered
+// 1980->2024 covered
 // Colors can be found here: https://imgur.com/Nqkms9X
 // Teams to change color for:
 // stewart
 // minardi
 // adnrea-moda
 // eurobrun
+// toleman
+// shadow
