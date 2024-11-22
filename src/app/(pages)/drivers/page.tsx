@@ -1,4 +1,5 @@
-import { DropdownMenuCheckboxes } from "@/components/DropDownFilter";
+import { DropdownMenuMultiple } from "@/components/DropDownFilterMultiple";
+import { DropdownMenuInterval } from "@/components/DropDownFIlterInterval";
 import Header from "@/components/Header";
 import "@/styles/page.css";
 
@@ -8,12 +9,10 @@ export default function DriversPage() {
     <section>
     <div className="container-page">
     <Header />
-      Drivers
-
-    <h1 className="font-bold underline text-3xl ml-20">
-      Hello world!
-    </h1>   
-    <DropdownMenuCheckboxes />
+    <div className="ml-20 mt-20">
+    <DropdownMenuMultiple />
+    <DropdownMenuInterval />
+    </div>
     </div>
     </section>
     </>
