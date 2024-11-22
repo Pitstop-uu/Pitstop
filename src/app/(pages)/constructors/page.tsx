@@ -45,7 +45,7 @@ export default function AboutPage() {
       setYears([Math.min(fromYear, updatedToYear), updatedToYear]);
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
@@ -216,46 +216,46 @@ export default function AboutPage() {
     );
   };
 
-  
+
 
 
   return (
     <section>
-    <div className="container-constructors container-page" style={{ color: "white" }}>
-      <Header />
-      <div className="ml-12 mt-20">
-      <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="hover:bg-[#252525]">TIMEFRAME: {years[0]}-{years[1]} <span className="rotate-90 ml-48">&gt;</span></Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525]">
-            <div className="flex flex-col">
-              <p className="font-semibold mb-2">FROM:</p>
-              {allYears.map((year) => (
-                <DropdownMenuCheckboxItem
-                  key={`from-${year}`}
-                  checked={years[0] === year}
-                  onCheckedChange={(checked) => checked && handleYearSelection("FROM", year)}
-                >
-                  {year}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </div>
-            <div className="flex flex-col">
-              <p className="font-semibold mb-2">TO:</p>
-              {allYears.map((year) => (
-                <DropdownMenuCheckboxItem
-                  key={`to-${year}`}
-                  checked={years[1] === year}
-                  disabled={year < years[0]}
-                  onCheckedChange={(checked) => checked && handleYearSelection("TO", year)}
-                >
-                  {year}
-                </DropdownMenuCheckboxItem>
-              ))}
-            </div>
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="container-constructors container-page" style={{ color: "white" }}>
+        <Header />
+        <div className="ml-12 mt-20">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="hover:bg-[#252525]">TIMEFRAME: {years[0]}-{years[1]} <span className="rotate-90 ml-48">&gt;</span></Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525]">
+              <div className="flex flex-col">
+                <p className="font-semibold mb-2">FROM:</p>
+                {allYears.map((year) => (
+                  <DropdownMenuCheckboxItem
+                    key={`from-${year}`}
+                    checked={years[0] === year}
+                    onCheckedChange={(checked) => checked && handleYearSelection("FROM", year)}
+                  >
+                    {year}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <p className="font-semibold mb-2">TO:</p>
+                {allYears.map((year) => (
+                  <DropdownMenuCheckboxItem
+                    key={`to-${year}`}
+                    checked={years[1] === year}
+                    disabled={year < years[0]}
+                    onCheckedChange={(checked) => checked && handleYearSelection("TO", year)}
+                  >
+                    {year}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {
