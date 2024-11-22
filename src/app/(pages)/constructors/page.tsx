@@ -30,7 +30,7 @@ type ConstructorResult = {
 export default function ConstructorsPage() {
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
   const [constructors, setConstructors] = useState<ConstructorResult[]>([]); // TODO: Rename to datapunkt eller nåt
-  const [selectedConstructors, setSelectedConstructors] = useState<string[]>([]);
+  const [selectedConstructors, setSelectedConstructors] = useState<string[]>(['mclaren','ferrari','red-bull','mercedes','aston-martin','alpine','haas','rb','williams','kick-sauber',]);
   const [years, setYears] = useState([2020, 2024]);
   const [loading, setLoading] = useState(false);
   const minYear = 1950;
