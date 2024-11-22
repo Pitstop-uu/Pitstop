@@ -72,15 +72,43 @@ export const constructorColors = {
     'ensign': '#FFC000',
     'fittipaldi': '#FFFF00',
     'shadow': '#000000',
+    'kauhsen': '#272727',
+    'rebaque': '#743E26',
+    'merzario': '#FFC000',
+    'wolf': '#000000',
+    'martini': '#9CC0E3',
+    'hesketh': '#404040',
+    'surtees': '#4472C4',
+    'kojima': '#000000',
+    'boro': '#ED7D31',
+    'brm': '#324725',
+    'penske': '#B4C6E7',
+    'mcguire': '#FCED4F',
+    'apollon': '#F4BE47',
+    'lec': '#223249',
+    'parnelli': '#FF0000',
+    'maki': '#404040',
+    'wolf-williams': '#44546A',
+    'hill': '#404040',
+    'frank-williams-racing-cars': '#44546A',
+    'lyncar': '#002C19',
 };
 
-// 73/184 teams covered
-// 1980->2024 covered
-// Colors can be found here: https://imgur.com/Nqkms9X
-// Teams to change color for:
+// 93/184 teams covered
+// 1975->2024 covered
+
+// Some colors can be found here: https://imgur.com/Nqkms9X
+
+// Teams to change color for (because they do not fit with background or axis):
 // stewart
 // minardi
 // adnrea-moda
 // eurobrun
 // toleman
 // shadow
+// kauhsen
+// wolf
+// hesketh
+// kojima
+// maki
+// hill

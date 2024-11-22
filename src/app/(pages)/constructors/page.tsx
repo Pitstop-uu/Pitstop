@@ -97,6 +97,9 @@ export default function AboutPage() {
       'first': 'FIRST',
       'ram': 'RAM',
       'ats-wheels': 'ATS Wheels',
+      'brm': 'BRM',
+      'mcguire': 'McGuire',
+      'hill': 'Embassy Hill',
     };
 
     if (exceptions[key]) {
