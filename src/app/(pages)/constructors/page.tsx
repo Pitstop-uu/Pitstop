@@ -7,8 +7,11 @@ import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
+
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { constructorColors } from '@/components/ui/ConstructorColors.ts';
+
 
 interface ConstructorItem {
   constructor_id: string;
@@ -30,6 +33,7 @@ export default function AboutPage() {
   const maxYear = 2024;
   const allYears = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i);
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
+
 
   const handleYearSelection = (type: "FROM" | "TO", year: number) => {
     const [fromYear, toYear] = years;
@@ -101,6 +105,16 @@ export default function AboutPage() {
     const exceptions: { [key: string]: string } = {
       'rb': 'RB',
       'alphatauri': 'AlphaTauri',
+      'mclaren': 'McLaren',
+      'hrt': 'HRT',
+      'bmw-sauber': 'BMW Sauber',
+      'ags': 'AGS',
+      'first': 'FIRST',
+      'ram': 'RAM',
+      'ats-wheels': 'ATS Wheels',
+      'brm': 'BRM',
+      'mcguire': 'McGuire',
+      'hill': 'Embassy Hill',
     };
 
     if (exceptions[key]) {
@@ -113,7 +127,6 @@ export default function AboutPage() {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
-
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -135,42 +148,75 @@ export default function AboutPage() {
    */
   const CustomTooltipContent = (props: any) => {
     const { axisValue } = props;
-    const data = constructors.find((entry) => entry.year === axisValue);
 
-    if (!data) {
-      return null;
-    }
+    if (!highlightedItem) {
+      const data = constructors.find((entry) => entry.year === axisValue);
 
-    const { year, ...rest } = data;
+      if (!data) {
+        return null;
+      }
+
+      const { year, ...rest } = data;
+
+      return (
+        <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
+          <p style={{ textAlign: 'center' }} >{year}</p>
+          <hr style={{ height: '1px', marginBottom: '2px' }} />
+          {
+            Object.entries(rest)
+              .sort(([, a], [, b]) => Number(b) - Number(a))
+              .map(([key, value], i) => {
+                const labelizedKey = labelizeKey(key)
+
+                const constructorColor = key in constructorColors
+                  ? constructorColors[key as keyof typeof constructorColors]
+                  : '#888';
+
+                return (
+                  <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: constructorColor, marginRight: 5, marginTop: 2, }} />
+                    {`${labelizedKey}: ${value} pts`}
+                  </p>
+                )
+              }
+              )}
+        </Paper>
+      );
+    };
+
+    const { seriesId } = highlightedItem;
+    const index = Number(String(seriesId).match(/\d+/g));
+    const constructorName: string = allConstructors[index];
+
+    const constructorData = constructors
+      .filter(entry => entry[constructorName])
+      .map(entry => ({
+        year: entry.year,
+        points: entry[constructorName],
+      }));
+
+    const constructorColor = constructorName in constructorColors
+      ? constructorColors[constructorName as keyof typeof constructorColors]
+      : '#888';
 
     return (
       <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
-        <p style={{ textAlign: 'center' }} >{year}</p>
+        <p style={{ textAlign: 'center' }} >{labelizeKey(constructorName)}</p>
         <hr style={{ height: '1px', marginBottom: '2px' }} />
-        {
-          Object.entries(rest)
-            .sort(([, a], [, b]) => Number(b) - Number(a))
-            .map(([key, value], i) => {
-              const labelizedKey = labelizeKey(key)
-              return <p key={i}>{`${labelizedKey}: ${value}`}</p>
-            }
-            )}
+        {constructorData.reverse().map((entry, i) => {
+          const isCurrentYear = entry.year === axisValue;
+          return (
+            <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+              {`${entry.year}: ${entry.points} pts`}
+            </p>
+          );
+        })}
       </Paper>
     );
   };
 
-  const constructorColors = {
-    'mclaren': '#FF8000',
-    'ferrari': '#E80020',
-    'red-bull': '#3671C6',
-    'mercedes': '#27F4D2',
-    'aston-martin': '#229971',
-    'alpine': '#0093CC',
-    'haas': '#B6BABD',
-    'rb': '#6692FF',
-    'williams': '#64C4FF',
-    'kick-sauber': '#000000',
-  }
+  
 
 
   return (
@@ -211,74 +257,74 @@ export default function AboutPage() {
           </DropdownMenuContent>
         </DropdownMenu>
         </div>
-      
-      {
-        !loading && (
-          <LineChart
-            dataset={constructors}
-            xAxis={[{ dataKey: "year", scaleType: "point" }]}
-            series={allConstructors.map((constructor) => {
 
-              const constructorColor = constructor in constructorColors
-                ? constructorColors[constructor as keyof typeof constructorColors]
-                : '#888';
+        {
+          !loading && (
+            <LineChart
+              dataset={constructors}
+              xAxis={[{ dataKey: "year", scaleType: "point" }]}
+              series={allConstructors.map((constructor) => {
 
-              return {
-                dataKey: constructor,
-                label: labelizeKey(constructor),
-                color: constructorColor,
-                curve: 'linear',
-                showMark: false,
-                highlightScope: { highlight: 'item', fade: 'global' },
-              };
-            })}
-            tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-            axisHighlight={{ x: 'line' }}
-            height={600}
-            margin={{ bottom: 120 }}
-            highlightedItem={highlightedItem}
-            onHighlightChange={setHighLightedItem}
-            grid={{ vertical: true, horizontal: true }}
-            slotProps={{
-              legend: {
-                position: {
-                  vertical: 'bottom',
-                  horizontal: 'middle',
-                },
-                labelStyle: {
-                  fontSize: 16,
-                  fill: 'white',
-                },
-                itemMarkWidth: 24,
-                itemMarkHeight: 3,
-                markGap: 10,
-                itemGap: 20,
-              }
-            }}
-            sx={() => ({
-              [`.${axisClasses.root}`]: {
-                [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                  stroke: 'white',
-                  strokeWidth: 3,
-                },
-                [`.${axisClasses.tickLabel}`]: {
-                  fill: 'white',
-                },
-              },
-              [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
-                strokeWidth: 4,
-              },
-              [`.${chartsGridClasses.line}`]: { 
-                strokeDasharray: '5 3', 
-                strokeWidth: 1,
-                stroke: 'rgba(255, 255, 255, 0.12)',
-              },
-            })}
-          />
-        )
-      }
+                const constructorColor = constructor in constructorColors
+                  ? constructorColors[constructor as keyof typeof constructorColors]
+                  : '#888';
 
-    </div>
+                return {
+                  dataKey: constructor,
+                  label: labelizeKey(constructor),
+                  color: constructorColor,
+                  curve: 'linear',
+                  showMark: false,
+                  highlightScope: { highlight: 'item', fade: 'global' },
+                };
+              })}
+              tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+              axisHighlight={{ x: 'line' }}
+              height={600}
+              margin={{ bottom: 120 }}
+              highlightedItem={highlightedItem}
+              onHighlightChange={setHighLightedItem}
+              grid={{ vertical: true, horizontal: true }}
+              slotProps={{
+                legend: {
+                  position: {
+                    vertical: 'bottom',
+                    horizontal: 'middle',
+                  },
+                  labelStyle: {
+                    fontSize: 16,
+                    fill: 'white',
+                  },
+                  itemMarkWidth: 24,
+                  itemMarkHeight: 3,
+                  markGap: 10,
+                  itemGap: 20,
+                }
+              }}
+              sx={() => ({
+                [`.${axisClasses.root}`]: {
+                  [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                    stroke: 'white',
+                    strokeWidth: 3,
+                  },
+                  [`.${axisClasses.tickLabel}`]: {
+                    fill: 'white',
+                  },
+                },
+                [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                  strokeWidth: 4,
+                },
+                [`.${chartsGridClasses.line}`]: {
+                  strokeDasharray: '5 3',
+                  strokeWidth: 1,
+                  stroke: 'rgba(255, 255, 255, 0.12)',
+                },
+              })}
+            />
+          )
+        }
+
+      </div>
     </section>
   );
 }
