@@ -54,7 +54,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		constructor.full_name
 	FROM 
 		s_c_subset
-		LEFT JOIN constructor ON constructor.id = s_c_subset.constructor_id`
+		LEFT JOIN constructor ON constructor.id = s_c_subset.constructor_id`;
 
 	// Each data point's related constructor is mapped
 	// to that constructor's latest representation in the selected timespan.
@@ -68,7 +68,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 		return constructorMapping
 			? { ...record, constructor_id: constructorMapping.other_constructor_id }
 			: record;
-	}, []);
+	}, []).sort((a, b) => a.year - b.year);
 
 	return response(true, 200, constructorStandings);
 }

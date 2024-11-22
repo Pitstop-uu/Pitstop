@@ -4,60 +4,48 @@ import * as React from "react"
 import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
-export function DropdownMenuMultiple() {
-  const [checkedItems, setCheckedItems] = React.useState<{ [key: number]: Checked }>({})
+interface DropDownFilterMultipleProps {
+  list: KeyValue[];
+  title?: string;
+  selected: string[];
+  setSelected: (selected: string[]) => void;
+};
 
-  const baseYears = Array.from({ length: 2024 - 1950 + 1 }, (_, i) => 2024 - i)
+type KeyValue = {
+  key: string;
+  value: string;
+}
 
-  const years = [...baseYears].sort((a, b) => {
-    const aChecked = checkedItems[a] || false
-    const bChecked = checkedItems[b] || false
-
-    if (aChecked === bChecked) {
-      return b - a 
-    }
-
-    return aChecked ? -1 : 1 
-  })
-
-  const handleCheckedChange = (year: number, checked: Checked) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [year]: checked,
-    }))
-  }
-
+export function DropdownMenuMultiple({list, title, selected, setSelected}: DropDownFilterMultipleProps){
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">TIMEFRAME</Button>
+        <Button variant="outline" className="hover:bg-[#252525]">{title}: <span className="rotate-90 ml-48">&gt;</span></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-96 max-h-60 overflow-y-auto"
+        className="w-96 max-h-60 overflow-y-auto bg-[#252525]"
       >
         <DropdownMenuLabel>SELECTION METHOD: SPECIFIED</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {years.map((year) => (
+        {list.map(({key, value}) => (
           <DropdownMenuCheckboxItem
-            key={year}
-            checked={checkedItems[year] || false}
-            onCheckedChange={(checked) => handleCheckedChange(year, checked)}
+            key={key}
+            checked={selected.find(item => item === key) !== undefined}
+            onCheckedChange={(checked) => {
+              const newSelected = checked
+                ? selected.concat(key)
+                : selected.filter(item => item !== key)
+              setSelected(newSelected);
+            }}
             onSelect={(event) => {
               event.preventDefault()
             }}
           >
-            {year}
+            {value}
           </DropdownMenuCheckboxItem>
         ))}
       </DropdownMenuContent>

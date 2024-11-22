@@ -1,5 +1,5 @@
 import { DropdownMenuMultiple } from "@/components/DropDownFilterMultiple";
-import { DropdownMenuInterval } from "@/components/DropDownFIlterInterval";
+import { DropdownMenuInterval } from "@/components/DropDownFilterInterval";
 import Header from "@/components/Header";
 import "@/styles/page.css";
 
