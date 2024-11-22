@@ -7,6 +7,8 @@ import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface ConstructorItem {
   constructor_id: string;
@@ -23,12 +25,22 @@ export default function AboutPage() {
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
   const [constructors, setConstructors] = useState<ConstructorResult[]>([]);
   const [years, setYears] = useState([2020, 2024]);
-  const [firstYear, setFirstYear] = useState(2020);
-  const [lastYear, setLastYear] = useState(2024);
   const [loading, setLoading] = useState(false);
   const minYear = 1950;
   const maxYear = 2024;
+  const allYears = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i);
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
+
+  const handleYearSelection = (type: "FROM" | "TO", year: number) => {
+    const [fromYear, toYear] = years;
+    if (type === "FROM") {
+      const updatedFromYear = year;
+      setYears([updatedFromYear, Math.max(toYear, updatedFromYear)]);
+    } else if (type === "TO") {
+      const updatedToYear = year;
+      setYears([Math.min(fromYear, updatedToYear), updatedToYear]);
+    }
+  };
   
   useEffect(() => {
     const fetchData = async () => {
@@ -165,14 +177,41 @@ export default function AboutPage() {
     <section>
     <div className="container-constructors container-page" style={{ color: "white" }}>
       <Header />
-      <input type="number" value={firstYear} min={minYear} max={maxYear} onChange={e => setFirstYear(Number(e.target.value))}></input>
-      <input type="number" value={lastYear} min={minYear} max={maxYear} onChange={e => setLastYear(Number(e.target.value))}></input>
-
-      <button onClick={(_) => {
-        setConstructors([]);
-        setYears([firstYear, lastYear]);
-      }}>Search</button>
-
+      <div className="ml-12 mt-20">
+      <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="hover:bg-[#252525]">TIMEFRAME: {years[0]}-{years[1]} <span className="rotate-90 ml-48">&gt;</span></Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525]">
+            <div className="flex flex-col">
+              <p className="font-semibold mb-2">FROM:</p>
+              {allYears.map((year) => (
+                <DropdownMenuCheckboxItem
+                  key={`from-${year}`}
+                  checked={years[0] === year}
+                  onCheckedChange={(checked) => checked && handleYearSelection("FROM", year)}
+                >
+                  {year}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </div>
+            <div className="flex flex-col">
+              <p className="font-semibold mb-2">TO:</p>
+              {allYears.map((year) => (
+                <DropdownMenuCheckboxItem
+                  key={`to-${year}`}
+                  checked={years[1] === year}
+                  disabled={year < years[0]}
+                  onCheckedChange={(checked) => checked && handleYearSelection("TO", year)}
+                >
+                  {year}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        </div>
+      
       {
         !loading && (
           <LineChart
