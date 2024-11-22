@@ -27,7 +27,7 @@ export function DropdownMenuMultiple({list, title, selected, setSelected}: DropD
         <Button variant="outline" className="hover:bg-[#252525]">{title}: <span className="rotate-90 ml-48">&gt;</span></Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-96 max-h-60 overflow-y-auto bg-[#252525]"
+        className="w-96 max-h-60 overflow-y-auto bg-[#252525] text-white"
       >
         <DropdownMenuLabel>SELECTION METHOD: SPECIFIED</DropdownMenuLabel>
         <DropdownMenuSeparator />

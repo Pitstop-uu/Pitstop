@@ -36,7 +36,7 @@ export default function DropDownFilterInterval({interval, setInterval}: DropDown
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="hover:bg-[#252525]">TIMEFRAME: {interval[0]}-{interval[1]} <span className="rotate-90 ml-48">&gt;</span></Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525]">
+            <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525] text-white">
               <div className="flex flex-col">
                 <p className="font-semibold mb-2">FROM:</p>
                 {years.map((year) => (
