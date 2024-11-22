@@ -1,4 +1,5 @@
 "use client"
+
 import "@/styles/constructors.css";
 import Header from "@/components/Header";
 import { useEffect, useState } from "react";
@@ -11,7 +12,9 @@ import Paper from "@mui/material/Paper";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
-
+import ConstructorDropDownFilterMultiple from '@/components/ConstructorDropDownFilterMultiple';
+import DropDownFilterInterval from '@/components/DropDownFilterInterval';
+import labelizeKey from "@/utils/frontend/labelizeKey";
 
 interface ConstructorItem {
   constructor_id: string;
@@ -24,27 +27,16 @@ type ConstructorResult = {
   [key: string]: number;
 }
 
-export default function AboutPage() {
+export default function ConstructorsPage() {
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
-  const [constructors, setConstructors] = useState<ConstructorResult[]>([]);
+  const [constructors, setConstructors] = useState<ConstructorResult[]>([]); // TODO: Rename to datapunkt eller nåt
+  const [selectedConstructors, setSelectedConstructors] = useState<string[]>([]);
   const [years, setYears] = useState([2020, 2024]);
   const [loading, setLoading] = useState(false);
   const minYear = 1950;
   const maxYear = 2024;
   const allYears = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i);
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
-
-
-  const handleYearSelection = (type: "FROM" | "TO", year: number) => {
-    const [fromYear, toYear] = years;
-    if (type === "FROM") {
-      const updatedFromYear = year;
-      setYears([updatedFromYear, Math.max(toYear, updatedFromYear)]);
-    } else if (type === "TO") {
-      const updatedToYear = year;
-      setYears([Math.min(fromYear, updatedToYear), updatedToYear]);
-    }
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -54,11 +46,15 @@ export default function AboutPage() {
       skicka med en lista med constructor-idn i request bodyn.
       T.ex. { from: 2020, to: 2024, constructors: [ 'mclaren', 'kick-sauber' ] }
       */
+      const requestBody: { [key: string]: any } = { from: years[0], to: years[1] }
+      if (selectedConstructors.length) {
+        requestBody.constructors = selectedConstructors;
+      }
       const response = await window.fetch(
         `/api/constructors/getStandings`,
         {
           method: 'POST',
-          body: JSON.stringify({ from: years[0], to: years[1] })
+          body: JSON.stringify(requestBody)
         }
       )
       const responseJson = await response.json();
@@ -83,50 +79,7 @@ export default function AboutPage() {
       setLoading(false);
     }
     fetchData();
-  }, [years])
-
-  /**
-   * Converts a key into a human-readable format with proper capitalization.
-   * 
-   * This function checks if the key is listed in a set of exceptions (e.g., 
-   * "rb" -> "RB", "alphatauri" -> "AlphaTauri"). If the key is not in the 
-   * exceptions list, the function will replace hyphens with spaces and capitalize 
-   * the first letter of each word in the string.
-   * 
-   * @param {string} key - The key to be formatted.
-   * @returns {string} - The formatted string with capitalized words, or the special transformation for exception keys.
-   * 
-   * @example
-   * // If key is "some-key"
-   * labelizeKey("some-key"); // Returns "Some Key"
-   */
-  const labelizeKey = (key: string): string => {
-
-    const exceptions: { [key: string]: string } = {
-      'rb': 'RB',
-      'alphatauri': 'AlphaTauri',
-      'mclaren': 'McLaren',
-      'hrt': 'HRT',
-      'bmw-sauber': 'BMW Sauber',
-      'ags': 'AGS',
-      'first': 'FIRST',
-      'ram': 'RAM',
-      'ats-wheels': 'ATS Wheels',
-      'brm': 'BRM',
-      'mcguire': 'McGuire',
-      'hill': 'Embassy Hill',
-    };
-
-    if (exceptions[key]) {
-      return exceptions[key];
-    }
-
-    const formattedKey = key.replace(/-/g, ' ');
-    return formattedKey
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
+  }, [years, selectedConstructors])
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -216,46 +169,23 @@ export default function AboutPage() {
     );
   };
 
-
-
-
   return (
     <section>
       <div className="container-constructors container-page" style={{ color: "white" }}>
         <Header />
+        
         <div className="ml-12 mt-20">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="hover:bg-[#252525]">TIMEFRAME: {years[0]}-{years[1]} <span className="rotate-90 ml-48">&gt;</span></Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525]">
-              <div className="flex flex-col">
-                <p className="font-semibold mb-2">FROM:</p>
-                {allYears.map((year) => (
-                  <DropdownMenuCheckboxItem
-                    key={`from-${year}`}
-                    checked={years[0] === year}
-                    onCheckedChange={(checked) => checked && handleYearSelection("FROM", year)}
-                  >
-                    {year}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </div>
-              <div className="flex flex-col">
-                <p className="font-semibold mb-2">TO:</p>
-                {allYears.map((year) => (
-                  <DropdownMenuCheckboxItem
-                    key={`to-${year}`}
-                    checked={years[1] === year}
-                    disabled={year < years[0]}
-                    onCheckedChange={(checked) => checked && handleYearSelection("TO", year)}
-                  >
-                    {year}
-                  </DropdownMenuCheckboxItem>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <DropDownFilterInterval
+            interval={years}
+            setInterval={setYears}
+          />
+
+          <ConstructorDropDownFilterMultiple
+            yearFrom={years[0]}
+            yearTo={years[1]}
+            selectedConstructors={selectedConstructors}
+            setSelectedConstructors={setSelectedConstructors}
+          />
         </div>
 
         {
@@ -268,6 +198,8 @@ export default function AboutPage() {
                 const constructorColor = constructor in constructorColors
                   ? constructorColors[constructor as keyof typeof constructorColors]
                   : '#888';
+
+                console.log(constructors)
 
                 return {
                   dataKey: constructor,
@@ -325,6 +257,7 @@ export default function AboutPage() {
         }
 
       </div>
+
     </section>
   );
 }
