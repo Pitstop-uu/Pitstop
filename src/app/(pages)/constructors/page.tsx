@@ -192,14 +192,13 @@ export default function ConstructorsPage() {
           !loading && (
             <LineChart
               dataset={constructors}
-              xAxis={[{ dataKey: "year", scaleType: "point" }]}
+              xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
+              yAxis={[{ min: 0 }]}
               series={allConstructors.map((constructor) => {
 
                 const constructorColor = constructor in constructorColors
                   ? constructorColors[constructor as keyof typeof constructorColors]
                   : '#888';
-
-                console.log(constructors)
 
                 return {
                   dataKey: constructor,
