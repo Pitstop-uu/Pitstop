@@ -12,8 +12,9 @@ interface ConstructorDropDownFilterMultipleProps {
     setSelectedConstructors: (selected: string[]) => void;
 }
 
-export default function ConstructorDropDownFilterMultiple({yearFrom, yearTo, selectedConstructors, setSelectedConstructors}: ConstructorDropDownFilterMultipleProps) {
+export default function ConstructorDropDownFilterMultiple({ yearFrom, yearTo, selectedConstructors, setSelectedConstructors }: ConstructorDropDownFilterMultipleProps) {
     const [constructors, setConstructors] = useState([]);
+    const noneSelected = selectedConstructors.length === 0;
 
     useEffect(() => {
         const fetchConstructors = async () => {
@@ -26,10 +27,23 @@ export default function ConstructorDropDownFilterMultiple({yearFrom, yearTo, sel
         fetchConstructors();
     }, [yearFrom, yearTo]);
 
+    const limitConstructorNames = (constructorList: string[]): string => {
+        let result = "";
+        constructorList.forEach(constructor => {
+            result += labelizeKey(constructor) + ", ";
+        });
+
+        if (result.length > 29) {
+            result = result.slice(0, 26) + "..."
+        };
+
+        return result;
+    }
+
     return (
-        <DropdownMenuMultiple 
+        <DropdownMenuMultiple
             list={constructors}
-            title={"SELECT CONSTRUCTORS"}
+            title={`SELECT CONSTRUCTORS: ${noneSelected ? "ALL" : limitConstructorNames(selectedConstructors)}`}
             selected={selectedConstructors}
             setSelected={setSelectedConstructors}
         />
