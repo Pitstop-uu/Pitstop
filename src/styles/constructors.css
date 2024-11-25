@@ -8,3 +8,7 @@
 .MuiChartsAxisHighlight-root {
     stroke: white !important;
 }
+
+/* .MuiChartsAxis-bottom {
+    transform: translateY(490px);
+} */

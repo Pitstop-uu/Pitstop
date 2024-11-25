@@ -142,7 +142,7 @@ export default function ConstructorsPage() {
     const constructorName: string = allConstructors[index];
 
     const constructorData = constructors
-      .filter(entry => entry[constructorName])
+      .filter(entry => entry[constructorName] !== undefined && entry[constructorName] !== null)
       .map(entry => ({
         year: entry.year,
         points: entry[constructorName],
