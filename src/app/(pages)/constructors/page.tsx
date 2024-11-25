@@ -9,12 +9,11 @@ import { axisClasses } from "@mui/x-charts/ChartsAxis";
 import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
 
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
-import ConstructorDropDownFilterMultiple from '@/components/ConstructorDropDownFilterMultiple';
+import { DropdownMenuMultiple } from "@/components/DropDownFilterMultiple";
 import DropDownFilterInterval from '@/components/DropDownFilterInterval';
 import labelizeKey from "@/utils/frontend/labelizeKey";
+import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
 
 interface ConstructorItem {
   constructor_id: string;
@@ -28,40 +27,34 @@ type ConstructorResult = {
 }
 
 export default function ConstructorsPage() {
-  const [allConstructors, setAllConstructors] = useState<string[]>([]);
-  const [constructors, setConstructors] = useState<ConstructorResult[]>([]); // TODO: Rename to datapunkt eller nåt
-  const [selectedConstructors, setSelectedConstructors] = useState<string[]>(['mclaren','ferrari','red-bull','mercedes','aston-martin','alpine','haas','rb','williams','kick-sauber',]);
   const [years, setYears] = useState([2020, 2024]);
+  const [allConstructors, setAllConstructors] = useState<string[]>([]);
+  const [datapoints, setDatapoints] = useState<ConstructorResult[]>([]); // TODO: Rename to datapunkt eller nåt
+  const [selectableConstructors, setSelectableConstructors] = useState([]);
+  const [selectedConstructors, setSelectedConstructors] = useState<string[]>([]);
+
   const [loading, setLoading] = useState(false);
-  const minYear = 1950;
-  const maxYear = 2024;
-  const allYears = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i);
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
+
+  useEffect(() => {
+    const fetchConstructors = async () => {
+      const constructorList = (await getConstructors(years[0], years[1]))
+          .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+      setSelectableConstructors(constructorList);
+  }
+  fetchConstructors();
+  }, [years])
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      /*
-      för att hämta standings för specifika constructors kan man också
-      skicka med en lista med constructor-idn i request bodyn.
-      T.ex. { from: 2020, to: 2024, constructors: [ 'mclaren', 'kick-sauber' ] }
-      */
-      const requestBody: { [key: string]: any } = { from: years[0], to: years[1] }
-      if (selectedConstructors.length) {
-        requestBody.constructors = selectedConstructors;
-      }
-      const response = await window.fetch(
-        `/api/constructors/getStandings`,
-        {
-          method: 'POST',
-          body: JSON.stringify(requestBody)
-        }
-      )
-      const responseJson = await response.json();
-      const constructors = responseJson.data;
+
+      const constructors = selectedConstructors
+        .filter(c => selectableConstructors.find((s: any) => s.key === c));
+      const fetchedDatapoints = await getConstructorStandings(years[0], years[1], constructors);
 
       const constructorList: string[] = [];
-      const transformedData = constructors.reduce((acc: ConstructorResult[], { year, constructor_id, total_points }: ConstructorItem) => {
+      const transformedData = fetchedDatapoints.reduce((acc: ConstructorResult[], { year, constructor_id, total_points }: ConstructorItem) => {
         if (!constructorList.find((c_id) => c_id === constructor_id)) {
           constructorList.push(constructor_id);
         }
@@ -75,11 +68,11 @@ export default function ConstructorsPage() {
       }, []);
 
       setAllConstructors(constructorList)
-      setConstructors(transformedData);
+      setDatapoints(transformedData);
       setLoading(false);
     }
     fetchData();
-  }, [years, selectedConstructors])
+  }, [years, selectedConstructors, selectableConstructors]);
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -103,7 +96,7 @@ export default function ConstructorsPage() {
     const { axisValue } = props;
 
     if (!highlightedItem) {
-      const data = constructors.find((entry) => entry.year === axisValue);
+      const data = datapoints.find((entry) => entry.year === axisValue);
 
       if (!data) {
         return null;
@@ -141,7 +134,7 @@ export default function ConstructorsPage() {
     const index = Number(String(seriesId).match(/\d+/g));
     const constructorName: string = allConstructors[index];
 
-    const constructorData = constructors
+    const constructorData = datapoints
       .filter(entry => entry[constructorName] !== undefined && entry[constructorName] !== null)
       .map(entry => ({
         year: entry.year,
@@ -180,18 +173,18 @@ export default function ConstructorsPage() {
             setInterval={setYears}
           />
 
-          <ConstructorDropDownFilterMultiple
-            yearFrom={years[0]}
-            yearTo={years[1]}
-            selectedConstructors={selectedConstructors}
-            setSelectedConstructors={setSelectedConstructors}
+          <DropdownMenuMultiple
+            list={selectableConstructors}
+            title={"SELECT CONSTRUCTORS"}
+            selected={selectedConstructors}
+            setSelected={setSelectedConstructors}
           />
         </div>
 
         {
           !loading && (
             <LineChart
-              dataset={constructors}
+              dataset={datapoints}
               xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
               yAxis={[{ min: 0 }]}
               series={allConstructors.map((constructor) => {
