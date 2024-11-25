@@ -16,6 +16,12 @@ export const getConstructorStandings = async (
     return responseJson.data;
 }
 
+export default getConstructorRaceStandings = async (year: number) => {
+  const response = await window.fetch(`/api/constructors?year=${year}`);
+  const responseJson = await response.json();
+  return responseJson.data;
+}
+
 export const getConstructors = async (yearFrom: number, yearTo: number) => {
     const response = await window.fetch(`/api/constructors?from=${yearFrom}&to=${yearTo}`);
     const responseJson = await response.json();
