@@ -1,31 +1,21 @@
 "use client"
 
 import React from "react";
-import { useState, useEffect } from "react";
 import { DropdownMenuMultiple } from "./DropDownFilterMultiple";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 
 interface ConstructorDropDownFilterMultipleProps {
-    yearFrom: number;
-    yearTo: number;
+    selectableConstructors: { key: string, value: string}[];
     selectedConstructors: string[];
     setSelectedConstructors: (selected: string[]) => void;
 }
 
-export default function ConstructorDropDownFilterMultiple({ yearFrom, yearTo, selectedConstructors, setSelectedConstructors }: ConstructorDropDownFilterMultipleProps) {
-    const [constructors, setConstructors] = useState([]);
+export default function ConstructorDropDownFilterMultiple({
+    selectableConstructors,
+    selectedConstructors,
+    setSelectedConstructors
+}: ConstructorDropDownFilterMultipleProps) {
     const noneSelected = selectedConstructors.length === 0;
-
-    useEffect(() => {
-        const fetchConstructors = async () => {
-            const response = await window.fetch(`/api/constructors?from=${yearFrom}&to=${yearTo}`);
-            const responseJson = await response.json();
-            const constructorList = responseJson.data
-                .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }))
-            setConstructors(constructorList);
-        }
-        fetchConstructors();
-    }, [yearFrom, yearTo]);
 
     const limitConstructorNames = (constructorList: string[]): string => {
         let result = "";
@@ -42,7 +32,7 @@ export default function ConstructorDropDownFilterMultiple({ yearFrom, yearTo, se
 
     return (
         <DropdownMenuMultiple
-            list={constructors}
+            list={selectableConstructors}
             title={`SELECT CONSTRUCTORS: ${noneSelected ? "ALL" : limitConstructorNames(selectedConstructors)}`}
             selected={selectedConstructors}
             setSelected={setSelectedConstructors}

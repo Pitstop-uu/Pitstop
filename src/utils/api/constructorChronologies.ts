@@ -21,8 +21,8 @@ const constructorChronologies = async (
   FROM 
     constructor_chronology
   WHERE
-    year_from BETWEEN ${fromYear} AND ${toYear}
-    OR year_to BETWEEN ${fromYear} AND ${toYear}`;
+    NOT (year_from < ${fromYear} AND year_to < ${fromYear}) AND
+    NOT (year_from > ${toYear} AND year_to > ${toYear})`;
 }
 
 export default constructorChronologies;
