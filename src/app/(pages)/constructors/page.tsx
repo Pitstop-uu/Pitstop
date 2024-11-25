@@ -10,7 +10,7 @@ import { HighlightItemData } from "@mui/x-charts/context";
 import Paper from "@mui/material/Paper";
 
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
-import { DropdownMenuMultiple } from "@/components/DropDownFilterMultiple";
+import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
 import DropDownFilterInterval from '@/components/DropDownFilterInterval';
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
@@ -173,11 +173,10 @@ export default function ConstructorsPage() {
             setInterval={setYears}
           />
 
-          <DropdownMenuMultiple
-            list={selectableConstructors}
-            title={"SELECT CONSTRUCTORS"}
-            selected={selectedConstructors}
-            setSelected={setSelectedConstructors}
+          <ConstructorDropDownFilterMultiple
+            selectableConstructors={selectableConstructors}
+            selectedConstructors={selectedConstructors}
+            setSelectedConstructors={setSelectedConstructors}
           />
         </div>
 
