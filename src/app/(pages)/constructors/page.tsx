@@ -12,11 +12,12 @@ import Paper from "@mui/material/Paper";
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
 import DropDownFilterInterval from '@/components/FilterInterval';
+import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors, getConstructorRaceStandings } from "@/utils/frontend/constructorPage/requests";
 import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
 
-type ConstructorResult = {
+export type ConstructorResult = {
   year: number;
   [key: string]: number;
 }
@@ -215,8 +216,8 @@ export default function ConstructorsPage() {
     <section>
       <div className="container-constructors container-page" style={{ color: "white" }}>
         <Header />
-        
-        <div className="ml-12 mt-20">
+
+        <div className="ml-12 mt-10">
           <DropDownFilterInterval
             interval={state.years}
             setInterval={(interval: number[]) => {
@@ -235,74 +236,78 @@ export default function ConstructorsPage() {
 
         {
           !state.loading && (
-            <LineChart
-              dataset={state.datapoints}
-              xAxis={[{ dataKey: "key", scaleType: "point", position: "bottom" }]}
-              yAxis={[{ min: 0 }]}
-              series={state.allConstructors.map((constructor: any) => {
+            <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
+              <div style={{ flex: "1", minHeight: "400px" }}>
+                <LineChart
+                  dataset={state.datapoints}
+                  xAxis={[{ dataKey: "key", scaleType: "point", position: "bottom" }]}
+                  yAxis={[{ min: 0 }]}
+                  series={state.allConstructors.map((constructor: any) => {
+                    const constructorColor = constructor in constructorColors
+                      ? constructorColors[constructor as keyof typeof constructorColors]
+                      : '#888';
 
-                const constructorColor = constructor in constructorColors
-                  ? constructorColors[constructor as keyof typeof constructorColors]
-                  : '#888';
-
-                return {
-                  dataKey: constructor,
-                  label: labelizeKey(constructor),
-                  color: constructorColor,
-                  curve: 'linear',
-                  showMark: false,
-                  highlightScope: { highlight: 'item', fade: 'global' },
-                };
-              })}
-              tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-              axisHighlight={{ x: 'line' }}
-              height={600}
-              margin={{ bottom: 120 }}
-              highlightedItem={highlightedItem}
-              onHighlightChange={setHighLightedItem}
-              grid={{ vertical: true, horizontal: true }}
-              slotProps={{
-                legend: {
-                  direction: 'row',
-                  position: {
-                    vertical: 'bottom',
-                    horizontal: 'middle',
-                  },
-                  labelStyle: {
-                    fontSize: 16,
-                    fill: 'white',
-                  },
-                  itemMarkWidth: 24,
-                  itemMarkHeight: 3,
-                  markGap: 10,
-                  itemGap: 20,
-                }
-              }}
-              sx={() => ({
-                [`.${axisClasses.root}`]: {
-                  [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                    stroke: 'white',
-                    strokeWidth: 3,
-                  },
-                  [`.${axisClasses.tickLabel}`]: {
-                    fill: 'white',
-                  },
-                },
-                [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
-                  strokeWidth: 4,
-                },
-                [`.${chartsGridClasses.line}`]: {
-                  strokeDasharray: '5 3',
-                  strokeWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0.12)',
-                },
-              })}
-            />
+                    return {
+                      dataKey: constructor,
+                      label: labelizeKey(constructor),
+                      color: constructorColor,
+                      curve: 'linear',
+                      showMark: false,
+                      highlightScope: { highlight: 'item', fade: 'global' },
+                    };
+                  })}
+                  tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+                  axisHighlight={{ x: 'line' }}
+                  margin={{
+                    bottom: 30,
+                    left: 100,
+                    right: 100,
+                  }}
+                  height={500}
+                  highlightedItem={highlightedItem}
+                  onHighlightChange={setHighLightedItem}
+                  grid={{ vertical: true, horizontal: true }}
+                  slotProps={{
+                    legend: {
+                      hidden: true,
+                    }
+                  }}
+                  sx={() => ({
+                    [`.${axisClasses.root}`]: {
+                      [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                        stroke: 'white',
+                        strokeWidth: 3,
+                      },
+                      [`.${axisClasses.tickLabel}`]: {
+                        fill: 'white',
+                      },
+                    },
+                    [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                      strokeWidth: 4,
+                    },
+                    [`.${chartsGridClasses.line}`]: {
+                      strokeDasharray: '5 3',
+                      strokeWidth: 1,
+                      stroke: 'rgba(255, 255, 255, 0.12)',
+                    },
+                  })}
+                />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CustomLegend
+                  constructors={state.datapoints}
+                />
+              </div>
+            </div>
           )
         }
-
       </div>
-
     </section>
   );
 }
