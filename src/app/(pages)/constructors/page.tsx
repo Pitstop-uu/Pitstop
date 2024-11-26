@@ -2,7 +2,7 @@
 
 import "@/styles/constructors.css";
 import Header from "@/components/Header";
-import { useEffect, useState } from "react";
+import { useEffect, useCallback, useReducer, useState } from "react";
 import { LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
 import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { axisClasses } from "@mui/x-charts/ChartsAxis";
@@ -27,53 +27,105 @@ export type ConstructorResult = {
   [key: string]: number;
 }
 
-export default function ConstructorsPage() {
-  const [years, setYears] = useState([2020, 2024]);
-  const [allConstructors, setAllConstructors] = useState<string[]>([]);
-  const [datapoints, setDatapoints] = useState<ConstructorResult[]>([]);
-  const [selectableConstructors, setSelectableConstructors] = useState([]);
-  const [selectedConstructors, setSelectedConstructors] = useState<string[]>([]);
+interface ReducerState {
+  years: [number, number],
+  datapoints: ConstructorResult[],
+  selectableConstructors: { key: string, value: string }[],
+  selectedConstructors: string[],
+  loading: boolean,
+}
 
-  const [loading, setLoading] = useState(false);
+const fetchConstructors = async (years: [number, number]) => {
+  return (await getConstructors(years[0], years[1]))
+    .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+}
+
+const fetchSeasonStandings = async (
+  years: [number, number],
+  constructors: string[]
+) => {
+  const datapoints = await getConstructorStandings(years[0], years[1], constructors);
+
+  const { data, uniqueConstructors } = datapoints.reduce((
+    acc: any,
+    { year, constructor_id, total_points }: ConstructorItem
+  ) => {
+    const dataRow = acc.data[year] || {}
+    return {
+      encountered: acc.encountered[constructor_id]
+        ? acc.encountered
+        : { ...acc.encountered, [constructor_id]: true },
+      uniqueConstructors: acc.encountered[constructor_id]
+        ? acc.uniqueConstructors
+        : acc.uniqueConstructors.concat(constructor_id),
+      data: { ...acc.data, [year]: { ...dataRow, [constructor_id]: Number(total_points) } }
+    }
+  }, {
+    encountered: {},
+    uniqueConstructors: [],
+    data: {}
+  });
+  
+  return {
+    data: Object.keys(data).map((key: string) => ({ ...data[key], year: key })),
+    uniqueConstructors
+  };
+}
+
+const stateWithDatapoints = async (state: ReducerState) => {
+  const { data, uniqueConstructors } = await fetchSeasonStandings(state.years, state.selectedConstructors);
+  return { ...state, datapoints: data, allConstructors: uniqueConstructors };
+}
+
+const stateWithSelectableConstructors = async (state: ReducerState) => {
+  const selectableConstructors = await fetchConstructors(state.years);
+  return { ...state, selectableConstructors: selectableConstructors };
+}
+
+const stateWithAll = async (state: ReducerState) => {
+  return await stateWithSelectableConstructors(await stateWithDatapoints(state));
+}
+
+const initialState = {
+  years: [2020, 2024],
+  datapoints: [],
+  selectableConstructors: [],
+  selectedConstructors: [],
+  allConstructors: [],
+  loading: false,
+} as ReducerState;
+
+const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
+  const { type } = action;
+  switch (type) {
+    case "set":
+      return { ...state, ...action.payload };
+    default:
+      return state;
+  }
+}
+
+export default function ConstructorsPage() {
+  const [state, dispatch] = useReducer(reducer, { ...initialState });
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
 
   useEffect(() => {
-    const fetchConstructors = async () => {
-      const constructorList = (await getConstructors(years[0], years[1]))
-        .map((constructor: { id: string, full_name: string }) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
-      setSelectableConstructors(constructorList);
+    const setInitialState = async () => {
+      const initState = await stateWithAll(initialState);
+      dispatch({ type: "set", payload: initState });
     }
-    fetchConstructors();
-  }, [years])
+    setInitialState();
+  }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+  const onSetInterval = useCallback(async (currentState: ReducerState, years: [number, number]) => {
+    const withAll = await stateWithAll({ ...currentState, years, selectedConstructors: [] });
+    dispatch({ type: "set", payload: withAll });
+  }, []);
 
-      const constructors = selectedConstructors
-        .filter(c => selectableConstructors.find((s: { key: string, value: string }) => s.key === c));
-      const fetchedDatapoints = await getConstructorStandings(years[0], years[1], constructors);
-
-      const constructorList: string[] = [];
-      const transformedData = fetchedDatapoints.reduce((acc: ConstructorResult[], { year, constructor_id, total_points }: ConstructorItem) => {
-        if (!constructorList.find((c_id) => c_id === constructor_id)) {
-          constructorList.push(constructor_id);
-        }
-        const yearEntry = acc.find((entry) => entry.year === year);
-        if (yearEntry) {
-          yearEntry[constructor_id] = Number(total_points);
-        } else {
-          acc.push({ year, [constructor_id]: Number(total_points) });
-        }
-        return acc;
-      }, []);
-
-      setAllConstructors(constructorList)
-      setDatapoints(transformedData);
-      setLoading(false);
-    }
-    fetchData();
-  }, [years, selectedConstructors, selectableConstructors]);
+  const onSetSelected = useCallback(async (currentState: ReducerState, constructors: string[]) => {
+    const withDatapoints = await stateWithDatapoints({ ...currentState, selectedConstructors: constructors });
+    dispatch({ type: "set", payload: withDatapoints });
+  }, [])
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -97,7 +149,7 @@ export default function ConstructorsPage() {
     const { axisValue } = props;
 
     if (!highlightedItem) {
-      const data = datapoints.find((entry) => entry.year === axisValue);
+      const data = state.datapoints.find((entry: any) => entry.year === axisValue);
 
       if (!data) {
         return null;
@@ -133,11 +185,11 @@ export default function ConstructorsPage() {
 
     const { seriesId } = highlightedItem;
     const index = Number(String(seriesId).match(/\d+/g));
-    const constructorName: string = allConstructors[index];
+    const constructorName: string = state.allConstructors[index];
 
-    const constructorData = datapoints
-      .filter(entry => entry[constructorName] !== undefined && entry[constructorName] !== null)
-      .map(entry => ({
+    const constructorData = state.datapoints
+      .filter((entry: any) => entry[constructorName] !== undefined && entry[constructorName] !== null)
+      .map((entry: any) => ({
         year: entry.year,
         points: entry[constructorName],
       }));
@@ -150,7 +202,7 @@ export default function ConstructorsPage() {
       <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
         <p style={{ textAlign: 'center' }} >{labelizeKey(constructorName)}</p>
         <hr style={{ height: '1px', marginBottom: '2px' }} />
-        {constructorData.reverse().map((entry, i) => {
+        {constructorData.reverse().map((entry: any, i: number) => {
           const isCurrentYear = entry.year === axisValue;
           return (
             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
@@ -168,28 +220,32 @@ export default function ConstructorsPage() {
       <div className="container-constructors container-page" style={{ color: "white" }}>
         <Header />
 
-        <div className="ml-12 mt-20">
+        <div className="ml-12 mt-10">
           <DropDownFilterInterval
-            interval={years}
-            setInterval={setYears}
+            interval={state.years}
+            setInterval={(interval: number[]) => {
+              onSetInterval(state, [interval[0], interval[1]]);
+            }}
           />
 
           <ConstructorDropDownFilterMultiple
-            selectableConstructors={selectableConstructors}
-            selectedConstructors={selectedConstructors}
-            setSelectedConstructors={setSelectedConstructors}
+            selectableConstructors={state.selectableConstructors}
+            selectedConstructors={state.selectedConstructors}
+            setSelectedConstructors={(constructors: string[]) => {
+              onSetSelected(state, constructors);
+            }}
           />
         </div>
 
         {
-          !loading && (
+          !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ flex: "1", minHeight: "400px" }}>
                 <LineChart
-                  dataset={datapoints}
+                  dataset={state.datapoints}
                   xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
                   yAxis={[{ min: 0 }]}
-                  series={allConstructors.map((constructor) => {
+                  series={state.allConstructors.map((constructor: any) => {
 
                     const constructorColor = constructor in constructorColors
                       ? constructorColors[constructor as keyof typeof constructorColors]
@@ -211,6 +267,7 @@ export default function ConstructorsPage() {
                     left: 100,
                     right: 100,
                   }}
+                  height={500}
                   highlightedItem={highlightedItem}
                   onHighlightChange={setHighLightedItem}
                   grid={{ vertical: true, horizontal: true }}
@@ -248,7 +305,7 @@ export default function ConstructorsPage() {
                 }}
               >
                 <CustomLegend
-                  constructors={datapoints}
+                  constructors={state.datapoints}
                 />
               </div>
             </div>
