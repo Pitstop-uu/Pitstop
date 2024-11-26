@@ -34,6 +34,57 @@ interface ReducerState {
   loading: boolean,
 }
 
+const fetchConstructors = async (years: [number, number]) => {
+  return (await getConstructors(years[0], years[1]))
+    .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+}
+
+const fetchSeasonStandings = async (
+  years: [number, number],
+  constructors: string[]
+) => {
+  const datapoints = await getConstructorStandings(years[0], years[1], constructors);
+
+  const { data, uniqueConstructors } = datapoints.reduce((
+    acc: any,
+    { year, constructor_id, total_points }: ConstructorItem
+  ) => {
+    const dataRow = acc.data[year] || {}
+    return {
+      encountered: acc.encountered[constructor_id]
+        ? acc.encountered
+        : { ...acc.encountered, [constructor_id]: true },
+      uniqueConstructors: acc.encountered[constructor_id]
+        ? acc.uniqueConstructors
+        : acc.uniqueConstructors.concat(constructor_id),
+      data: { ...acc.data, [year]: { ...dataRow, [constructor_id]: Number(total_points) } }
+    }
+  }, {
+    encountered: {},
+    uniqueConstructors: [],
+    data: {}
+  });
+  
+  return {
+    data: Object.keys(data).map((key: string) => ({ ...data[key], year: key })),
+    uniqueConstructors
+  };
+}
+
+const stateWithDatapoints = async (state: ReducerState) => {
+  const { data, uniqueConstructors } = await fetchSeasonStandings(state.years, state.selectedConstructors);
+  return { ...state, datapoints: data, allConstructors: uniqueConstructors };
+}
+
+const stateWithSelectableConstructors = async (state: ReducerState) => {
+  const selectableConstructors = await fetchConstructors(state.years);
+  return { ...state, selectableConstructors: selectableConstructors };
+}
+
+const stateWithAll = async (state: ReducerState) => {
+  return await stateWithSelectableConstructors(await stateWithDatapoints(state));
+}
+
 const initialState = {
   years: [2020, 2024],
   datapoints: [],
@@ -46,88 +97,34 @@ const initialState = {
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
   const { type } = action;
   switch (type) {
-    case "setInitialState":
-        return action.payload;
-    case "setInterval":
-      
+    case "set":
+      return { ...state, ...action.payload };
     default:
       return state;
   }
 }
 
-const fetchConstructors = async (years: [number, number]) => {
-  return (await getConstructors(years[0], years[1]))
-    .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
-}
-
-const fetchConstructorSeasonStandings = async (
-  years: [number, number],
-  constructors: string[]
-) => {
-  const datapoints = await getConstructorStandings(years[0], years[1], constructors);
-
-  const { data, uniqueConstructors } = datapoints.reduce((
-    acc: any,
-    { year, constructor_id, total_points }: ConstructorItem
-  ) => {
-    const entryIndex = acc.yearIndexes.map[year]
-    return {
-      encountered: acc.encountered[constructor_id]
-        ? acc.encountered
-        : { ...acc.encountered, [constructor_id]: true },
-      yearIndexes: entryIndex
-        ? acc.yearIndexes
-        : {
-          map: { ...acc.yearIndexes.map, [year]: acc.yearIndexes.counter },
-          counter: acc.yearIndexes.counter + 1
-        },
-      uniqueConstructors: acc.encountered[constructor_id]
-        ? acc.uniqueConstructors
-        : acc.uniqueConstructors.concat(constructor_id),
-      data: entryIndex
-        ? acc.data.with(entryIndex, { ...acc.data[entryIndex], [constructor_id]: Number(total_points) })
-        : acc.data.concat({ year, [constructor_id]: Number(total_points) })
-    }
-  }, {
-    encountered: {},
-    yearIndexes: { map: {}, counter: 0 },
-    uniqueConstructors: [],
-    data: []
-  });
-
-  return { data, uniqueConstructors };
-}
-
-const getInitialState = async () => {
-  const { data, uniqueConstructors } = await fetchConstructorSeasonStandings(initialState.years, initialState.selectedConstructors);
-  const selectableConstructors = await fetchConstructors(initialState.years);
-  return {
-    ...initialState,
-    datapoints: data,
-    allConstructors: uniqueConstructors,
-    selectableConstructors: selectableConstructors,
-  }
-}
-
-
-
 export default function ConstructorsPage() {
-
   const [state, dispatch] = useReducer(reducer, { ...initialState });
-
   const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
 
   useEffect(() => {
     const setInitialState = async () => {
-      const initialState = await getInitialState();
-      dispatch({ type: "setInitialState", payload: initialState });
+      const initState = await stateWithAll(initialState);
+      dispatch({ type: "set", payload: initState });
     }
     setInitialState();
   }, []);
 
-  const onSetInterval = useCallback(async () => {
+  const onSetInterval = useCallback(async (currentState: ReducerState, years: [number, number]) => {
+    const withAll = await stateWithAll({ ...currentState, years, selectedConstructors: [] });
+    dispatch({ type: "set", payload: withAll });
+  }, []);
 
-  }, [state])
+  const onSetSelected = useCallback(async (currentState: ReducerState, constructors: string[]) => {
+    const withDatapoints = await stateWithDatapoints({ ...currentState, selectedConstructors: constructors });
+    dispatch({ type: "set", payload: withDatapoints });
+  }, [])
 
   /**
    * Custom Tooltip Component for rendering data in a tooltip.
@@ -225,13 +222,17 @@ export default function ConstructorsPage() {
         <div className="ml-12 mt-20">
           <DropDownFilterInterval
             interval={state.years}
-            setInterval={() => {}}
+            setInterval={(interval: number[]) => {
+              onSetInterval(state, [interval[0], interval[1]]);
+            }}
           />
 
           <ConstructorDropDownFilterMultiple
             selectableConstructors={state.selectableConstructors}
             selectedConstructors={state.selectedConstructors}
-            setSelectedConstructors={() => {}}
+            setSelectedConstructors={(constructors: string[]) => {
+              onSetSelected(state, constructors);
+            }}
           />
         </div>
 
@@ -265,6 +266,7 @@ export default function ConstructorsPage() {
               grid={{ vertical: true, horizontal: true }}
               slotProps={{
                 legend: {
+                  direction: 'row',
                   position: {
                     vertical: 'bottom',
                     horizontal: 'middle',
