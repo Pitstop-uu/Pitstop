@@ -8,11 +8,7 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 
 type Checked = DropdownMenuCheckboxItemProps["checked"]
 
-interface DropDownFilterMultipleProps {
-  
-};
-
-export function DropdownMenuMultiple(props: DropDownFilterMultipleProps) {
+export function DropdownMenuMultiple() {
   const [checkedItems, setCheckedItems] = React.useState<{ [key: number]: Checked }>({})
 
   const baseYears = Array.from({ length: 2024 - 1950 + 1 }, (_, i) => 2024 - i)

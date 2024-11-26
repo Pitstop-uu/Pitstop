@@ -11,7 +11,7 @@ import Paper from "@mui/material/Paper";
 
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
-import DropDownFilterInterval from '@/components/DropDownFilterInterval';
+import DropDownFilterInterval from '@/components/FilterInterval';
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
 
@@ -39,7 +39,7 @@ export default function ConstructorsPage() {
   useEffect(() => {
     const fetchConstructors = async () => {
       const constructorList = (await getConstructors(years[0], years[1]))
-          .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+          .map((constructor: {id: string, full_name: string}) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
       setSelectableConstructors(constructorList);
   }
   fetchConstructors();
@@ -50,7 +50,7 @@ export default function ConstructorsPage() {
       setLoading(true);
 
       const constructors = selectedConstructors
-        .filter(c => selectableConstructors.find((s: any) => s.key === c));
+        .filter(c => selectableConstructors.find((s: {key: string, value: string}) => s.key === c));
       const fetchedDatapoints = await getConstructorStandings(years[0], years[1], constructors);
 
       const constructorList: string[] = [];

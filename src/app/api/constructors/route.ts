@@ -1,10 +1,10 @@
 import { PrismaClient } from '@prisma/client'
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
 import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   const params = req.nextUrl.searchParams;
   const from = params.get('from');
   const to = params.get('to');
