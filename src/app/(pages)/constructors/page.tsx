@@ -11,7 +11,7 @@ import Paper from "@mui/material/Paper";
 
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
-import DropDownFilterInterval from '@/components/DropDownFilterInterval';
+import DropDownFilterInterval from '@/components/FilterInterval';
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
 

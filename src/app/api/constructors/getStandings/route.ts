@@ -1,11 +1,11 @@
 import { PrismaClient, Prisma } from '@prisma/client'
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
 import getConstructorAliasMap from '@/utils/api/constructorAliasMap';
 import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
 	const requestBody = await req.json();
 	if (
 		!('from' in requestBody && typeof requestBody.from === 'number') ||
