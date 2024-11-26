@@ -23,7 +23,7 @@ export default function ConstructorDropDownFilterMultiple({
             result += labelizeKey(constructor) + ", ";
         });
 
-        result = result.slice(0, result.length-2)
+        result = result.slice(0, result.length-2);
 
         if (result.length > 29) {
             result = result.slice(0, 26) + "..."

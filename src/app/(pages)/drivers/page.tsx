@@ -1,5 +1,3 @@
-import { DropdownMenuMultiple } from "@/components/DropDownFilterMultiple";
-import { DropdownMenuInterval } from "@/components/DropDownFilterInterval";
 import Header from "@/components/Header";
 import "@/styles/page.css";
 
@@ -10,8 +8,6 @@ export default function DriversPage() {
     <div className="container-page">
     <Header />
     <div className="ml-20 mt-20">
-    <DropdownMenuMultiple />
-    <DropdownMenuInterval />
     </div>
     </div>
     </section>

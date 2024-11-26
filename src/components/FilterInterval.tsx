@@ -1,12 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { DropdownMenuCheckboxItemProps } from "@radix-ui/react-dropdown-menu"
 
 import { Button } from "@/components/ui/button"
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-
-type Checked = DropdownMenuCheckboxItemProps["checked"]
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface DropDownFilterIntervalProps {
   interval: number[];
@@ -14,8 +11,6 @@ interface DropDownFilterIntervalProps {
 }
 
 export default function DropDownFilterInterval({interval, setInterval}: DropDownFilterIntervalProps) {
-  const [fromYear, setFromYear] = React.useState<number | null>(null)
-  const [toYear, setToYear] = React.useState<number | null>(null)
   const minYear = 1950;
   const maxYear = 2024;
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i)
