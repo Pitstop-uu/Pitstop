@@ -12,6 +12,7 @@ import Paper from "@mui/material/Paper";
 import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
 import DropDownFilterInterval from '@/components/FilterInterval';
+import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
 
@@ -21,7 +22,7 @@ interface ConstructorItem {
   total_points: string | number;
 }
 
-type ConstructorResult = {
+export type ConstructorResult = {
   year: number;
   [key: string]: number;
 }
@@ -29,7 +30,7 @@ type ConstructorResult = {
 export default function ConstructorsPage() {
   const [years, setYears] = useState([2020, 2024]);
   const [allConstructors, setAllConstructors] = useState<string[]>([]);
-  const [datapoints, setDatapoints] = useState<ConstructorResult[]>([]); // TODO: Rename to datapunkt eller nåt
+  const [datapoints, setDatapoints] = useState<ConstructorResult[]>([]);
   const [selectableConstructors, setSelectableConstructors] = useState([]);
   const [selectedConstructors, setSelectedConstructors] = useState<string[]>([]);
 
@@ -39,10 +40,10 @@ export default function ConstructorsPage() {
   useEffect(() => {
     const fetchConstructors = async () => {
       const constructorList = (await getConstructors(years[0], years[1]))
-          .map((constructor: {id: string, full_name: string}) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+        .map((constructor: { id: string, full_name: string }) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
       setSelectableConstructors(constructorList);
-  }
-  fetchConstructors();
+    }
+    fetchConstructors();
   }, [years])
 
   useEffect(() => {
@@ -50,7 +51,7 @@ export default function ConstructorsPage() {
       setLoading(true);
 
       const constructors = selectedConstructors
-        .filter(c => selectableConstructors.find((s: {key: string, value: string}) => s.key === c));
+        .filter(c => selectableConstructors.find((s: { key: string, value: string }) => s.key === c));
       const fetchedDatapoints = await getConstructorStandings(years[0], years[1], constructors);
 
       const constructorList: string[] = [];
@@ -166,7 +167,7 @@ export default function ConstructorsPage() {
     <section>
       <div className="container-constructors container-page" style={{ color: "white" }}>
         <Header />
-        
+
         <div className="ml-12 mt-20">
           <DropDownFilterInterval
             interval={years}
@@ -182,73 +183,78 @@ export default function ConstructorsPage() {
 
         {
           !loading && (
-            <LineChart
-              dataset={datapoints}
-              xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
-              yAxis={[{ min: 0 }]}
-              series={allConstructors.map((constructor) => {
+            <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
+              <div style={{ flex: "1", minHeight: "400px" }}>
+                <LineChart
+                  dataset={datapoints}
+                  xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
+                  yAxis={[{ min: 0 }]}
+                  series={allConstructors.map((constructor) => {
 
-                const constructorColor = constructor in constructorColors
-                  ? constructorColors[constructor as keyof typeof constructorColors]
-                  : '#888';
+                    const constructorColor = constructor in constructorColors
+                      ? constructorColors[constructor as keyof typeof constructorColors]
+                      : '#888';
 
-                return {
-                  dataKey: constructor,
-                  label: labelizeKey(constructor),
-                  color: constructorColor,
-                  curve: 'linear',
-                  showMark: false,
-                  highlightScope: { highlight: 'item', fade: 'global' },
-                };
-              })}
-              tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-              axisHighlight={{ x: 'line' }}
-              height={600}
-              margin={{ bottom: 120 }}
-              highlightedItem={highlightedItem}
-              onHighlightChange={setHighLightedItem}
-              grid={{ vertical: true, horizontal: true }}
-              slotProps={{
-                legend: {
-                  position: {
-                    vertical: 'bottom',
-                    horizontal: 'middle',
-                  },
-                  labelStyle: {
-                    fontSize: 16,
-                    fill: 'white',
-                  },
-                  itemMarkWidth: 24,
-                  itemMarkHeight: 3,
-                  markGap: 10,
-                  itemGap: 20,
-                }
-              }}
-              sx={() => ({
-                [`.${axisClasses.root}`]: {
-                  [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                    stroke: 'white',
-                    strokeWidth: 3,
-                  },
-                  [`.${axisClasses.tickLabel}`]: {
-                    fill: 'white',
-                  },
-                },
-                [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
-                  strokeWidth: 4,
-                },
-                [`.${chartsGridClasses.line}`]: {
-                  strokeDasharray: '5 3',
-                  strokeWidth: 1,
-                  stroke: 'rgba(255, 255, 255, 0.12)',
-                },
-              })}
-            />
+                    return {
+                      dataKey: constructor,
+                      label: labelizeKey(constructor),
+                      color: constructorColor,
+                      curve: 'linear',
+                      showMark: false,
+                      highlightScope: { highlight: 'item', fade: 'global' },
+                    };
+                  })}
+                  tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+                  axisHighlight={{ x: 'line' }}
+                  margin={{
+                    bottom: 30,
+                    left: 100,
+                    right: 100,
+                  }}
+                  highlightedItem={highlightedItem}
+                  onHighlightChange={setHighLightedItem}
+                  grid={{ vertical: true, horizontal: true }}
+                  slotProps={{
+                    legend: {
+                      hidden: true,
+                    }
+                  }}
+                  sx={() => ({
+                    [`.${axisClasses.root}`]: {
+                      [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                        stroke: 'white',
+                        strokeWidth: 3,
+                      },
+                      [`.${axisClasses.tickLabel}`]: {
+                        fill: 'white',
+                      },
+                    },
+                    [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                      strokeWidth: 4,
+                    },
+                    [`.${chartsGridClasses.line}`]: {
+                      strokeDasharray: '5 3',
+                      strokeWidth: 1,
+                      stroke: 'rgba(255, 255, 255, 0.12)',
+                    },
+                  })}
+                />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <CustomLegend
+                  constructors={datapoints}
+                />
+              </div>
+            </div>
           )
         }
-
       </div>
-
     </section>
   );
 }
