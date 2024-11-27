@@ -1,7 +1,7 @@
 
 export const parseConstructorRaceStandings = (raceStandings: any) => {
     return raceStandings.map((record: any) => ({
-        key: record.circuit_id,
+        key: record.grand_prix_id,
         constructor_id: record.constructor_id,
         value: record.points
     }));
