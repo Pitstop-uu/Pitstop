@@ -14,13 +14,8 @@ import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownF
 import DropDownFilterInterval from '@/components/FilterInterval';
 import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
-import { getConstructorStandings, getConstructors } from "@/utils/frontend/requests/constructors";
-
-interface ConstructorItem {
-  constructor_id: string;
-  year: number;
-  total_points: string | number;
-}
+import { getConstructorStandings, getConstructors, getConstructorRaceStandings } from "@/utils/frontend/constructorPage/requests";
+import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
 
 export type ConstructorResult = {
   year: number;
@@ -40,17 +35,19 @@ const fetchConstructors = async (years: [number, number]) => {
     .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
 }
 
-const fetchSeasonStandings = async (
+const fetchStandings = async (
   years: [number, number],
   constructors: string[]
 ) => {
-  const datapoints = await getConstructorStandings(years[0], years[1], constructors);
+  const datapoints = years[0] === years[1]
+    ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
+    : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors));
 
   const { data, uniqueConstructors } = datapoints.reduce((
     acc: any,
-    { year, constructor_id, total_points }: ConstructorItem
+    { key, constructor_id, value }: any
   ) => {
-    const dataRow = acc.data[year] || {}
+    const dataRow = acc.data[key] || {}
     return {
       encountered: acc.encountered[constructor_id]
         ? acc.encountered
@@ -58,7 +55,7 @@ const fetchSeasonStandings = async (
       uniqueConstructors: acc.encountered[constructor_id]
         ? acc.uniqueConstructors
         : acc.uniqueConstructors.concat(constructor_id),
-      data: { ...acc.data, [year]: { ...dataRow, [constructor_id]: Number(total_points) } }
+      data: { ...acc.data, [key]: { ...dataRow, [constructor_id]: Number(value) } }
     }
   }, {
     encountered: {},
@@ -67,13 +64,13 @@ const fetchSeasonStandings = async (
   });
   
   return {
-    data: Object.keys(data).map((key: string) => ({ ...data[key], year: key })),
+    data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
     uniqueConstructors
   };
 }
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueConstructors } = await fetchSeasonStandings(state.years, state.selectedConstructors);
+  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors);
   return { ...state, datapoints: data, allConstructors: uniqueConstructors };
 }
 
@@ -149,17 +146,17 @@ export default function ConstructorsPage() {
     const { axisValue } = props;
 
     if (!highlightedItem) {
-      const data = state.datapoints.find((entry: any) => entry.year === axisValue);
+      const data = state.datapoints.find((entry: any) => entry.key === axisValue);
 
       if (!data) {
         return null;
       }
 
-      const { year, ...rest } = data;
+      const { key, ...rest } = data;
 
       return (
         <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
-          <p style={{ textAlign: 'center' }} >{year}</p>
+          <p style={{ textAlign: 'center' }} >{key}</p>
           <hr style={{ height: '1px', marginBottom: '2px' }} />
           {
             Object.entries(rest)
@@ -190,7 +187,7 @@ export default function ConstructorsPage() {
     const constructorData = state.datapoints
       .filter((entry: any) => entry[constructorName] !== undefined && entry[constructorName] !== null)
       .map((entry: any) => ({
-        year: entry.year,
+        year: entry.key,
         points: entry[constructorName],
       }));
 
@@ -243,10 +240,9 @@ export default function ConstructorsPage() {
               <div style={{ flex: "1", minHeight: "400px" }}>
                 <LineChart
                   dataset={state.datapoints}
-                  xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
+                  xAxis={[{ dataKey: "key", scaleType: "point", position: "bottom" }]}
                   yAxis={[{ min: 0 }]}
                   series={state.allConstructors.map((constructor: any) => {
-
                     const constructorColor = constructor in constructorColors
                       ? constructorColors[constructor as keyof typeof constructorColors]
                       : '#888';

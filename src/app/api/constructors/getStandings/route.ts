@@ -26,35 +26,28 @@ export async function POST(req: NextRequest) {
 	const constructorAliasMap = getConstructorAliasMap(constructorChronologies);
 	const selectedConstructors = (requestBody.constructors || [])
 		.reduce((acc: any, constructor: string) => acc.concat(constructorAliasMap[constructor] || [constructor]), [])
-
+	
 	// Fetching all relevant data points
 	const queryResult = await prisma.$queryRaw<{
 		constructor_id: string;
-		total_points: number;
+		points: number;
 		year: number;
-		full_name: string;
 	}[]>`
-	WITH s_c_subset AS (
-		SELECT 
-			* 
-		FROM 
-			season_constructor 
-		WHERE
-			year BETWEEN ${requestBody.from} AND ${requestBody.to}
-			${
-				'constructors' in requestBody 
-					? Prisma.sql`AND constructor_id IN (SELECT value from json_each(${JSON.stringify(selectedConstructors)}))`
-					: Prisma.empty
-			}
-	)
 	SELECT 
-		s_c_subset.constructor_id,
-		s_c_subset.total_points,
-		s_c_subset.year,
-		constructor.full_name
+		constructor_id,
+		points,
+		year
 	FROM 
-		s_c_subset
-		LEFT JOIN constructor ON constructor.id = s_c_subset.constructor_id`;
+		season_constructor_standing
+	WHERE
+		year BETWEEN ${requestBody.from} AND ${requestBody.to}
+		${
+			'constructors' in requestBody 
+				? Prisma.sql`AND constructor_id IN (SELECT value from json_each(${JSON.stringify(selectedConstructors)}))`
+				: Prisma.empty
+		}
+	ORDER BY
+		year ASC`;
 
 	// Each data point's related constructor is mapped
 	// to that constructor's latest representation in the selected timespan.
@@ -68,7 +61,7 @@ export async function POST(req: NextRequest) {
 		return constructorMapping
 			? { ...record, constructor_id: constructorMapping.other_constructor_id }
 			: record;
-	}, []).sort((a, b) => a.year - b.year);
+	}, []);
 
 	return response(true, 200, constructorStandings);
 }
