@@ -295,7 +295,7 @@ export default function ConstructorsPage() {
         {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
-              <div style={{ flex: "1", minHeight: "400px" }}>
+              <div style={{ minHeight: "300px" }}>
                 <LineChart
                   dataset={state.datapoints}
                   xAxis={[{ dataKey: "year", scaleType: "point", position: "bottom" }]}
@@ -322,7 +322,7 @@ export default function ConstructorsPage() {
                     left: 100,
                     right: 100,
                   }}
-                  height={500}
+                  height={480}
                   highlightedItem={highlightedItem}
                   onHighlightChange={setHighLightedItem}
                   grid={{ vertical: true, horizontal: true }}
