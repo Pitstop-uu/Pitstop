@@ -22,9 +22,9 @@ export async function GET(req: NextRequest) {
     constructor.full_name
   FROM constructor
   WHERE EXISTS (SELECT 1
-    FROM season_constructor
-    WHERE season_constructor.constructor_id = constructor.id
-    AND season_constructor.year BETWEEN ${from} AND ${to})`;
+    FROM season_constructor_standing
+    WHERE season_constructor_standing.constructor_id = constructor.id
+    AND season_constructor_standing.year BETWEEN ${from} AND ${to})`;
 
   
   // Removes records that represent old constructors, if a newer representation
