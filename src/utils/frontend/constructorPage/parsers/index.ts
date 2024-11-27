@@ -11,6 +11,6 @@ export const parseConstructorSeasonStandings = (seasonStandings: any) => {
     return seasonStandings.map((record: any) => ({
         key: record.year,
         constructor_id: record.constructor_id,
-        value: record.total_points
+        value: record.points
     }))
 }
