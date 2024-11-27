@@ -156,7 +156,7 @@ export default function ConstructorsPage() {
 
       return (
         <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
-          <p style={{ textAlign: 'center' }} >{key}</p>
+          <p style={{ textAlign: 'center' }} >{labelizeKey(key)}</p>
           <hr style={{ height: '1px', marginBottom: '2px' }} />
           {
             Object.entries(rest)
@@ -295,7 +295,19 @@ export default function ConstructorsPage() {
               <div style={{ minHeight: "300px" }}>
                 <LineChart
                   dataset={state.datapoints}
-                  xAxis={[{ dataKey: "key", scaleType: "point", position: "bottom" }]}
+                  xAxis={[{ 
+                    dataKey: "key", 
+                    scaleType: "point", 
+                    position: "bottom" ,
+                    valueFormatter: (key, context) =>
+                        `${labelizeKey(key)}`,
+                  }]}
+                  bottomAxis={{
+                    tickLabelStyle: {
+                      angle: state.years[0] === state.years[1] ? 35 : 0,
+                      textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                    },
+                  }}
                   yAxis={[{ min: 0 }]}
                   series={state.allConstructors.map((constructor: any) => {
                     const constructorColor = constructor in constructorColors
@@ -314,7 +326,7 @@ export default function ConstructorsPage() {
                   tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
                   axisHighlight={{ x: 'line' }}
                   margin={{
-                    bottom: 30,
+                    bottom: state.years[0] === state.years[1] ? 100 : 30,
                     left: 100,
                     right: 100,
                   }}
