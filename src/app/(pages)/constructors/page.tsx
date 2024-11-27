@@ -65,7 +65,7 @@ const fetchSeasonStandings = async (
     uniqueConstructors: [],
     data: {}
   });
-  
+
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], year: key })),
     uniqueConstructors
@@ -198,19 +198,74 @@ export default function ConstructorsPage() {
       ? constructorColors[constructorName as keyof typeof constructorColors]
       : '#888';
 
+    const constructorList = constructorData.reverse();
+    const firstColumn = constructorList.slice(0, 20)
+    const secondColumn = constructorList.slice(20, 40)
+    const thirdColumn = constructorList.slice(40, 60)
+    const fourthColumn = constructorList.slice(60, constructorList.length)
+
     return (
       <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
         <p style={{ textAlign: 'center' }} >{labelizeKey(constructorName)}</p>
         <hr style={{ height: '1px', marginBottom: '2px' }} />
-        {constructorData.reverse().map((entry: any, i: number) => {
-          const isCurrentYear = entry.year === axisValue;
-          return (
-            <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
-              {`${entry.year}: ${entry.points} pts`}
-            </p>
-          );
-        })}
+        <div style={{ display: 'grid', gridTemplateColumns: (constructorList.length > 20 ? (constructorList.length > 40 ? (constructorList.length > 60 ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr') : '1fr 1fr') : '1fr'), gap: '10px' }} >
+          <div>
+            {firstColumn.map((entry: any, i: number) => {
+              const isCurrentYear = entry.year === axisValue;
+              return (
+                <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+                  {`${entry.year}: ${entry.points} pts`}
+                </p>
+              );
+            })}
+          </div>
+          {
+            constructorList.length > 20 && (
+              <div>
+                {secondColumn.map((entry: any, i: number) => {
+                  const isCurrentYear = entry.year === axisValue;
+                  return (
+                    <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+                      {`${entry.year}: ${entry.points} pts`}
+                    </p>
+                  );
+                })}
+              </div>
+            )
+          }
+          {
+            constructorList.length > 40 && (
+              <div>
+                {thirdColumn.map((entry: any, i: number) => {
+                  const isCurrentYear = entry.year === axisValue;
+                  return (
+                    <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+                      {`${entry.year}: ${entry.points} pts`}
+                    </p>
+                  );
+                })}
+              </div>
+            )
+          }
+          {
+            constructorList.length > 60 && (
+              <div>
+                {fourthColumn.map((entry: any, i: number) => {
+                  const isCurrentYear = entry.year === axisValue;
+                  return (
+                    <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentYear ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+                      {`${entry.year}: ${entry.points} pts`}
+                    </p>
+                  );
+                })}
+              </div>
+            )
+          }
+        </div>
       </Paper>
     );
   };
