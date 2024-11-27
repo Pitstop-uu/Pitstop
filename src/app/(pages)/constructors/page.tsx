@@ -326,7 +326,7 @@ export default function ConstructorsPage() {
                   tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
                   axisHighlight={{ x: 'line' }}
                   margin={{
-                    bottom: state.years[0] === state.years[1] ? 100 : 30,
+                    bottom: state.years[0] === state.years[1] ? 80 : 30,
                     left: 100,
                     right: 100,
                   }}
