@@ -38,3 +38,12 @@ export const getConstructors = async (yearFrom: number, yearTo: number) => {
     const responseJson = await response.json();
     return responseJson.data;
 }
+
+export const getLatestId = async (constructors: string[]) => {
+  const response = await window.fetch(`/api/constructors/getLatestId`, {
+    method: 'POST',
+    body: JSON.stringify({ constructors })
+  });
+  const responseJson = await response.json();
+  return responseJson.data;
+}

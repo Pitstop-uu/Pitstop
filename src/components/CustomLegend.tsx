@@ -7,6 +7,7 @@ import { constructorColors } from "./ui/ConstructorColors";
 
 interface CustomLegendProps {
     constructors: ConstructorResult[];
+    latestConstructorIdMap: { [key: string]: string };
 }
 
 const getConstructorNames = (data: Array<Record<string, any>>): string[] => {
@@ -23,7 +24,7 @@ const getConstructorNames = (data: Array<Record<string, any>>): string[] => {
     return Array.from(constructorNames);
 };
 
-export default function CustomLegend({ constructors }: CustomLegendProps) {
+export default function CustomLegend({ constructors, latestConstructorIdMap }: CustomLegendProps) {
     const constructorNames = getConstructorNames(constructors);
     const scaleFactor = Math.max(1 - (constructorNames.length - 10) * 0.05, 0.7);
 
@@ -58,7 +59,7 @@ export default function CustomLegend({ constructors }: CustomLegendProps) {
                             marginRight: `${10 * scaleFactor}px`,
                             marginLeft: `${20 * scaleFactor}px`,
                         }}></span>
-                    {labelizeKey(constructorName)}
+                    {constructorName === latestConstructorIdMap[constructorName] ? labelizeKey(constructorName) : `${labelizeKey(constructorName)} (${labelizeKey(String(latestConstructorIdMap[constructorName]))})`}
                 </div>
             ))}
         </div>

@@ -14,7 +14,7 @@ import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownF
 import DropDownFilterInterval from '@/components/FilterInterval';
 import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
-import { getConstructorStandings, getConstructors, getConstructorRaceStandings } from "@/utils/frontend/constructorPage/requests";
+import { getConstructorStandings, getConstructors, getConstructorRaceStandings, getLatestId } from "@/utils/frontend/constructorPage/requests";
 import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
 
 export type ConstructorResult = {
@@ -69,6 +69,10 @@ const fetchStandings = async (
   };
 }
 
+const fetchLatestId = async (constructors: string[]) => {
+  return (await getLatestId(constructors));
+}
+
 const stateWithDatapoints = async (state: ReducerState) => {
   const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors);
   return { ...state, datapoints: data, allConstructors: uniqueConstructors };
@@ -76,7 +80,13 @@ const stateWithDatapoints = async (state: ReducerState) => {
 
 const stateWithSelectableConstructors = async (state: ReducerState) => {
   const selectableConstructors = await fetchConstructors(state.years);
-  return { ...state, selectableConstructors: selectableConstructors };
+  const selectableConstructorIds = selectableConstructors.map((obj: any) => obj.key);
+  const latestConstructorIdMap = await fetchLatestId(selectableConstructorIds);
+  return { 
+    ...state,
+    selectableConstructors,
+    latestConstructorIdMap
+  };
 }
 
 const stateWithAll = async (state: ReducerState) => {
@@ -87,6 +97,7 @@ const initialState = {
   years: [2020, 2024],
   datapoints: [],
   selectableConstructors: [],
+  latestConstructorIdMap: {},
   selectedConstructors: [],
   allConstructors: [],
   loading: false,
@@ -100,7 +111,7 @@ const reducer = (state: ReducerState, action: { type: string, payload: any }) =>
     default:
       return state;
   }
-}
+};
 
 export default function ConstructorsPage() {
   const [state, dispatch] = useReducer(reducer, { ...initialState });
@@ -162,7 +173,6 @@ export default function ConstructorsPage() {
             Object.entries(rest)
               .sort(([, a], [, b]) => Number(b) - Number(a))
               .map(([key, value], i) => {
-                const labelizedKey = labelizeKey(key)
 
                 const constructorColor = key in constructorColors
                   ? constructorColors[key as keyof typeof constructorColors]
@@ -171,7 +181,7 @@ export default function ConstructorsPage() {
                 return (
                   <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: constructorColor, marginRight: 5, marginTop: 2, }} />
-                    {`${labelizedKey}: ${value} pts`}
+                    {`${key === state.latestConstructorIdMap[key] ? labelizeKey(key) : `${labelizeKey(key)} (${labelizeKey(String(state.latestConstructorIdMap[key]))})`}: ${value} pts`}
                   </p>
                 )
               }
@@ -203,7 +213,7 @@ export default function ConstructorsPage() {
 
     return (
       <Paper sx={{ padding: 2, backgroundColor: '#252525', color: '#ffffff' }}>
-        <p style={{ textAlign: 'center' }} >{labelizeKey(constructorName)}</p>
+        <p style={{ textAlign: 'center' }} >{constructorName === state.latestConstructorIdMap[constructorName] ? labelizeKey(constructorName) : <>{labelizeKey(constructorName)}<br/>({labelizeKey(String(state.latestConstructorIdMap[constructorName]))})</>}</p>
         <hr style={{ height: '1px', marginBottom: '2px' }} />
         <div style={{ display: 'grid', gridTemplateColumns: (constructorList.length > 22 ? (constructorList.length > 44 ? (constructorList.length > 66 ? '1fr 1fr 1fr 1fr' : '1fr 1fr 1fr') : '1fr 1fr') : '1fr'), gap: '10px' }} >
           <div>
@@ -282,6 +292,7 @@ export default function ConstructorsPage() {
 
           <ConstructorDropDownFilterMultiple
             selectableConstructors={state.selectableConstructors}
+            latestConstructorIdMap={state.latestConstructorIdMap}
             selectedConstructors={state.selectedConstructors}
             setSelectedConstructors={(constructors: string[]) => {
               onSetSelected(state, constructors);
@@ -369,6 +380,7 @@ export default function ConstructorsPage() {
               >
                 <CustomLegend
                   constructors={state.datapoints}
+                  latestConstructorIdMap={state.latestConstructorIdMap}
                 />
               </div>
             </div>
