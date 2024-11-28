@@ -6,12 +6,14 @@ import labelizeKey from "@/utils/frontend/labelizeKey";
 
 interface ConstructorDropDownFilterMultipleProps {
     selectableConstructors: { key: string, value: string}[];
+    latestConstructorIdMap: {[key: string]: string};
     selectedConstructors: string[];
     setSelectedConstructors: (selected: string[]) => void;
 }
 
 export default function ConstructorDropDownFilterMultiple({
     selectableConstructors,
+    latestConstructorIdMap,
     selectedConstructors,
     setSelectedConstructors
 }: ConstructorDropDownFilterMultipleProps) {
@@ -32,9 +34,14 @@ export default function ConstructorDropDownFilterMultiple({
         return result;
     }
 
+    const list = selectableConstructors.map(({key, value}) => ({
+        key,
+        value: key === latestConstructorIdMap[key] ? labelizeKey(key) : `${labelizeKey(key)} (${labelizeKey(String(latestConstructorIdMap[key]))})`
+    }))
+
     return (
         <DropdownMenuMultiple
-            list={selectableConstructors}
+            list={list}
             title={`SELECT CONSTRUCTORS: ${noneSelected ? "ALL" : limitConstructorNames(selectedConstructors)}`}
             selected={selectedConstructors}
             setSelected={setSelectedConstructors}
