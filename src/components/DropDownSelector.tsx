@@ -22,6 +22,10 @@ export default function DropDownSelector({ interval, setInterval }: DropDownSele
   const [mode, setMode] = useState<"range" | "single">("range");
 
   const toggleMode = () => {
+    if (mode === "range") {
+      setInterval([interval[1], interval[1]]);
+    }
+    
     setMode((prevMode) => (prevMode === "range" ? "single" : "range"));
   };
 
