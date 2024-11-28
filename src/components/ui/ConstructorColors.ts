@@ -122,7 +122,7 @@ export const constructorColors = {
 };
 
 // 93/184 teams covered
-// 1975->2024 covered
+// 1963->2024 covered
 
 // Some colors can be found here: https://imgur.com/Nqkms9X
 
