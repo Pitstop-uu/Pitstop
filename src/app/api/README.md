@@ -4,8 +4,6 @@
 ```
 GET /api/constructors?from=startYear&to=endYear
 ```
-Returns all constructors that have participated in at least one
-of the seasons between startYear and endYear.
 
 ### Example
 #### Request URL
@@ -40,7 +38,6 @@ of the seasons between startYear and endYear.
 ```
 POST /api/constructors/getStandings
 ```
-Returns scores for specific constructors, over a span of seasons.
 
 ### Example
 #### Request body
@@ -61,23 +58,89 @@ request body, data will be fetched for all constructors.
     "status": 200,
     "data": [
         {
-            "constructor_id": "kick-sauber",
-            "total_points": "0",
-            "year": 2024,
-            "full_name": "Kick Sauber F1 Team"
+            constructor_id: 'kick-sauber',
+            points: 16,
+            year: 2023 
         },
-        {
-            "constructor_id": "mclaren",
-            "total_points": "302",
-            "year": 2023,
-            "full_name": "McLaren Racing"
+        { 
+            constructor_id: 'mclaren',
+            points: 302,
+            year: 2023
         },
-        {
-            "constructor_id": "mclaren",
-            "total_points": "593",
-            "year": 2024,
-            "full_name": "McLaren Racing"
+        { 
+            constructor_id: 'kick-sauber', 
+            points: 0,
+            year: 2024
+        },
+        { 
+            constructor_id: 'mclaren',
+            points: 593,
+            year: 2024
         }
+    ]
+}
+```
+
+## api/constructors/getRaceStandings
+
+```
+POST /api/constructors/getRaceStandings
+```
+
+### Example
+#### Request body
+```
+{
+    "year": 2024,
+    "constructors: ["mclaren", "ferrari"]
+}
+```
+The 'constructors' property is optional, and if it is excluded from the
+request body, data will be fetched for all constructors.
+
+#### Response
+```
+{
+    "success": true,
+    "status": 200,
+    "data": [
+        {
+            constructor_id: 'ferrari',
+            points: 27,
+            year: 2024,
+            date: 2024-03-02T00:00:00.000Z,
+            official_name: 'Formula 1 Gulf Air Bahrain Grand Prix 2024',
+            circuit_id: 'bahrain',
+            grand_prix_id: 'bahrain'
+        },
+        {
+            constructor_id: 'mclaren',
+            points: 12,
+            year: 2024,
+            date: 2024-03-02T00:00:00.000Z,
+            official_name: 'Formula 1 Gulf Air Bahrain Grand Prix 2024',
+            circuit_id: 'bahrain',
+            grand_prix_id: 'bahrain'
+        },
+        {
+            constructor_id: 'ferrari',
+            points: 49,
+            year: 2024,
+            date: 2024-03-09T00:00:00.000Z,
+            official_name: 'Formula 1 stc Saudi Arabian Grand Prix 2024',
+            circuit_id: 'jeddah',
+            grand_prix_id: 'saudi-arabia'
+        },
+        {
+            constructor_id: 'mclaren',
+            points: 28,
+            year: 2024,
+            date: 2024-03-09T00:00:00.000Z,
+            official_name: 'Formula 1 stc Saudi Arabian Grand Prix 2024',
+            circuit_id: 'jeddah',
+            grand_prix_id: 'saudi-arabia'
+        },
+        ...
     ]
 }
 ```
