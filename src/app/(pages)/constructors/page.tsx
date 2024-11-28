@@ -16,6 +16,7 @@ import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors, getConstructorRaceStandings, getLatestId } from "@/utils/frontend/constructorPage/requests";
 import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
+import DropDownSelector from "@/components/DropDownSelector";
 
 export type ConstructorResult = {
   year: number;
@@ -282,8 +283,8 @@ export default function ConstructorsPage() {
       <div className="container-constructors container-page" style={{ color: "white" }}>
         <Header />
 
-        <div className="ml-12 mt-10">
-          <DropDownFilterInterval
+        <div className="ml-12 mt-10 flex gap-10">
+          <DropDownSelector
             interval={state.years}
             setInterval={(interval: number[]) => {
               onSetInterval(state, [interval[0], interval[1]]);
