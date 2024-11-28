@@ -14,7 +14,7 @@ const getConstructorNames = (data: Array<Record<string, any>>): string[] => {
 
     data.forEach((item) => {
         Object.keys(item).forEach((name) => {
-            if (name !== "year") {
+            if (name !== "key") {
                 constructorNames.add(name);
             }
         });
