@@ -2,23 +2,15 @@
 
 import "@/styles/constructors.css";
 import Header from "@/components/Header";
-import { useEffect, useCallback, useReducer, useState } from "react";
-import { LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
-import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
-import { axisClasses } from "@mui/x-charts/ChartsAxis";
-import { HighlightItemData } from "@mui/x-charts/context";
-import Paper from "@mui/material/Paper";
+import { useEffect, useCallback, useReducer } from "react";
 
-import { constructorColors } from '@/components/ui/ConstructorColors.ts';
 import ConstructorDropDownFilterMultiple from "@/components/ConstructorDropDownFilterMultiple";
 import CustomLegend from "@/components/CustomLegend";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { getConstructorStandings, getConstructors, getConstructorRaceStandings, getLatestId } from "@/utils/frontend/constructorPage/requests";
 import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
 import DropDownSelector from "@/components/DropDownSelector";
-import latestConstructorMap from "@/utils/api/latestConstructorMap";
-import CustomTooltip from "@/components/CustomTooltip";
-import CustomTooltipHighlight from "@/components/CustomTooltipHighlight";
+import CustomLineChart from "@/components/CustomLineChart";
 
 export type ConstructorResult = {
   year: number;
@@ -118,7 +110,6 @@ const reducer = (state: ReducerState, action: { type: string, payload: any }) =>
 
 export default function ConstructorsPage() {
   const [state, dispatch] = useReducer(reducer, { ...initialState });
-  const [highlightedItem, setHighLightedItem] = useState<HighlightItemData | null>(null);
 
   useEffect(() => {
     const setInitialState = async () => {
@@ -136,39 +127,7 @@ export default function ConstructorsPage() {
   const onSetSelected = useCallback(async (currentState: ReducerState, constructors: string[]) => {
     const withDatapoints = await stateWithDatapoints({ ...currentState, selectedConstructors: constructors });
     dispatch({ type: "set", payload: withDatapoints });
-  }, [])
-
-  /**
-   * Custom Tooltip Component for rendering data in a tooltip.
-   * 
-   * This component renders a custom tooltip that displays key-value pairs for 
-   * a specific year, with special formatting for certain keys. The `year` key 
-   * is displayed separately with centered text, while the rest of the keys are 
-   * shown in descending order.
-   * 
-   * @param {Object} props - The component's props.
-   * @param {string} props.axisValue - The year value used to retrieve the corresponding data.
-   * 
-   * @returns {JSX.Element | null} - Returns a Paper component containing the tooltip content,
-   *                                  or `null` if no data is found for the specified year.
-   * 
-   * @example
-   * // When year is "2022"
-   * <CustomTooltipContent axisValue="2022" />
-   */
-  const CustomTooltipContent = (props: any) => {
-    const { axisValue } = props;
-    if (!highlightedItem) {
-      const data = state.datapoints.find((entry: any) => entry.key === axisValue);
-
-      return (
-        <CustomTooltip constructors={data} latestConstructorIdMap={state.latestConstructorIdMap} />
-      );
-    };
-    return (
-      <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} datapoints={state.datapoints} allConstructors={state.allConstructors} latestConstructorIdMap={state.latestConstructorIdMap} />
-    );
-  };
+  }, []);
 
   return (
     <section>
@@ -192,77 +151,11 @@ export default function ConstructorsPage() {
             }}
           />
         </div>
-
         {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <LineChart
-                  dataset={state.datapoints}
-                  xAxis={[{ 
-                    dataKey: "key", 
-                    scaleType: "point", 
-                    position: "bottom" ,
-                    valueFormatter: (key, _) =>
-                        `${labelizeKey(key)}`,
-                  }]}
-                  bottomAxis={{
-                    tickLabelStyle: {
-                      angle: state.years[0] === state.years[1] ? 35 : 0,
-                      textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
-                    },
-                  }}
-                  yAxis={[{ min: 0 }]}
-                  series={state.allConstructors.map((constructor: any) => {
-                    const constructorColor = constructor in constructorColors
-                      ? constructorColors[constructor as keyof typeof constructorColors]
-                      : '#888';
-
-                    return {
-                      dataKey: constructor,
-                      label: labelizeKey(constructor),
-                      color: constructorColor,
-                      curve: 'linear',
-                      showMark: false,
-                      highlightScope: { highlight: 'item', fade: 'global' },
-                    };
-                  })}
-                  tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-                  axisHighlight={{ x: 'line' }}
-                  margin={{
-                    bottom: state.years[0] === state.years[1] ? 80 : 30,
-                    left: 100,
-                    right: 100,
-                  }}
-                  height={480}
-                  highlightedItem={highlightedItem}
-                  onHighlightChange={setHighLightedItem}
-                  grid={{ vertical: true, horizontal: true }}
-                  slotProps={{
-                    legend: {
-                      hidden: true,
-                    }
-                  }}
-                  sx={() => ({
-                    [`.${axisClasses.root}`]: {
-                      [`.${axisClasses.tick}, .${axisClasses.line}`]: {
-                        stroke: 'white',
-                        strokeWidth: 3,
-                      },
-                      [`.${axisClasses.tickLabel}`]: {
-                        fill: 'white',
-                      },
-                    },
-                    [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
-                      strokeWidth: 4,
-                    },
-                    [`.${chartsGridClasses.line}`]: {
-                      strokeDasharray: '5 3',
-                      strokeWidth: 1,
-                      stroke: 'rgba(255, 255, 255, 0.12)',
-                    },
-                  })}
-                />
+                <CustomLineChart state={state} />
               </div>
               <div
                 style={{
