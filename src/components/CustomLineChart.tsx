@@ -1,34 +1,43 @@
 import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { axisClasses, chartsGridClasses, HighlightItemData, LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
-import { constructorColors } from "./ui/ConstructorColors";
-import CustomTooltip from "./CustomTooltip";
-import CustomTooltipHighlight from "./CustomTooltipHighlight";
+//import CustomTooltip from "./CustomTooltip";
+//import CustomTooltipHighlight from "./CustomTooltipHighlight";
 
 interface CustomLineChartProps {
-    state: any;
+    datapoints: any,
+    series: any,
+    bottomAxis: any,
+    CustomTooltip: any,
+    CustomTooltipHighlight: any,
+    margin: any,
 };
 
-export default function CustomLineChart({ state }: CustomLineChartProps) {
+export default function CustomLineChart({ 
+    datapoints,
+    series,
+    bottomAxis,
+    CustomTooltip,
+    CustomTooltipHighlight,
+    margin,
+}: CustomLineChartProps) {
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
 
     const CustomTooltipContent = (props: any) => {
         const { axisValue } = props;
         if (!highlightedItem) {
-          const data = state.datapoints.find((entry: any) => entry.key === axisValue);
-    
           return (
-            <CustomTooltip constructors={data} latestConstructorIdMap={state.latestConstructorIdMap} />
+            <CustomTooltip axisValue={axisValue} />
           );
         };
         return (
-          <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} datapoints={state.datapoints} allConstructors={state.allConstructors} latestConstructorIdMap={state.latestConstructorIdMap} />
+          <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
         );
       };
 
     return (
         <LineChart
-            dataset={state.datapoints}
+            dataset={datapoints}
             xAxis={[{
                 dataKey: "key",
                 scaleType: "point",
@@ -36,38 +45,16 @@ export default function CustomLineChart({ state }: CustomLineChartProps) {
                 valueFormatter: (key, _) =>
                     `${labelizeKey(key)}`,
             }]}
-            bottomAxis={{
-                tickLabelStyle: {
-                    angle: state.years[0] === state.years[1] ? 35 : 0,
-                    textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
-                },
-            }}
+            bottomAxis={bottomAxis}
             yAxis={[{ min: 0 }]}
-            series={state.allConstructors.map((constructor: any) => {
-                const constructorColor = constructor in constructorColors
-                    ? constructorColors[constructor as keyof typeof constructorColors]
-                    : '#888';
-
-                return {
-                    dataKey: constructor,
-                    label: labelizeKey(constructor),
-                    color: constructorColor,
-                    curve: 'linear',
-                    showMark: false,
-                    highlightScope: { highlight: 'item', fade: 'global' },
-                };
-            })}
+            series={series}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
             axisHighlight={{ x: 'line' }}
-            margin={{
-                bottom: state.years[0] === state.years[1] ? 80 : 30,
-                left: 100,
-                right: 100,
-            }}
             height={480}
             highlightedItem={highlightedItem}
             onHighlightChange={setHighlightedItem}
             grid={{ vertical: true, horizontal: true }}
+            margin={margin}
             slotProps={{
                 legend: {
                     hidden: true,

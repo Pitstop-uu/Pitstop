@@ -11,6 +11,9 @@ import { getConstructorStandings, getConstructors, getConstructorRaceStandings, 
 import { parseConstructorRaceStandings, parseConstructorSeasonStandings } from "@/utils/frontend/constructorPage/parsers";
 import DropDownSelector from "@/components/DropDownSelector";
 import CustomLineChart from "@/components/CustomLineChart";
+import { constructorColors } from "@/components/ui/ConstructorColors";
+import CustomTooltip from "@/components/CustomTooltip";
+import CustomTooltipHighlight from "@/components/CustomTooltipHighlight";
 
 export type ConstructorResult = {
   year: number;
@@ -129,6 +132,15 @@ export default function ConstructorsPage() {
     dispatch({ type: "set", payload: withDatapoints });
   }, []);
 
+  const Tooltip = (props: any) => {
+    const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
+    return <CustomTooltip constructors={data} latestConstructorIdMap={state.latestConstructorIdMap} />
+  }
+
+  const TooltipHighlight = (props: any) => {
+    return <CustomTooltipHighlight highlightedItem={props.highlightedItem} axisValue={props.axisValue} datapoints={state.datapoints} allConstructors={state.allConstructors} latestConstructorIdMap={state.latestConstructorIdMap} />
+  }
+  
   return (
     <section>
       <div className="container-constructors container-page" style={{ color: "white" }}>
@@ -155,7 +167,36 @@ export default function ConstructorsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomLineChart state={state} />
+                <CustomLineChart 
+                  datapoints={state.datapoints}
+                  series={state.allConstructors.map((constructor: any) => {
+                    const constructorColor = constructor in constructorColors
+                        ? constructorColors[constructor as keyof typeof constructorColors]
+                        : '#888';
+    
+                    return {
+                        dataKey: constructor,
+                        label: labelizeKey(constructor),
+                        color: constructorColor,
+                        curve: 'linear',
+                        showMark: false,
+                        highlightScope: { highlight: 'item', fade: 'global' },
+                    };
+                  })}
+                  CustomTooltip={Tooltip}
+                  CustomTooltipHighlight={TooltipHighlight}
+                  margin={{
+                    bottom: state.years[0] === state.years[1] ? 80 : 30,
+                    left: 100,
+                    right: 100,
+                  }} 
+                  bottomAxis={{
+                    tickLabelStyle: {
+                        angle: state.years[0] === state.years[1] ? 35 : 0,
+                        textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                    }
+                  }}
+                />
               </div>
               <div
                 style={{
