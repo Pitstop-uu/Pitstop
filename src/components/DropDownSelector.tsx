@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import DropDownFilterInterval from "@/components/FilterInterval";
+import FilterInterval from "@/components/FilterInterval";
 import DropDownSingle from "@/components/DropDownSingle";
 import { Button } from "@/components/ui/button"
 
@@ -44,7 +44,7 @@ export default function DropDownSelector({ interval, setInterval }: DropDownSele
         </DropdownMenuLabel>
         <div className="text-left pt-1">
         {mode === "range" ? (
-          <DropDownFilterInterval interval={interval} setInterval={setInterval}/>
+          <FilterInterval interval={interval} setInterval={setInterval}/>
         ) : (
           <DropDownSingle interval={interval} setInterval={setInterval} />
         )}

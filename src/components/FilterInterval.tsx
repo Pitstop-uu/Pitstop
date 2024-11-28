@@ -5,12 +5,12 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
 
-interface DropDownFilterIntervalProps {
+interface FilterIntervalProps {
   interval: number[];
   setInterval: (selected:number[]) => void;
 }
 
-export default function DropDownFilterInterval({interval, setInterval}: DropDownFilterIntervalProps) {
+export default function FilterInterval({interval, setInterval}: FilterIntervalProps) {
   const minYear = 1958;
   const maxYear = 2024;
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i)
