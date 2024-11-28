@@ -92,6 +92,33 @@ export const constructorColors = {
     'hill': '#404040',
     'frank-williams-racing-cars': '#44546A',
     'lyncar': '#002C19',
+    'trojan': '#862c26',
+    'token': '#005200',
+    'iso-marlboro':'#9b2308',
+    'amon': '#7ebde0',
+    'tecno': '#a95b57',
+    'politoys':'#54566a',
+    'eifelland': '#2a425a',
+    'connew':'#fee45d',
+    'bellasi':'#ff361c',
+    'de-tomaso':'#bd1e03',
+    'matra':'#21a4d6',
+    'eagle':'#f1c959',
+    'cooper':'#70ad47', //senaste cooper, kanske måste lägga till flera färger för cooper om vi fixar med olika cooper men kan vara svårt
+    'lds':'#fc8b02',
+    'protos':'#db2122',
+    'shannon':'#7ac4c4',
+    'alfa-special':'#9f252e',
+    'scirocco':'#dfce08', //kan finnas en annna scirocco som är blå?
+    'porsche':'#959192', //grå
+    'derrington-francis':'#dd1d3a',
+    'gilby':'#54848c',
+    'stebro':'#c4a73d', //egentligen svart och vit men tog sponsoren som är gul (ingen kommer veta)
+    'ats':'#df291c',
+    'enb':'#f9cd49',
+
+
+
 };
 
 // 93/184 teams covered
@@ -112,3 +139,5 @@ export const constructorColors = {
 // kojima
 // maki
 // hill
+//porche
+//stebro
