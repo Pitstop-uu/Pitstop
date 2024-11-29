@@ -10,10 +10,11 @@ import labelizeKey from "@/utils/frontend/labelizeKey";
 import { parseDriverSeasonStandings } from "@/utils/frontend/driverPage/parsers";
 import { getDriverSeasonStandings, getDrivers } from "@/utils/frontend/driverPage/requests";
 import DropDownSelector from "@/components/DropDownSelector";
-import CustomLineChart from "@/components/CustomLineChart";
 import { constructorColors } from "@/components/ui/ConstructorColors";
-import CustomTooltip from "@/components/CustomTooltip";
-import CustomTooltipHighlight from "@/components/CustomTooltipHighlight";
+import { axisClasses, BarChart, chartsGridClasses, HighlightItemData, lineElementClasses, markElementClasses } from "@mui/x-charts";
+import React from "react";
+import CustomBarTooltip from "@/components/CustomBarTooltip";
+import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 
 export type ConstructorResult = {
   year: number;
@@ -25,6 +26,9 @@ interface ReducerState {
   datapoints: ConstructorResult[],
   selectableDrivers: { key: string, value: string }[],
   selectedDrivers: string[],
+  driverConstructors: {
+    [driver: string]: { [year: string]: string }
+  },
   loading: boolean,
 }
 
@@ -39,11 +43,12 @@ const fetchStandings = async (
 ) => {
   const datapoints = parseDriverSeasonStandings(await getDriverSeasonStandings(years[0], years[1], drivers));
 
-  const { data, uniqueDrivers } = datapoints.reduce((
+  const { data, uniqueDrivers, driverConstructorMap } = datapoints.reduce((
     acc: any,
-    { key, driver_id, value }: any
+    { key, driver_id, constructor_id, value }: any
   ) => {
     const dataRow = acc.data[key] || {}
+    const driverConstructorObject = acc.driverConstructorMap[driver_id] || {};
     return {
       encountered: acc.encountered[driver_id]
         ? acc.encountered
@@ -51,29 +56,35 @@ const fetchStandings = async (
       uniqueDrivers: acc.encountered[driver_id]
         ? acc.uniqueDrivers
         : acc.uniqueDrivers.concat(driver_id),
-      data: { ...acc.data, [key]: { ...dataRow, [driver_id]: Number(value) } }
+      data: { ...acc.data, [key]: { ...dataRow, [driver_id]: Number(value) } },
+      driverConstructorMap: {
+        ...acc.driverConstructorMap,
+        [driver_id]: { ...driverConstructorObject, [key]: constructor_id }
+      }
     }
   }, {
     encountered: {},
     uniqueDrivers: [],
+    driverConstructorMap: {},
     data: {}
   });
 
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
-    uniqueDrivers
+    uniqueDrivers,
+    driverConstructorMap
   };
 }
 
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueDrivers } = await fetchStandings(state.years, state.selectedDrivers);
-  return { ...state, datapoints: data, allDrivers: uniqueDrivers };
+  const { data, uniqueDrivers, driverConstructorMap } = await fetchStandings(state.years, state.selectedDrivers);
+  return { ...state, datapoints: data, allDrivers: uniqueDrivers, driverConstructors: driverConstructorMap };
 }
 
 const stateWithSelectableDrivers = async (state: ReducerState) => {
   const selectableDrivers = await fetchDrivers(state.years);
-  return { 
+  return {
     ...state,
     selectableDrivers
   };
@@ -89,6 +100,7 @@ const initialState = {
   selectableDrivers: [],
   selectedDrivers: [],
   allDrivers: [],
+  driverConstructors: {},
   loading: false,
 } as ReducerState;
 
@@ -125,13 +137,27 @@ export default function DriversPage() {
 
   const Tooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
-    return <CustomTooltip constructors={data} latestConstructorIdMap={{}} />
-  }
-
-  const TooltipHighlight = (props: any) => {
-    return <CustomTooltipHighlight highlightedItem={props.highlightedItem} axisValue={props.axisValue} datapoints={state.datapoints} allConstructors={state.allDrivers} latestConstructorIdMap={{}} />
+    return <CustomBarTooltip drivers={data} />
   }
   
+  const TooltipHighlight = (props: any) => {
+    return <CustomBarTooltipHighlight highlightedItem={props.highlightedItem} axisValue={props.axisValue} datapoints={state.datapoints} allDrivers={state.allDrivers} />
+  }
+
+  const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
+  
+  const CustomTooltipContent = (props: any) => {
+    const { axisValue } = props;
+    if (!highlightedItem) {
+      return (
+        <Tooltip axisValue={axisValue} />
+      );
+    };
+    return (
+      <TooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
+    );
+  };
+
   return (
     <section>
       <div className="container-drivers container-page" style={{ color: "white" }}>
@@ -158,33 +184,70 @@ export default function DriversPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomLineChart 
-                  datapoints={state.datapoints}
+                <BarChart
+                  dataset={state.datapoints}
+                  xAxis={[{
+                    dataKey: "key",
+                    scaleType: "band",
+                    position: "bottom",
+                    valueFormatter: (key, _) =>
+                      `${labelizeKey(key)}`,
+                  }]}
+                  yAxis={[{ min: 0 }]}
+                  axisHighlight={{ x: 'band' }}
+                  tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
+                  height={480}
+                  highlightedItem={highlightedItem}
+                  onHighlightChange={setHighlightedItem}
+                  grid={{ vertical: true, horizontal: true }}
+                  slotProps={{
+                    legend: {
+                      hidden: true,
+                    }
+                  }}
+                  sx={() => ({
+                    [`.${axisClasses.root}`]: {
+                      [`.${axisClasses.tick}, .${axisClasses.line}`]: {
+                        stroke: 'white',
+                        strokeWidth: 3,
+                      },
+                      [`.${axisClasses.tickLabel}`]: {
+                        fill: 'white',
+                      },
+                    },
+                    [`.${lineElementClasses.root}, .${markElementClasses.root}`]: {
+                      strokeWidth: 4,
+                    },
+                    [`.${chartsGridClasses.line}`]: {
+                      strokeDasharray: '5 3',
+                      strokeWidth: 1,
+                      stroke: 'rgba(255, 255, 255, 0.12)',
+                    },
+                  })}
                   series={state.allDrivers.map((driver: any) => {
                     /* const constructorColor = driver in constructorColors
                         ? constructorColors[driver as keyof typeof constructorColors]
                         : '#888'; */
-    
+
                     return {
-                        dataKey: driver,
-                        label: labelizeKey(driver),
-                        /* color: constructorColor, */
-                        curve: 'linear',
-                        showMark: false,
-                        highlightScope: { highlight: 'item', fade: 'global' },
+                      dataKey: driver,
+                      label: labelizeKey(driver),
+                      /* color: constructorColor, */
+                      /* stack: 0, */
+                      curve: 'linear',
+                      showMark: false,
+                      highlightScope: { highlight: 'item', fade: 'global' },
                     };
                   })}
-                  CustomTooltip={Tooltip}
-                  CustomTooltipHighlight={TooltipHighlight}
                   margin={{
                     bottom: state.years[0] === state.years[1] ? 80 : 30,
                     left: 100,
                     right: 100,
-                  }} 
+                  }}
                   bottomAxis={{
                     tickLabelStyle: {
-                        angle: state.years[0] === state.years[1] ? 35 : 0,
-                        textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                      angle: state.years[0] === state.years[1] ? 35 : 0,
+                      textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                     }
                   }}
                 />

@@ -42,6 +42,7 @@ export async function POST(req: NextRequest) {
         s_d_subset
         JOIN season_entrant_driver ON season_entrant_driver.driver_id = s_d_subset.driver_id
         AND season_entrant_driver.year = s_d_subset.year
+        AND NOT season_entrant_driver.test_driver
 	ORDER BY
 		s_d_subset.year ASC`;
 
