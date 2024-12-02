@@ -30,9 +30,11 @@
 
 .preview-section {
     height: 100vh;
-    background-color: #333333;
+    background-color: black;
     font-weight: bold;
-
+    border-width: 10px;
+    border-style: solid;
+    border-image: linear-gradient(45deg, #008080 25%, white 25%, white 50%, #008080 50%, black 75%, white 75%) 10;
 }
 
 .preview-title {
