@@ -267,6 +267,7 @@ export default function DriversPage() {
                 <CustomLegend
                   constructors={state.datapoints}
                   latestConstructorIdMap={{}}
+                  allDrivers={state.allDrivers}
                 />
               </div>
             </div>
