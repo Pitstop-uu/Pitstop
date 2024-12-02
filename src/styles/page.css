@@ -1,6 +1,7 @@
 .container-page {
     display: flex;
-    background: linear-gradient(to bottom, #252525, black);
+    background-color: black;
     height: 100vh;
     flex-direction: column;
+    color: white;
 }

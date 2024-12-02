@@ -26,7 +26,7 @@
 .navLink {
     text-decoration: none;
     transition: color 0.3s ease, text-shadow 0.3s ease;
-
+    color: white;
 }
 
 .navLink:hover {
