@@ -40,6 +40,7 @@ export default function CustomLegend({ constructors, latestConstructorIdMap, all
                 gap: "10px",
                 justifyContent: "center",
                 alignItems: "center",
+                color: "white",
             }}>
             {constructorNames.map((constructorName) => {
                 

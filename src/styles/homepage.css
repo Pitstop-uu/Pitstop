@@ -23,22 +23,31 @@
 }
 
 .content-description-text {
+    color: white;
     font-size: 23px;
     padding: 0 100px;
     display: flex;
 }
 
 .preview-section {
+    display: flex;
+    flex-direction: column;
     height: 100vh;
     background-color: black;
     font-weight: bold;
     border-width: 10px;
     border-style: solid;
-    border-image: linear-gradient(45deg, #008080 25%, white 25%, white 50%, #008080 50%, black 75%, white 75%) 10;
+    border-image: linear-gradient(45deg, #008080 25%, white 25%, white 50%, #008080 50%, black 75%, white 75%) 10;    
+}
+
+.preview-section div {
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .preview-title {
     font-size: 64px;
-    padding: 100px;
+    color: white;
+    padding: 50px 50px 0px 50px;
     display: flex;    
 }

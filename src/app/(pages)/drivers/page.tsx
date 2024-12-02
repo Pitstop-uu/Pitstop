@@ -15,6 +15,7 @@ import { axisClasses, BarChart, chartsGridClasses, HighlightItemData, lineElemen
 import React from "react";
 import CustomBarTooltip from "@/components/CustomBarTooltip";
 import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
+import "@/styles/page.css";
 
 export type ConstructorResult = {
   year: number;
@@ -165,8 +166,8 @@ export default function DriversPage() {
   };
 
   return (
-    <section>
-      <div className="container-drivers container-page" style={{ color: "white" }}>
+    <section className="bg-black">
+      <div className="container-drivers container-page" style={{ color: "white", backgroundColor: "black" }}>
         <Header />
 
         <div className="ml-12 mt-10 flex gap-10">

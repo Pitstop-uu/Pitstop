@@ -1,6 +1,7 @@
 
 .link-section {
     height: 50vh;
+    background-color: black;
 }
 
 .link-title {
@@ -10,6 +11,7 @@
     justify-content: center;
     display: flex;
     padding-top: 80px;
+    color: white;
 }
 
 .link-bottom {
@@ -30,6 +32,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
 .link-button .icon {
