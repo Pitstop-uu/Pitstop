@@ -11,24 +11,29 @@ interface CustomBarTooltipHighlightProps {
         key: any,
         [prop: string]: number
     }[],
-    allDrivers: string[],
+    allDrivers: {
+        driver: string,
+        constructor: string,
+    }[],
 };
 
 export default function CustomTooltipHighlight({ highlightedItem, axisValue, datapoints, allDrivers }: CustomBarTooltipHighlightProps) {
 
     const { seriesId } = highlightedItem;
     const index = Number(String(seriesId).match(/\d+/g));
-    const driverName: string = allDrivers[index];
+    const driverName: string = allDrivers[index].driver;
 
     const driverData = datapoints
       .filter((entry: any) => entry[driverName] !== undefined && entry[driverName] !== null)
       .map((entry: any) => ({
         key: entry.key,
         points: entry[driverName],
-      }));
+    }));
 
-    const constructorColor = driverName in constructorColors
-      ? constructorColors[driverName as keyof typeof constructorColors]
+    const driver = allDrivers.find(({driver, constructor}: { driver: string, constructor: string }) => driver === driverName) || { driver: '', constructor: '' }
+
+    const constructorColor = String(driver.constructor) in constructorColors
+      ? constructorColors[driver.constructor as keyof typeof constructorColors]
       : '#888';
 
     const driverList = driverData.reverse();

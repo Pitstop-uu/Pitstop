@@ -29,6 +29,7 @@ interface ReducerState {
   driverConstructors: {
     [driver: string]: { [year: string]: string }
   },
+  allDrivers: { driver: string, constructor: string }[],
   loading: boolean,
 }
 
@@ -43,19 +44,19 @@ const fetchStandings = async (
 ) => {
   const datapoints = parseDriverSeasonStandings(await getDriverSeasonStandings(years[0], years[1], drivers));
 
-  const { data, uniqueDrivers, driverConstructorMap } = datapoints.reduce((
+  const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
     { key, driver_id, constructor_id, value }: any
   ) => {
     const dataRow = acc.data[key] || {}
     const driverConstructorObject = acc.driverConstructorMap[driver_id] || {};
+    const latestDriver = acc.encountered[driver_id];
+    const newDriver = (latestDriver?.key || 0) < key
+      ? { key, driver_id, constructor_id }
+      : latestDriver
+    
     return {
-      encountered: acc.encountered[driver_id]
-        ? acc.encountered
-        : { ...acc.encountered, [driver_id]: true },
-      uniqueDrivers: acc.encountered[driver_id]
-        ? acc.uniqueDrivers
-        : acc.uniqueDrivers.concat(driver_id),
+      encountered: { ...acc.encountered, [driver_id]: newDriver },
       data: { ...acc.data, [key]: { ...dataRow, [driver_id]: Number(value) } },
       driverConstructorMap: {
         ...acc.driverConstructorMap,
@@ -64,14 +65,13 @@ const fetchStandings = async (
     }
   }, {
     encountered: {},
-    uniqueDrivers: [],
     driverConstructorMap: {},
     data: {}
   });
 
-  return {
+  return {  
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
-    uniqueDrivers,
+    uniqueDrivers: Object.keys(encountered).map((driver: string) => ({ driver, constructor: encountered[driver].constructor_id })),
     driverConstructorMap
   };
 }
@@ -137,11 +137,16 @@ export default function DriversPage() {
 
   const Tooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
-    return <CustomBarTooltip drivers={data} />
+    return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} />
   }
   
   const TooltipHighlight = (props: any) => {
-    return <CustomBarTooltipHighlight highlightedItem={props.highlightedItem} axisValue={props.axisValue} datapoints={state.datapoints} allDrivers={state.allDrivers} />
+    return <CustomBarTooltipHighlight
+      highlightedItem={props.highlightedItem}
+      axisValue={props.axisValue}
+      datapoints={state.datapoints}
+      allDrivers={state.allDrivers}
+    />
   }
 
   const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
@@ -225,15 +230,14 @@ export default function DriversPage() {
                     },
                   })}
                   series={state.allDrivers.map((driver: any) => {
-                    /* const constructorColor = driver in constructorColors
-                        ? constructorColors[driver as keyof typeof constructorColors]
-                        : '#888'; */
+                    const constructorColor = driver.constructor in constructorColors
+                        ? constructorColors[driver.constructor as keyof typeof constructorColors]
+                        : '#888';
 
                     return {
-                      dataKey: driver,
-                      label: labelizeKey(driver),
-                      /* color: constructorColor, */
-                      /* stack: 0, */
+                      dataKey: driver.driver,
+                      label: labelizeKey(String(driver.driver)),
+                      color: constructorColor,
                       curve: 'linear',
                       showMark: false,
                       highlightScope: { highlight: 'item', fade: 'global' },

@@ -8,9 +8,13 @@ interface CustomBarTooltipProps {
         key: any,
         [prop: string]: number
     },
+    allDrivers: {
+        driver: string,
+        constructor: string
+    }[]
 };
 
-export default function CustomBarTooltip({ drivers }: CustomBarTooltipProps) {
+export default function CustomBarTooltip({ drivers, allDrivers }: CustomBarTooltipProps) {
 
     if (!drivers) {
         return null;
@@ -27,13 +31,15 @@ export default function CustomBarTooltip({ drivers }: CustomBarTooltipProps) {
                     .sort(([, a], [, b]) => Number(b) - Number(a))
                     .map(([key, value], i) => {
 
-                        /* const constructorColor = key in constructorColors
-                            ? constructorColors[key as keyof typeof constructorColors]
-                            : '#888'; */
+                        const driver = allDrivers.find(({driver, constructor}: { driver: string, constructor: string }) => driver === key) || { driver: '', constructor: '' }
+
+                        const constructorColor = String(driver.constructor) in constructorColors
+                            ? constructorColors[driver.constructor as keyof typeof constructorColors]
+                            : '#888';
 
                         return (
                             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ width: 8, height: 8, borderRadius: '50%', /* backgroundColor: constructorColor, */ marginRight: 5, marginTop: 2, }} />
+                                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: constructorColor, marginRight: 5, marginTop: 2, }} />
                                 {`${labelizeKey(key)}: ${value} pts`}
                             </p>
                         )
