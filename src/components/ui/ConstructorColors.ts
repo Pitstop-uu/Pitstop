@@ -116,6 +116,47 @@ export const constructorColors = {
     'stebro':'#c4a73d', //egentligen svart och vit men tog sponsoren som är gul (ingen kommer veta)
     'ats':'#df291c',
     'enb':'#f9cd49',
+    'emeryson':'#3a4d54', //rätt så mörk färg
+    'ferguson':'#658ac1',
+    'jbw':'#1d4444', //kan vara för mörk grön?
+    'vanwall':'#2f856a',
+    'scarab':'#3598d4',
+    'lesovsky':'#c6acb3',
+    'meskowski':'#df2e11',
+    'trevis':'#29688b',
+    'watson':'#38567e',
+    'kuzma':'#c02123',
+    'christensen':'#6d4b57',
+    'ewing':'#ed6c68',
+    'behra-porsche':'#578ab2',
+    'phillips':'#6c6c6c', //grå, egentligen främst bara vit
+    'kurtis-kraft':'#d75133',
+    'maserati':'#ff0006',
+    'epperly':'#3e8ed0',
+    'elder':'#9d1401',
+    'moore':'#25876f', //kunde inte hitta, tog bara någon grön
+    'dunn':'#c96720', //egentligen vit, tog orange från sponsor
+    'sutton':'#526b93',
+    'fry':'#263b8c',
+    'connaught':'#1a5532',
+    'tec-mec':'#c75d6e',
+    'osca':'#fc685f',
+    'gordini':'#088dba',
+    'bugatti':'#3b97ea',
+    'arzani-volpini':'#a51411',
+    'lancis':'#a95152',
+    'schroeder':'#d03033', //egentligen svart men har lite rött på sig så tog det
+    'stevens':'#f087a5',
+    'hwm':'#015e25',
+    'pankratz':'#83b1f7',
+    'pawl':'#832b27', //egentligen vit tog rött istället, tror nummerna var det
+    'lancia':'#ec1e33',
+    'klenk':'#99989f', //grå
+    'nichels':'#f6e78c', //kunde inte hitta, la gult
+    'bromme':'#5f7827', //kunde inte hitta, la grönt
+    'emw':'#a8a7a3', //silver / grå
+ 
+
 
 
 
