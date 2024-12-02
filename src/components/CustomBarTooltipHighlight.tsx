@@ -15,9 +15,12 @@ interface CustomBarTooltipHighlightProps {
         driver: string,
         constructor: string,
     }[],
+    driverConstructors: {
+        [driver: string]: { [year: string]: string }
+    }
 };
 
-export default function CustomTooltipHighlight({ highlightedItem, axisValue, datapoints, allDrivers }: CustomBarTooltipHighlightProps) {
+export default function CustomTooltipHighlight({ highlightedItem, axisValue, datapoints, allDrivers, driverConstructors }: CustomBarTooltipHighlightProps) {
 
     const { seriesId } = highlightedItem;
     const index = Number(String(seriesId).match(/\d+/g));
@@ -53,7 +56,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
                         return (
                             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentKey ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
-                                {`${labelizeKey(entry.key)}: ${entry.points} pts`}
+                                {`${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${entry.points} pts`}
                             </p>
                         );
                     })}
@@ -66,7 +69,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
                                 return (
                                     <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                         <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentKey ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
-                                        {`${labelizeKey(entry.key)}: ${entry.points} pts`}
+                                        {`${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${entry.points} pts`}
                                     </p>
                                 );
                             })}
@@ -81,7 +84,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
                                 return (
                                     <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                         <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentKey ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
-                                        {`${labelizeKey(entry.key)}: ${entry.points} pts`}
+                                        {`${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${entry.points} pts`}
                                     </p>
                                 );
                             })}
@@ -96,7 +99,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
                                 return (
                                     <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                         <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentKey ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
-                                        {`${labelizeKey(entry.key)}: ${entry.points} pts`}
+                                        {`${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${entry.points} pts`}
                                     </p>
                                 );
                             })}

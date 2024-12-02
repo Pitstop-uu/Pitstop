@@ -146,6 +146,7 @@ export default function DriversPage() {
       axisValue={props.axisValue}
       datapoints={state.datapoints}
       allDrivers={state.allDrivers}
+      driverConstructors={state.driverConstructors}
     />
   }
 
