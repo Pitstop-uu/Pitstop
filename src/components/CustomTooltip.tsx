@@ -1,6 +1,5 @@
 import * as React from "react"
 import Paper from "@mui/material/Paper";
-import { ConstructorResult } from "@/app/(pages)/constructors/page";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { constructorColors } from "./ui/ConstructorColors";
 
