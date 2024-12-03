@@ -28,6 +28,20 @@ interface ReducerState {
   loading: boolean,
 }
 
+
+const predictedpointss= {
+  "mercedes": 424,
+  "red-bull": 758,
+  "alpine": 89,
+  "haas": 83,
+  "mclaren": 468,
+  "rb": 70,
+  "kick-sauber" : 19,
+  "ferrari" : 453,
+  "williams" : 30,
+  "aston-martin": 119
+}
+
 const fetchConstructors = async (years: [number, number]) => {
   return (await getConstructors(years[0], years[1]))
     .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
@@ -35,44 +49,58 @@ const fetchConstructors = async (years: [number, number]) => {
 
 const fetchStandings = async (
   years: [number, number],
-  constructors: string[]
+  constructors: string[],
+  predictedPoints?: { [key: string]: number } // Accept predictions as an optional parameter
 ) => {
-  const datapoints = years[0] === years[1]
-    ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
-    : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors));
+  const datapoints =
+    years[0] === years[1]
+      ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
+      : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors));
 
-  const { data, uniqueConstructors } = datapoints.reduce((
-    acc: any,
-    { key, constructor_id, value }: any
-  ) => {
-    const dataRow = acc.data[key] || {}
-    return {
-      encountered: acc.encountered[constructor_id]
-        ? acc.encountered
-        : { ...acc.encountered, [constructor_id]: true },
-      uniqueConstructors: acc.encountered[constructor_id]
-        ? acc.uniqueConstructors
-        : acc.uniqueConstructors.concat(constructor_id),
-      data: { ...acc.data, [key]: { ...dataRow, [constructor_id]: Number(value) } }
+  const { data, uniqueConstructors } = datapoints.reduce(
+    (acc: any, { key, constructor_id, value }: any) => {
+      const dataRow = acc.data[key] || {};
+      return {
+        encountered: acc.encountered[constructor_id]
+          ? acc.encountered
+          : { ...acc.encountered, [constructor_id]: true },
+        uniqueConstructors: acc.encountered[constructor_id]
+          ? acc.uniqueConstructors
+          : acc.uniqueConstructors.concat(constructor_id),
+        data: { ...acc.data, [key]: { ...dataRow, [constructor_id]: Number(value) } },
+      };
+    },
+    {
+      encountered: {},
+      uniqueConstructors: [],
+      data: {},
     }
-  }, {
-    encountered: {},
-    uniqueConstructors: [],
-    data: {}
-  });
+  );
+
+  // Add predicted points if years[1] is 2024
+  if (years[1] === 2024 && predictedPoints) {
+    const predictionKey = "2025"; // Key for the predicted year
+    const predictionData = Object.keys(predictedPoints).reduce((acc: any, constructor_id) => {
+      acc[constructor_id] = predictedPoints[constructor_id];
+      return acc;
+    }, {});
+
+    data[predictionKey] = { ...predictionData, key: predictionKey };
+    uniqueConstructors.push(...Object.keys(predictedPoints));
+  }
 
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
-    uniqueConstructors
+    uniqueConstructors: [...new Set(uniqueConstructors)],
   };
-}
+};
 
 const fetchLatestId = async (constructors: string[]) => {
   return (await getLatestId(constructors));
 }
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors);
+  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors,predictedpointss);
   return { ...state, datapoints: data, allConstructors: uniqueConstructors };
 }
 
