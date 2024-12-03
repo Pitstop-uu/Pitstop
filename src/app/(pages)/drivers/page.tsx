@@ -16,6 +16,7 @@ import React from "react";
 import CustomBarTooltip from "@/components/CustomBarTooltip";
 import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 import "@/styles/page.css";
+import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMultiple";
 
 export type ConstructorResult = {
   year: number;
@@ -178,12 +179,11 @@ export default function DriversPage() {
             }}
           />
 
-          <ConstructorDropDownFilterMultiple
-            selectableConstructors={state.selectableDrivers}
-            latestConstructorIdMap={{}}
-            selectedConstructors={state.selectedDrivers}
-            setSelectedConstructors={(constructors: string[]) => {
-              onSetSelected(state, constructors);
+          <DriverDropDownFilterMultiple
+            selectableDrivers={state.selectableDrivers}
+            selectedDrivers={state.selectedDrivers}
+            setSelectedDrivers={(drivers: string[]) => {
+              onSetSelected(state, drivers);
             }}
           />
         </div>
