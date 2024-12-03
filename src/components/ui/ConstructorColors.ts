@@ -149,12 +149,40 @@ export const constructorColors = {
     'stevens':'#f087a5',
     'hwm':'#015e25',
     'pankratz':'#83b1f7',
-    'pawl':'#832b27', //egentligen vit tog rött istället, tror nummerna var det
+    'pawl':'#832b27', 
     'lancia':'#ec1e33',
     'klenk':'#99989f', //grå
     'nichels':'#f6e78c', //kunde inte hitta, la gult
     'bromme':'#5f7827', //kunde inte hitta, la grönt
     'emw':'#a8a7a3', //silver / grå
+    'turner':'#c22134',
+    'afm':'#5985aa',
+    'heck':'#7a8f8d', //grå
+    'simca-gordini':'#6594ba',
+    'del-roy':'#416446',
+    'greifzu':'#8c9991', //grå
+    'veritas':'#a09a9e', //grå
+    'krakau':'#ada8a5', //grå
+    'frazer-nash':'#406554',
+    'reif':'#8e9b94', //grå
+    'aston-butterworth':'#f8da6a', //egentligen svart men hade en gul fläck så tog gult
+    'cisitalia':'#bd130f',
+    'alta':'#3e6d5b',
+    'balsa':'#54a9d8',
+    'sherman':'#c83127',
+    'era':'#5fb8a4',
+    'deidt':'#66a9d2',
+    'nacke':'#c3c4c6', //grå
+    'hall':'#911a0a',
+    'talbot-lago':'#75aad6',
+    'marchese':'#feb52e',
+    'langley':'#709492',
+    'rae':'#fe0217',
+    'adams':'#e94c3d',
+    'wetteroth':'#80abca',
+    'olson':'#fabd47',
+    'snowberger':'#f77029',
+    'brp':'#8db68a',
  
 
 
