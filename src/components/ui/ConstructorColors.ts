@@ -92,10 +92,106 @@ export const constructorColors = {
     'hill': '#404040',
     'frank-williams-racing-cars': '#44546A',
     'lyncar': '#002C19',
+    'trojan': '#862c26',
+    'token': '#005200',
+    'iso-marlboro':'#9b2308',
+    'amon': '#7ebde0',
+    'tecno': '#a95b57',
+    'politoys':'#54566a',
+    'eifelland': '#2a425a',
+    'connew':'#fee45d',
+    'bellasi':'#ff361c',
+    'de-tomaso':'#bd1e03',
+    'matra':'#21a4d6',
+    'eagle':'#f1c959',
+    'cooper':'#70ad47', //senaste cooper, kanske måste lägga till flera färger för cooper om vi fixar med olika cooper men kan vara svårt
+    'lds':'#fc8b02',
+    'protos':'#db2122',
+    'shannon':'#7ac4c4',
+    'alfa-special':'#9f252e',
+    'scirocco':'#dfce08', //kan finnas en annna scirocco som är blå?
+    'porsche':'#959192', //grå
+    'derrington-francis':'#dd1d3a',
+    'gilby':'#54848c',
+    'stebro':'#c4a73d', //egentligen svart och vit men tog sponsoren som är gul (ingen kommer veta)
+    'ats':'#df291c',
+    'enb':'#f9cd49',
+    'emeryson':'#3a4d54', //rätt så mörk färg
+    'ferguson':'#658ac1',
+    'jbw':'#1d4444', //kan vara för mörk grön?
+    'vanwall':'#2f856a',
+    'scarab':'#3598d4',
+    'lesovsky':'#c6acb3',
+    'meskowski':'#df2e11',
+    'trevis':'#29688b',
+    'watson':'#38567e',
+    'kuzma':'#c02123',
+    'christensen':'#6d4b57',
+    'ewing':'#ed6c68',
+    'behra-porsche':'#578ab2',
+    'phillips':'#6c6c6c', //grå, egentligen främst bara vit
+    'kurtis-kraft':'#d75133',
+    'maserati':'#ff0006',
+    'epperly':'#3e8ed0',
+    'elder':'#9d1401',
+    'moore':'#25876f', //kunde inte hitta, tog bara någon grön
+    'dunn':'#c96720', //egentligen vit, tog orange från sponsor
+    'sutton':'#526b93',
+    'fry':'#263b8c',
+    'connaught':'#1a5532',
+    'tec-mec':'#c75d6e',
+    'osca':'#fc685f',
+    'gordini':'#088dba',
+    'bugatti':'#3b97ea',
+    'arzani-volpini':'#a51411',
+    'lancis':'#a95152',
+    'schroeder':'#d03033', //egentligen svart men har lite rött på sig så tog det
+    'stevens':'#f087a5',
+    'hwm':'#015e25',
+    'pankratz':'#83b1f7',
+    'pawl':'#832b27', 
+    'lancia':'#ec1e33',
+    'klenk':'#99989f', //grå
+    'nichels':'#f6e78c', //kunde inte hitta, la gult
+    'bromme':'#5f7827', //kunde inte hitta, la grönt
+    'emw':'#a8a7a3', //silver / grå
+    'turner':'#c22134',
+    'afm':'#5985aa',
+    'heck':'#7a8f8d', //grå
+    'simca-gordini':'#6594ba',
+    'del-roy':'#416446',
+    'greifzu':'#8c9991', //grå
+    'veritas':'#a09a9e', //grå
+    'krakau':'#ada8a5', //grå
+    'frazer-nash':'#406554',
+    'reif':'#8e9b94', //grå
+    'aston-butterworth':'#f8da6a', //egentligen svart men hade en gul fläck så tog gult
+    'cisitalia':'#bd130f',
+    'alta':'#3e6d5b',
+    'balsa':'#54a9d8',
+    'sherman':'#c83127',
+    'era':'#5fb8a4',
+    'deidt':'#66a9d2',
+    'nacke':'#c3c4c6', //grå
+    'hall':'#911a0a',
+    'talbot-lago':'#75aad6',
+    'marchese':'#feb52e',
+    'langley':'#709492',
+    'rae':'#fe0217',
+    'adams':'#e94c3d',
+    'wetteroth':'#80abca',
+    'olson':'#fabd47',
+    'snowberger':'#f77029',
+    'brp':'#8db68a',
+ 
+
+
+
+
 };
 
 // 93/184 teams covered
-// 1975->2024 covered
+// 1963->2024 covered
 
 // Some colors can be found here: https://imgur.com/Nqkms9X
 
@@ -112,3 +208,5 @@ export const constructorColors = {
 // kojima
 // maki
 // hill
+//porche
+//stebro
