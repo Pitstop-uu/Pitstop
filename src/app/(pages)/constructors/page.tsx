@@ -52,6 +52,7 @@ const fetchStandings = async (
   constructors: string[],
   predictedPoints?: { [key: string]: number } // Accept predictions as an optional parameter
 ) => {
+  console.log(constructors)
   const datapoints =
     years[0] === years[1]
       ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
@@ -77,16 +78,24 @@ const fetchStandings = async (
     }
   );
 
-  // Add predicted points if years[1] is 2024
-  if (years[1] === 2024 && predictedPoints) {
+  // Add predicted points for selected constructors if years[1] is 2024
+  if (years[1] === 2024 && predictedPoints && years[0] !== years[1]) {
     const predictionKey = "2025"; // Key for the predicted year
-    const predictionData = Object.keys(predictedPoints).reduce((acc: any, constructor_id) => {
-      acc[constructor_id] = predictedPoints[constructor_id];
-      return acc;
-    }, {});
-
-    data[predictionKey] = { ...predictionData, key: predictionKey };
-    uniqueConstructors.push(...Object.keys(predictedPoints));
+  
+    // If no specific constructors are selected, use all constructors with predictions
+    const filteredPredictions = (constructors.length > 0 ? constructors : Object.keys(predictedPoints))
+      .reduce((acc: any, constructor_id) => {
+        if (predictedPoints[constructor_id] !== undefined) {
+          acc[constructor_id] = predictedPoints[constructor_id];
+        }
+        return acc;
+      }, {});
+  
+    // Add predictions to the data
+    if (Object.keys(filteredPredictions).length > 0) {
+      data[predictionKey] = { ...filteredPredictions, key: predictionKey };
+      uniqueConstructors.push(...Object.keys(filteredPredictions));
+    }
   }
 
   return {

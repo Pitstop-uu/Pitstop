@@ -50,7 +50,7 @@ function predictNextYear(model){
 
 }
 
-function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2022) {
+export function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2022) {
   const year = 2024; // Current year
   const predictions = {};
 
