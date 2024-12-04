@@ -3,8 +3,8 @@ export const getDriverSeasonStandings = async (
     yearTo: number,
     drivers: string[]
 ) => {
-    const requestBody: { [key: string]: any } = { from: yearFrom, to: yearTo }
-    if (drivers.length) requestBody.drivers = drivers;
+    const requestBody: { [key: string]: any } = { from: yearFrom, to: yearTo, drivers }
+    //if (drivers.length) requestBody.drivers = drivers;
     const response = await window.fetch(
       `/api/drivers/getSeasonStandings`,
       {

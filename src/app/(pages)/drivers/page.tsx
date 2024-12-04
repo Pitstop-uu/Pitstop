@@ -14,6 +14,7 @@ import React from "react";
 import CustomBarTooltip from "@/components/CustomBarTooltip";
 import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 import "@/styles/page.css";
+import "@/styles/drivers.css";
 import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMultiple";
 import CustomBarChart from "@/components/CustomBarChart";
 import CustomLineChart from "@/components/CustomLineChart";
@@ -181,6 +182,7 @@ export default function DriversPage() {
             setSelectedDrivers={(drivers: string[]) => {
               onSetSelected(state, drivers);
             }}
+            years={state.years}
           />
         </div>
 

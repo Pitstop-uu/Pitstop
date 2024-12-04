@@ -24,27 +24,33 @@ export default function CustomBarChart({
     const CustomTooltipContent = (props: any) => {
         const { axisValue } = props;
         if (!highlightedItem) {
-          return (
-            <CustomTooltip axisValue={axisValue} />
-          );
+            return (
+                <CustomTooltip axisValue={axisValue} />
+            );
         };
         return (
-          <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
+            <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
         );
-      };
+    };
 
     return (
 
         <BarChart
             dataset={datapoints}
-            xAxis={[{
-                dataKey: "key",
-                scaleType: "band",
-                position: "bottom",
-                valueFormatter: (key) =>
-                    `${labelizeKey(key)}`,
-            }]}
-            yAxis={[{ min: 0 }]}
+            xAxis={[allDrivers.length
+                ? {
+                    dataKey: "key",
+                    scaleType: "band",
+                    position: "bottom",
+                    valueFormatter: (key) =>
+                        `${labelizeKey(key)}`,
+                }
+                : {
+                    data: Array.from({ length: years[1] - years[0] + 1 }, (v, i) => i + years[0]),
+                    scaleType: "band",
+                }
+            ]}
+            yAxis={[allDrivers.length ? { min: 0 } : { min: 0, max: 600 }]}
             axisHighlight={{ x: 'band' }}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
             height={480}
@@ -54,7 +60,11 @@ export default function CustomBarChart({
             slotProps={{
                 legend: {
                     hidden: true,
-                }
+                },
+                noDataOverlay: {
+                    message: 'No drivers to display',
+                    style: { fill: 'white' }
+                },
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

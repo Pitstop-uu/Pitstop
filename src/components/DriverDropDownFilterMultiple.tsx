@@ -8,12 +8,14 @@ interface DriverDropDownFilterMultipleProps {
     selectableDrivers: { key: string, value: string}[];
     selectedDrivers: string[];
     setSelectedDrivers: (selected: string[]) => void;
+    years: [number, number];
 }
 
 export default function DriverDropDownFilterMultiple({
     selectableDrivers,
     selectedDrivers,
-    setSelectedDrivers
+    setSelectedDrivers,
+    years
 }: DriverDropDownFilterMultipleProps) {
     const noneSelected = selectedDrivers.length === 0;
 
@@ -40,7 +42,7 @@ export default function DriverDropDownFilterMultiple({
     return (
         <DropdownMenuMultiple
             list={list}
-            title={`SELECT DRIVERS: ${noneSelected ? "ALL" : limitDriverNames(selectedDrivers)}`}
+            title={`SELECT DRIVERS: ${noneSelected ? (years[0] === years[1] ? "ALL" : "NONE") : limitDriverNames(selectedDrivers)}`}
             selected={selectedDrivers}
             setSelected={setSelectedDrivers}
         />
