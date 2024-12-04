@@ -204,6 +204,7 @@ export default function DriversPage() {
                         curve: 'linear',
                         showMark: false,
                         highlightScope: { highlight: 'item', fade: 'global' },
+                        connectNulls: true,
                     };
                   })}
                   CustomTooltip={Tooltip}
