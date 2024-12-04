@@ -43,13 +43,6 @@ const testInput = {
   const predictedPoints = normalizedPrediction.nextYearPoints * 860; // De-normalize prediction
   
   //console.log('Predicted Next Year Points:', predictedPoints);
-
-function predictNextYear(model){
-  maxPoints = 860
-  maxYear = 2022
-
-}
-
 export function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2022) {
   const year = 2024; // Current year
   const predictions = {};

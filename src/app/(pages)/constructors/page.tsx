@@ -77,8 +77,8 @@ const fetchStandings = async (
       data: {},
     }
   );
-
-  // Add predicted points for selected constructors if years[1] is 2024
+  
+  //add predictions
   if (years[1] === 2024 && predictedPoints && years[0] !== years[1]) {
     const predictionKey = "2025"; // Key for the predicted year
   
