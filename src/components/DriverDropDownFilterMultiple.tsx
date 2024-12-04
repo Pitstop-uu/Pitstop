@@ -10,7 +10,7 @@ interface DriverDropDownFilterMultipleProps {
     setSelectedDrivers: (selected: string[]) => void;
 }
 
-export default function ConstructorDropDownFilterMultiple({
+export default function DriverDropDownFilterMultiple({
     selectableDrivers,
     selectedDrivers,
     setSelectedDrivers

@@ -1,24 +1,24 @@
 import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
-import { axisClasses, chartsGridClasses, HighlightItemData, LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
+import { axisClasses, chartsGridClasses, BarChart, lineElementClasses, markElementClasses, HighlightItemData } from "@mui/x-charts";
+import { constructorColors } from "./ui/ConstructorColors";
 
-interface CustomLineChartProps {
+interface CustomBarChartProps {
     datapoints: any,
-    series: any,
-    bottomAxis: any,
     CustomTooltip: any,
     CustomTooltipHighlight: any,
-    margin: any,
+    allDrivers: any,
+    years: any,
 };
 
-export default function CustomLineChart({ 
+export default function CustomBarChart({
     datapoints,
-    series,
-    bottomAxis,
     CustomTooltip,
     CustomTooltipHighlight,
-    margin,
-}: CustomLineChartProps) {
+    allDrivers,
+    years,
+}: CustomBarChartProps) {
+
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
 
     const CustomTooltipContent = (props: any) => {
@@ -34,25 +34,23 @@ export default function CustomLineChart({
       };
 
     return (
-        <LineChart
+
+        <BarChart
             dataset={datapoints}
             xAxis={[{
                 dataKey: "key",
-                scaleType: "point",
+                scaleType: "band",
                 position: "bottom",
                 valueFormatter: (key, _) =>
                     `${labelizeKey(key)}`,
             }]}
-            bottomAxis={bottomAxis}
             yAxis={[{ min: 0 }]}
-            series={series}
+            axisHighlight={{ x: 'band' }}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
-            axisHighlight={{ x: 'line' }}
             height={480}
             highlightedItem={highlightedItem}
             onHighlightChange={setHighlightedItem}
             grid={{ vertical: true, horizontal: true }}
-            margin={margin}
             slotProps={{
                 legend: {
                     hidden: true,
@@ -77,6 +75,32 @@ export default function CustomLineChart({
                     stroke: 'rgba(255, 255, 255, 0.12)',
                 },
             })}
+            series={allDrivers.map((driver: any) => {
+                const constructorColor = driver.constructor in constructorColors
+                    ? constructorColors[driver.constructor as keyof typeof constructorColors]
+                    : '#888';
+
+                return {
+                    dataKey: driver.driver,
+                    label: labelizeKey(String(driver.driver)),
+                    color: constructorColor,
+                    curve: 'linear',
+                    showMark: false,
+                    highlightScope: { highlight: 'item', fade: 'global' },
+                };
+            })}
+            margin={{
+                bottom: years[0] === years[1] ? 80 : 30,
+                left: 100,
+                right: 100,
+            }}
+            bottomAxis={{
+                tickLabelStyle: {
+                    angle: years[0] === years[1] ? 35 : 0,
+                    textAnchor: years[0] === years[1] ? 'start' : 'middle',
+                }
+            }}
         />
+
     );
 };
