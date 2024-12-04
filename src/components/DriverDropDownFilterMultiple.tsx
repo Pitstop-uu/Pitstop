@@ -32,7 +32,7 @@ export default function DriverDropDownFilterMultiple({
         return result;
     }
 
-    const list = selectableDrivers.map(({key, value}) => ({
+    const list = selectableDrivers.map(({key}) => ({
         key,
         value: labelizeKey(key)
     }))

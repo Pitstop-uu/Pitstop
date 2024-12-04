@@ -41,7 +41,7 @@ export default function CustomBarChart({
                 dataKey: "key",
                 scaleType: "band",
                 position: "bottom",
-                valueFormatter: (key, _) =>
+                valueFormatter: (key) =>
                     `${labelizeKey(key)}`,
             }]}
             yAxis={[{ min: 0 }]}

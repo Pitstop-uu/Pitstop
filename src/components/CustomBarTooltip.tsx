@@ -31,7 +31,7 @@ export default function CustomBarTooltip({ drivers, allDrivers }: CustomBarToolt
                     .sort(([, a], [, b]) => Number(b) - Number(a))
                     .map(([key, value], i) => {
 
-                        const driver = allDrivers.find(({driver, constructor}: { driver: string, constructor: string }) => driver === key) || { driver: '', constructor: '' }
+                        const driver = allDrivers.find(({driver}: { driver: string, constructor: string }) => driver === key) || { driver: '', constructor: '' }
 
                         const constructorColor = String(driver.constructor) in constructorColors
                             ? constructorColors[driver.constructor as keyof typeof constructorColors]

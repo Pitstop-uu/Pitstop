@@ -40,7 +40,7 @@ export default function CustomLineChart({
                 dataKey: "key",
                 scaleType: "point",
                 position: "bottom",
-                valueFormatter: (key, _) =>
+                valueFormatter: (key) =>
                     `${labelizeKey(key)}`,
             }]}
             bottomAxis={bottomAxis}

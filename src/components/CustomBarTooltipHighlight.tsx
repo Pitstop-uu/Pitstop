@@ -33,7 +33,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
         points: entry[driverName],
     }));
 
-    const driver = allDrivers.find(({driver, constructor}: { driver: string, constructor: string }) => driver === driverName) || { driver: '', constructor: '' }
+    const driver = allDrivers.find(({driver}: { driver: string, constructor: string }) => driver === driverName) || { driver: '', constructor: '' }
 
     const constructorColor = String(driver.constructor) in constructorColors
       ? constructorColors[driver.constructor as keyof typeof constructorColors]

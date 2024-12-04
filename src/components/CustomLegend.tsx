@@ -44,7 +44,7 @@ export default function CustomLegend({ constructors, latestConstructorIdMap, all
             }}>
             {constructorNames.map((constructorName) => {
                 
-                const driver = (allDrivers || []).find(({ driver, constructor }: { driver: string, constructor: string }) => driver === constructorName) || { driver: '', constructor: '' }
+                const driver = (allDrivers || []).find(({ driver }: { driver: string, constructor: string }) => driver === constructorName) || { driver: '', constructor: '' }
 
                 return (<div
                     key={constructorName}

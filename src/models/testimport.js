@@ -1,4 +1,4 @@
-const fs = require('fs');
+/* const fs = require('fs');
 const brain = require('brain.js');
 
 
@@ -29,4 +29,4 @@ const testInput = {
   const normalizedPrediction = net.run(testInput);
   const predictedPoints = normalizedPrediction.nextYearPoints * 860; // De-normalize prediction
   
-  console.log('Predicted Next Year Points:', predictedPoints);
+  console.log('Predicted Next Year Points:', predictedPoints); */
