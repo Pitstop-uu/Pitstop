@@ -14,6 +14,7 @@ import CustomLineChart from "@/components/CustomLineChart";
 import { constructorColors } from "@/components/ui/ConstructorColors";
 import CustomTooltip from "@/components/CustomTooltip";
 import CustomTooltipHighlight from "@/components/CustomTooltipHighlight";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 export type ConstructorResult = {
   year: number;
@@ -26,21 +27,9 @@ interface ReducerState {
   selectableConstructors: { key: string, value: string }[],
   selectedConstructors: string[],
   loading: boolean,
+  includePredictions: boolean,
 }
 
-
-const predictedpointss= {
-  "mercedes": 424,
-  "red-bull": 758,
-  "alpine": 89,
-  "haas": 83,
-  "mclaren": 468,
-  "rb": 70,
-  "kick-sauber" : 19,
-  "ferrari" : 453,
-  "williams" : 30,
-  "aston-martin": 119
-}
 
 const fetchConstructors = async (years: [number, number]) => {
   return (await getConstructors(years[0], years[1]))
@@ -50,13 +39,12 @@ const fetchConstructors = async (years: [number, number]) => {
 const fetchStandings = async (
   years: [number, number],
   constructors: string[],
-  predictedPoints?: { [key: string]: number } // Accept predictions as an optional parameter
+  includePredictions: boolean,
 ) => {
-  console.log(constructors)
   const datapoints =
     years[0] === years[1]
       ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
-      : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors));
+      : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors, includePredictions));
 
   const { data, uniqueConstructors } = datapoints.reduce(
     (acc: any, { key, constructor_id, value }: any) => {
@@ -78,8 +66,8 @@ const fetchStandings = async (
     }
   );
   
-  //add predictions
-  if (years[1] === 2024 && predictedPoints && years[0] !== years[1]) {
+/*   //add predictions
+  if (showPredictions && predictedPoints && years[0] !== years[1]) {
     const predictionKey = "2025"; // Key for the predicted year
   
     // If no specific constructors are selected, use all constructors with predictions
@@ -96,7 +84,7 @@ const fetchStandings = async (
       data[predictionKey] = { ...filteredPredictions, key: predictionKey };
       uniqueConstructors.push(...Object.keys(filteredPredictions));
     }
-  }
+  } */
 
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
@@ -109,7 +97,7 @@ const fetchLatestId = async (constructors: string[]) => {
 }
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors,predictedpointss);
+  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors,state.includePredictions);
   return { ...state, datapoints: data, allConstructors: uniqueConstructors };
 }
 
@@ -136,6 +124,7 @@ const initialState = {
   selectedConstructors: [],
   allConstructors: [],
   loading: false,
+  includePredictions: false,
 } as ReducerState;
 
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
@@ -177,6 +166,12 @@ export default function ConstructorsPage() {
   const TooltipHighlight = (props: any) => {
     return <CustomTooltipHighlight highlightedItem={props.highlightedItem} axisValue={props.axisValue} datapoints={state.datapoints} allConstructors={state.allConstructors} latestConstructorIdMap={state.latestConstructorIdMap} />
   }
+
+  const handleChange = async (currentState: ReducerState) => {
+    const withAll = await stateWithAll( { ...currentState, includePredictions: !currentState.includePredictions });
+    console.log("withAll", withAll)
+    dispatch({ type: "set", payload: withAll });
+  }
   
   return (
     <section>
@@ -199,6 +194,18 @@ export default function ConstructorsPage() {
               onSetSelected(state, constructors);
             }}
           />
+
+          <div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  className="text-white"
+                  onChange={(e) => { handleChange(state) } }
+                />
+              } 
+              label="SHOW PREDICTIONS"
+            />
+          </div>
         </div>
         {
           !state.loading && (
