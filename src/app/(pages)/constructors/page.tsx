@@ -201,6 +201,7 @@ export default function ConstructorsPage() {
                 <Checkbox
                   className="text-white"
                   onChange={(e) => { handleChange(state) } }
+                  disabled= {state.years[0] === state.years[1] || state.years[1] !== 2024}
                 />
               } 
               label="SHOW PREDICTIONS"

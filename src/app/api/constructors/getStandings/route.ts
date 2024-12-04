@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 			: record;
 	}, []);
 
-	const result =  requestBody.includePredictions === true
+	const result =  requestBody.includePredictions === true && requestBody.to === 2024
 		? constructorStandings.concat(filteredPredictedPoints)
 		: constructorStandings;
 
