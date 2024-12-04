@@ -56,7 +56,10 @@ export default function CustomLineChart({
             slotProps={{
                 legend: {
                     hidden: true,
-                }
+                },
+                noDataOverlay: {
+                    message: 'Loading...',
+                },
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

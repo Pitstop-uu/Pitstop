@@ -63,7 +63,6 @@ export default function CustomBarChart({
                 },
                 noDataOverlay: {
                     message: 'No drivers to display',
-                    style: { fill: 'white' }
                 },
             }}
             sx={() => ({
