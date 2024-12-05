@@ -1,9 +1,10 @@
 export const getConstructorStandings = async (
     yearFrom: number,
     yearTo: number,
-    constructors: string[]
+    constructors: string[],
+    includePredictions: boolean
 ) => {
-    const requestBody: { [key: string]: any } = { from: yearFrom, to: yearTo }
+    const requestBody: { [key: string]: any } = { from: yearFrom, to: yearTo, includePredictions }
     if (constructors.length) requestBody.constructors = constructors;
     const response = await window.fetch(
       `/api/constructors/getStandings`,

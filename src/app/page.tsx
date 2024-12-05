@@ -99,7 +99,7 @@ export default function HomePage() {
   ) => {
     const datapoints = years[0] === years[1]
       ? parseConstructorRaceStandings(await getConstructorRaceStandings(years[0], constructors))
-      : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors));
+      : parseConstructorSeasonStandings(await getConstructorStandings(years[0], years[1], constructors, false));
   
     const { data, uniqueConstructors } = datapoints.reduce((
       acc: any,

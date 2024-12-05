@@ -7,9 +7,10 @@ import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
 
 export async function POST(req: NextRequest) {
 	const requestBody = await req.json();
+	console.log(requestBody);
 	if (
 		!('from' in requestBody && typeof requestBody.from === 'number') ||
-		!('to' in requestBody && typeof requestBody.to === 'number') 
+		!('to' in requestBody && typeof requestBody.to === 'number')
 	) {
 		return response(false, 400, []);
 	}
@@ -18,7 +19,7 @@ export async function POST(req: NextRequest) {
 
 	// Gets all constructor chronology records in the selected time-span
 	const constructorChronologies = await getConstructorChronologies(prisma, requestBody.from, requestBody.to);
-	
+
 	// Maps all selected constructors to their aliases,
 	// so that we can fetch all relevant datapoints from the database.
 	// For example, "kick-sauber" will be mapped to ["kick-sauber", "alfa-romeo"],
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
 	const constructorAliasMap = getConstructorAliasMap(constructorChronologies);
 	const selectedConstructors = (requestBody.constructors || [])
 		.reduce((acc: any, constructor: string) => acc.concat(constructorAliasMap[constructor] || [constructor]), [])
-	
+
 	// Fetching all relevant data points
 	const queryResult = await prisma.$queryRaw<{
 		constructor_id: string;
@@ -41,13 +42,28 @@ export async function POST(req: NextRequest) {
 		season_constructor_standing
 	WHERE
 		year BETWEEN ${requestBody.from} AND ${requestBody.to}
-		${
-			'constructors' in requestBody 
-				? Prisma.sql`AND constructor_id IN (SELECT value from json_each(${JSON.stringify(selectedConstructors)}))`
-				: Prisma.empty
+		${'constructors' in requestBody
+			? Prisma.sql`AND constructor_id IN (SELECT value from json_each(${JSON.stringify(selectedConstructors)}))`
+			: Prisma.empty
 		}
 	ORDER BY
 		year ASC`;
+
+	const predictedPoints =[
+		{ year: 2025, constructor_id: "mercedes", points: 424 },
+		{ year: 2025, constructor_id: "red-bull", points: 758 },
+		{ year: 2025, constructor_id: "alpine", points: 89 },
+		{ year: 2025, constructor_id: "haas", points: 83 },
+		{ year: 2025, constructor_id: "mclaren", points: 468 },
+		{ year: 2025, constructor_id: "rb", points: 70 },
+		{ year: 2025, constructor_id: "kick-sauber", points: 19 },
+		{ year: 2025, constructor_id: "ferrari", points: 453 },
+		{ year: 2025, constructor_id: "williams", points: 30 },
+		{ year: 2025, constructor_id: "aston-martin", points: 119 },	
+	]
+	const filteredPredictedPoints = selectedConstructors.length > 0
+		? predictedPoints.filter((point) => selectedConstructors.includes(point.constructor_id))
+		: predictedPoints
 
 	// Each data point's related constructor is mapped
 	// to that constructor's latest representation in the selected timespan.
@@ -63,5 +79,9 @@ export async function POST(req: NextRequest) {
 			: record;
 	}, []);
 
-	return response(true, 200, constructorStandings);
+	const result =  requestBody.includePredictions === true && requestBody.to === 2024
+		? constructorStandings.concat(filteredPredictedPoints)
+		: constructorStandings;
+
+	return response(true, 200, result);
 }
