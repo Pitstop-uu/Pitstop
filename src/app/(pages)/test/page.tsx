@@ -9,7 +9,7 @@ export default function AboutPage() {
             to: 2024,
             grand_prix_id: "spain"
         }
-        const res = await window.fetch("/api/circuit/spain/getFastestLaps", {
+        const res = await window.fetch("/api/drivers/getFastestLaps", {
             method: "POST",
             body: JSON.stringify(request)
         })
