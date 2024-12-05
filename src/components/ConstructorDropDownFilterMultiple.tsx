@@ -34,7 +34,7 @@ export default function ConstructorDropDownFilterMultiple({
         return result;
     }
 
-    const list = selectableConstructors.map(({key, value}) => ({
+    const list = selectableConstructors.map(({key}) => ({
         key,
         value: key === latestConstructorIdMap[key] ? labelizeKey(key) : `${labelizeKey(key)} (${labelizeKey(String(latestConstructorIdMap[key]))})`
     }))

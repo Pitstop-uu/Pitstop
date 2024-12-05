@@ -1,8 +1,6 @@
 import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { axisClasses, chartsGridClasses, HighlightItemData, LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
-//import CustomTooltip from "./CustomTooltip";
-//import CustomTooltipHighlight from "./CustomTooltipHighlight";
 
 interface CustomLineChartProps {
     datapoints: any,
@@ -42,7 +40,7 @@ export default function CustomLineChart({
                 dataKey: "key",
                 scaleType: "point",
                 position: "bottom",
-                valueFormatter: (key, _) =>
+                valueFormatter: (key) =>
                     `${labelizeKey(key)}`,
             }]}
             bottomAxis={bottomAxis}
@@ -58,7 +56,10 @@ export default function CustomLineChart({
             slotProps={{
                 legend: {
                     hidden: true,
-                }
+                },
+                noDataOverlay: {
+                    message: 'Loading...',
+                },
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {
