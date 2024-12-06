@@ -36,6 +36,15 @@ export default function CustomBarChart({
         );
     };
 
+
+    const yAxisMin = Math.floor(Math.min(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500; 
+    
+    const yAxisMax = Math.ceil(Math.max(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500;  
+
     return (
 
         <BarChart
@@ -60,7 +69,7 @@ export default function CustomBarChart({
                         : { min: 0, max: 600 }
                     ]
                     : [allDrivers.length
-                        ? { valueFormatter: (key) => `${formatMillis(key)}` }
+                        ? { min:yAxisMin, max: yAxisMax, valueFormatter: (key) => `${formatMillis(key)}` }
                         : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
                     ]
             }
