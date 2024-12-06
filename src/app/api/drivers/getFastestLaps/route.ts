@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from '@prisma/client'
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
 import getLatestConstructorMap from '@/utils/api/latestConstructorMap';

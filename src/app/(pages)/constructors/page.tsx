@@ -200,7 +200,7 @@ export default function ConstructorsPage() {
               control={
                 <Checkbox
                   className="text-white"
-                  onChange={(e) => { handleChange(state) } }
+                  onChange={() => { handleChange(state) } }
                   disabled= {state.years[0] === state.years[1] || state.years[1] !== 2024}
                 />
               } 
