@@ -15,13 +15,13 @@ export async function GET(req: NextRequest) {
     const queryResult = await prisma.$queryRaw<{
         id: string, full_name: string
     }[]>`
-  SELECT
-    driver.id
-  FROM driver
-  WHERE EXISTS (SELECT 1
-    FROM season_driver_standing
-    WHERE season_driver_standing.driver_id = driver.id
-    AND season_driver_standing.year BETWEEN ${from} AND ${to})`;
+    SELECT
+      driver.id
+    FROM driver
+    WHERE EXISTS (SELECT 1
+      FROM season_driver_standing
+      WHERE season_driver_standing.driver_id = driver.id
+      AND season_driver_standing.year BETWEEN ${from} AND ${to})`;
 
     return response(true, 200, queryResult);
 }

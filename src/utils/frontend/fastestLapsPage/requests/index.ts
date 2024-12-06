@@ -22,3 +22,15 @@ export const getGrandPrix = async (yearFrom: number, yearTo: number) => {
   const responseJson = await response.json();
   return responseJson.data;
 }
+
+export const getGrandPrixDrivers = async (
+  yearFrom: number,
+  yearTo: number,
+  grandPrixId: string
+) => {
+  const response = await window.fetch(
+    `/api/grand_prix/${grandPrixId}/drivers/?from=${yearFrom}&to=${yearTo}`
+  );
+  const responseJson = await response.json();
+  return responseJson.data;
+}
