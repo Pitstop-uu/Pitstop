@@ -60,7 +60,7 @@ export default function CustomBarChart({
                         : { min: 0, max: 600 }
                     ]
                     : [allDrivers.length
-                        ? { min: 68000, valueFormatter: (key) => `${formatMillis(key)}` }
+                        ? { valueFormatter: (key) => `${formatMillis(key)}` }
                         : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
                     ]
             }
