@@ -2,6 +2,7 @@ import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { axisClasses, chartsGridClasses, BarChart, lineElementClasses, markElementClasses, HighlightItemData } from "@mui/x-charts";
 import { constructorColors } from "./ui/ConstructorColors";
+import formatMillis from "@/utils/frontend/formatMillis";
 
 interface CustomBarChartProps {
     datapoints: any,
@@ -9,6 +10,7 @@ interface CustomBarChartProps {
     CustomTooltipHighlight: any,
     allDrivers: any,
     years: any,
+    displayPoints: boolean,
 };
 
 export default function CustomBarChart({
@@ -17,6 +19,7 @@ export default function CustomBarChart({
     CustomTooltipHighlight,
     allDrivers,
     years,
+    displayPoints,
 }: CustomBarChartProps) {
 
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
@@ -50,7 +53,17 @@ export default function CustomBarChart({
                     scaleType: "band",
                 }
             ]}
-            yAxis={[allDrivers.length ? { min: 0 } : { min: 0, max: 600 }]}
+            yAxis={
+                displayPoints
+                    ? [allDrivers.length
+                        ? { min: 0 }
+                        : { min: 0, max: 600 }
+                    ]
+                    : [allDrivers.length
+                        ? { min: 68000, valueFormatter: (key) => `${formatMillis(key)}` }
+                        : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
+                    ]
+            }
             axisHighlight={{ x: 'band' }}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
             height={480}

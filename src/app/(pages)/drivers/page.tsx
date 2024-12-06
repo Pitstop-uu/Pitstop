@@ -223,7 +223,7 @@ export default function DriversPage() {
                     }
                   }}
                 />
-                  : <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} />
+                  : <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} displayPoints={true} />
                 }
               </div>
               <div
