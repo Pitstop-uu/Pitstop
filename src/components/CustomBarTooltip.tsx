@@ -2,6 +2,7 @@ import * as React from "react"
 import Paper from "@mui/material/Paper";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { constructorColors } from "./ui/ConstructorColors";
+import formatMillis from "@/utils/frontend/formatMillis";
 
 interface CustomBarTooltipProps {
     drivers: { 
@@ -11,10 +12,11 @@ interface CustomBarTooltipProps {
     allDrivers: {
         driver: string,
         constructor: string
-    }[]
+    }[],
+    displayPoints: boolean,
 };
 
-export default function CustomBarTooltip({ drivers, allDrivers }: CustomBarTooltipProps) {
+export default function CustomBarTooltip({ drivers, allDrivers, displayPoints }: CustomBarTooltipProps) {
 
     if (!drivers) {
         return null;
@@ -40,7 +42,7 @@ export default function CustomBarTooltip({ drivers, allDrivers }: CustomBarToolt
                         return (
                             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: constructorColor, marginRight: 5, marginTop: 2, }} />
-                                {`${labelizeKey(key)}: ${value} pts`}
+                                {displayPoints ? `${labelizeKey(key)}: ${value} pts` : `${labelizeKey(key)}: ${formatMillis(value)}`}
                             </p>
                         )
                     }
