@@ -11,6 +11,7 @@ interface CustomBarChartProps {
     allDrivers: any,
     years: any,
     displayPoints: boolean,
+    selectedGrandPrix?: string,
 };
 
 export default function CustomBarChart({
@@ -20,6 +21,7 @@ export default function CustomBarChart({
     allDrivers,
     years,
     displayPoints,
+    selectedGrandPrix,
 }: CustomBarChartProps) {
 
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
@@ -35,6 +37,15 @@ export default function CustomBarChart({
             <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
         );
     };
+
+
+    const yAxisMin = Math.floor(Math.min(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500; 
+    
+    const yAxisMax = Math.ceil(Math.max(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500;  
 
     return (
 
@@ -60,7 +71,7 @@ export default function CustomBarChart({
                         : { min: 0, max: 600 }
                     ]
                     : [allDrivers.length
-                        ? { valueFormatter: (key) => `${formatMillis(key)}` }
+                        ? { min:yAxisMin, max: yAxisMax, valueFormatter: (key) => `${formatMillis(key)}` }
                         : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
                     ]
             }
@@ -74,9 +85,11 @@ export default function CustomBarChart({
                 legend: {
                     hidden: true,
                 },
-                noDataOverlay: {
-                    message: 'No drivers to display',
-                },
+                noDataOverlay: displayPoints
+                ? { message: 'No drivers to display' }
+                : selectedGrandPrix
+                    ? { message: 'No drivers to display' }
+                    : { message: 'No Grand Prix to display' }
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

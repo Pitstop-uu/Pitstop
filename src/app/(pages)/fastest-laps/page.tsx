@@ -32,6 +32,9 @@ interface ReducerState {
   selectableDrivers: { key: string, value: string }[],
   selectedDrivers: string[],
   allDrivers: { driver: string, constructor: string }[],
+  driverConstructors: {
+    [driver: string]: { [year: string]: string }
+  },
   selectableGrandPrix: { key: string, value: string }[],
   selectedGrandPrix: string,
   loading: boolean,
@@ -54,30 +57,41 @@ const fetchLapTimes = async (
 ) => {
   const datapoints = parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
 
-  const { data, encountered } = datapoints.reduce((
+  const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
     { key, driver_id, constructor_id, value }: any
   ) => {
     const dataRow = acc.data[key] || {}
+    const driverConstructorObject = acc.driverConstructorMap[driver_id] || {};
+    const latestDriver = acc.encountered[driver_id];
+    const newDriver = (latestDriver?.key || -Infinity) < key
+      ? { key, driver_id, constructor_id, value }
+      : latestDriver
+
     return {
-      encountered: { ...acc.encountered, [driver_id]: { key, driver_id, constructor_id, value } },
+      encountered: { ...acc.encountered, [driver_id]: newDriver },
       data: { ...acc.data, [key]: { ...dataRow, [driver_id]: Number(value) } },
+      driverConstructorMap: {
+        ...acc.driverConstructorMap,
+        [driver_id]: { ...driverConstructorObject, [key]: constructor_id }
+      }
     }
   }, {
     encountered: {},
-    data: {}
+    data: {},
+    driverConstructorMap: {}
   });
 
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
     uniqueDrivers: Object.keys(encountered).map((driver: string) => ({ driver, constructor: encountered[driver].constructor_id })),
-  };
-}
-
+    driverConstructorMap: driverConstructorMap
+  }
+};
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueDrivers } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
-  return { ...state, datapoints: data, allDrivers: uniqueDrivers };
+  const { data, uniqueDrivers,driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
+  return { ...state, datapoints: data, allDrivers: uniqueDrivers, driverConstructors: driverConstructorMap };
 }
 
 const stateWithSelectableDrivers = async (state: ReducerState) => {
@@ -107,6 +121,7 @@ const initialState = {
   selectableDrivers: [],
   selectedDrivers: [],
   allDrivers: [],
+  driverConstructors: {},
   selectableGrandPrix: [],
   selectedGrandPrix: "",
   loading: false,
@@ -150,7 +165,7 @@ export default function FastestLapsPage() {
 
   const Tooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
-    return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} />
+    return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} displayPoints={false} />
   }
 
   const TooltipHighlight = (props: any) => {
@@ -159,7 +174,8 @@ export default function FastestLapsPage() {
       axisValue={props.axisValue}
       datapoints={state.datapoints}
       allDrivers={state.allDrivers}
-      driverConstructors={state.driverConstructors || {}}
+      driverConstructors={state.driverConstructors}
+      displayPoints={false}
     />
   }
 
@@ -199,7 +215,15 @@ export default function FastestLapsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} displayPoints={false} />
+                <CustomBarChart 
+                  datapoints={state.datapoints} 
+                  allDrivers={state.allDrivers} 
+                  CustomTooltip={Tooltip} 
+                  CustomTooltipHighlight={TooltipHighlight} 
+                  years={state.years} 
+                  displayPoints={false} 
+                  selectedGrandPrix={state.selectedGrandPrix} 
+                />
               </div>
               <div
                 style={{

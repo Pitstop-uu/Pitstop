@@ -148,7 +148,7 @@ export default function DriversPage() {
 
   const Tooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
-    return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} />
+    return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} displayPoints={true} />
   }
   
   const TooltipHighlight = (props: any) => {
@@ -158,6 +158,7 @@ export default function DriversPage() {
       datapoints={state.datapoints}
       allDrivers={state.allDrivers}
       driverConstructors={state.driverConstructors}
+      displayPoints={true}
     />
   }
 
