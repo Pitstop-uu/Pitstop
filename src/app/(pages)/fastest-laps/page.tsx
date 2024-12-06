@@ -15,7 +15,7 @@ import "@/styles/drivers.css";
 import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMultiple";
 import CustomBarChart from "@/components/CustomBarChart";
 import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
-import { getDriverLapTimes, getGrandPrix } from "@/utils/frontend/fastestLapsPage/requests";
+import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers } from "@/utils/frontend/fastestLapsPage/requests";
 import { getDrivers } from "@/utils/frontend/driverPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
 
@@ -38,9 +38,9 @@ interface ReducerState {
   loading: boolean,
 }
 
-const fetchDrivers = async (years: [number, number]) => {
-  return (await getDrivers(years[0], years[1]))
-    .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
+  return (await getGrandPrixDrivers(years[0], years[1], grandPrixId))
+    .map((driver: any) => ({ key: driver.driver_id, value: labelizeKey(driver.driver_id) }));
 }
 
 const fetchGrandPrix = async (years: [number, number]) => {
@@ -93,11 +93,16 @@ const stateWithDatapoints = async (state: ReducerState) => {
 }
 
 const stateWithSelectableDrivers = async (state: ReducerState) => {
-  const selectableDrivers = await fetchDrivers(state.years);
-  return {
-    ...state,
-    selectableDrivers
-  };
+  if (state.selectedGrandPrix) {
+    const selectableDrivers = await fetchDrivers(state.years, state.selectedGrandPrix);
+    return {
+      ...state,
+      selectableDrivers
+    };
+  } else {
+    return state;
+  }
+
 }
 
 const stateWithSelectableGrandPrix = async (state: ReducerState) => {
