@@ -11,6 +11,7 @@ interface CustomBarChartProps {
     allDrivers: any,
     years: any,
     displayPoints: boolean,
+    selectedGrandPrix?: string,
 };
 
 export default function CustomBarChart({
@@ -20,6 +21,7 @@ export default function CustomBarChart({
     allDrivers,
     years,
     displayPoints,
+    selectedGrandPrix,
 }: CustomBarChartProps) {
 
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
@@ -83,9 +85,11 @@ export default function CustomBarChart({
                 legend: {
                     hidden: true,
                 },
-                noDataOverlay: {
-                    message: 'No drivers to display',
-                },
+                noDataOverlay: displayPoints
+                ? { message: 'No drivers to display' }
+                : selectedGrandPrix
+                    ? { message: 'No drivers to display' }
+                    : { message: 'No Grand Prix to display' }
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

@@ -215,7 +215,15 @@ export default function FastestLapsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} displayPoints={false} />
+                <CustomBarChart 
+                  datapoints={state.datapoints} 
+                  allDrivers={state.allDrivers} 
+                  CustomTooltip={Tooltip} 
+                  CustomTooltipHighlight={TooltipHighlight} 
+                  years={state.years} 
+                  displayPoints={false} 
+                  selectedGrandPrix={state.selectedGrandPrix} 
+                />
               </div>
               <div
                 style={{
