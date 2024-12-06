@@ -17,8 +17,9 @@ import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMulti
 import CustomBarChart from "@/components/CustomBarChart";
 import CustomLineChart from "@/components/CustomLineChart";
 import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
-import { getDriverLapTimes } from "@/utils/frontend/fastestLapsPage/requests";
+import { getDriverLapTimes, getGrandPrix } from "@/utils/frontend/fastestLapsPage/requests";
 import { getDrivers } from "@/utils/frontend/driverPage/requests";
+import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
 
 export type ConstructorResult = {
   year: number;
@@ -31,7 +32,7 @@ interface ReducerState {
   selectableDrivers: { key: string, value: string }[],
   selectedDrivers: string[],
   allDrivers: { driver: string, constructor: string }[],
-  selectableGrandPrixs: { key: string, value: string }[],
+  selectableGrandPrix: { key: string, value: string }[],
   selectedGrandPrix: string,
   loading: boolean,
 }
@@ -39,6 +40,11 @@ interface ReducerState {
 const fetchDrivers = async (years: [number, number]) => {
   return (await getDrivers(years[0], years[1]))
     .map((constructor: any) => ({ key: constructor.id, value: labelizeKey(constructor.id) }));
+}
+
+const fetchGrandPrix = async (years: [number, number]) => {
+  return (await getGrandPrix(years[0], years[1]))
+    .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }));
 }
 
 const fetchLapTimes = async (
@@ -62,7 +68,7 @@ const fetchLapTimes = async (
     data: {}
   });
 
-  return {  
+  return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
     uniqueDrivers: Object.keys(encountered).map((driver: string) => ({ driver, constructor: encountered[driver].constructor_id })),
   };
@@ -82,8 +88,17 @@ const stateWithSelectableDrivers = async (state: ReducerState) => {
   };
 }
 
+const stateWithSelectableGrandPrix = async (state: ReducerState) => {
+  const selectableGrandPrix = await fetchGrandPrix(state.years);
+  console.log("selectable grand prix", selectableGrandPrix);
+  return {
+    ...state,
+    selectableGrandPrix
+  };
+}
+
 const stateWithAll = async (state: ReducerState) => {
-  return await stateWithSelectableDrivers(await stateWithDatapoints(state));
+  return await stateWithSelectableGrandPrix(await stateWithSelectableDrivers(await stateWithDatapoints(state)));
 }
 
 const initialState = {
@@ -92,8 +107,8 @@ const initialState = {
   selectableDrivers: [],
   selectedDrivers: [],
   allDrivers: [],
-  selectableGrandPrixs: [],
-  selectedGrandPrix: "spain",
+  selectableGrandPrix: [],
+  selectedGrandPrix: "",
   loading: false,
 } as ReducerState;
 
@@ -128,11 +143,16 @@ export default function FastestLapsPage() {
     dispatch({ type: "set", payload: withDatapoints });
   }, []);
 
+  const onSetSingle = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
+    const withAll = await stateWithAll({ ...currentState, selectedGrandPrix });
+    dispatch({ type: "set", payload: withAll });
+  }, []);
+
   const Tooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
     return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} />
   }
-  
+
   const TooltipHighlight = (props: any) => {
     return <CustomBarTooltipHighlight
       highlightedItem={props.highlightedItem}
@@ -142,8 +162,6 @@ export default function FastestLapsPage() {
       driverConstructors={state.driverConstructors || {}}
     />
   }
-
-  console.log("selectable drivers", state.selectableDrivers)
 
   return (
     <section className="bg-black">
@@ -158,6 +176,14 @@ export default function FastestLapsPage() {
             }}
           />
 
+          <GrandPrixDropDownFilterSingle
+            selectableGrandPrix={state.selectableGrandPrix}
+            selectedGrandPrix={state.selectedGrandPrix}
+            setGrandPrix={(grand_prix: string) => {
+              onSetSingle(state, grand_prix);
+            }}
+          />
+
           <DriverDropDownFilterMultiple
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
@@ -167,14 +193,6 @@ export default function FastestLapsPage() {
             years={state.years}
           />
 
-          {/* <GrandPrixDropDownFilterSingle
-            selectableGrandPrix={state.selectableGrandPrix}
-            selectedGrandPrix={state.selectedGrandPrix}
-            setSelectedGrandPrix={(grand_prix: string[]) => {
-              onSetSelected(state, grand_prix);
-            }}
-            years={state.years}
-          /> */}
         </div>
 
         {

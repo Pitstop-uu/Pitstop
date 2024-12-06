@@ -19,7 +19,7 @@ const Header = () => (
           <Link href="/drivers" className="navLink">
             Driver Standings
           </Link>
-          <Link href="/fastest-lap" className="navLink">
+          <Link href="/fastest-laps" className="navLink">
             Fastest Laps
           </Link>
         </div>

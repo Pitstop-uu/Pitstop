@@ -16,3 +16,9 @@ export const getDriverLapTimes = async (
     const responseJson = await response.json();
     return responseJson.data;
 }
+
+export const getGrandPrix = async (yearFrom: number, yearTo: number) => {
+  const response = await window.fetch(`/api/grand_prix?from=${yearFrom}&to=${yearTo}`);
+  const responseJson = await response.json();
+  return responseJson.data;
+}
