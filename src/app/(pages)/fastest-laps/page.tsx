@@ -12,11 +12,13 @@ import CustomBarTooltip from "@/components/CustomBarTooltip";
 import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 import "@/styles/page.css";
 import "@/styles/drivers.css";
-import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMultiple";
 import CustomBarChart from "@/components/CustomBarChart";
 import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
 import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers } from "@/utils/frontend/fastestLapsPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
+import DriverDropDownSelector from "@/components/DriverDropDownSelector";
+import { constructorColors } from "@/components/ui/ConstructorColors";
+import CustomLineChart from "@/components/CustomLineChart";
 
 export type ConstructorResult = {
   year: number;
@@ -35,6 +37,7 @@ interface ReducerState {
   selectableGrandPrix: { key: string, value: string }[],
   selectedGrandPrix: string,
   loading: boolean,
+  record: boolean,
 }
 
 const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
@@ -90,7 +93,7 @@ const fetchLapTimes = async (
 };
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueDrivers,driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
+  const { data, uniqueDrivers, driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
   return { ...state, datapoints: data, allDrivers: uniqueDrivers, driverConstructors: driverConstructorMap };
 }
 
@@ -130,6 +133,7 @@ const initialState = {
   selectableGrandPrix: [],
   selectedGrandPrix: "",
   loading: false,
+  record: true,
 } as ReducerState;
 
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
@@ -205,13 +209,13 @@ export default function FastestLapsPage() {
             }}
           />
 
-          <DriverDropDownFilterMultiple
+          <DriverDropDownSelector
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
+            record={state.selectedDrivers}
             setSelectedDrivers={(drivers: string[]) => {
               onSetSelected(state, drivers);
             }}
-            years={state.years}
           />
 
         </div>
@@ -220,15 +224,50 @@ export default function FastestLapsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomBarChart 
-                  datapoints={state.datapoints} 
-                  allDrivers={state.allDrivers} 
-                  CustomTooltip={Tooltip} 
-                  CustomTooltipHighlight={TooltipHighlight} 
-                  years={state.years} 
-                  displayPoints={false} 
-                  selectedGrandPrix={state.selectedGrandPrix} 
-                />
+                {state.record
+                  ? <CustomLineChart
+                    datapoints={state.datapoints}
+                    series={state.allDrivers.map((driver: any) => {
+
+                      const constructorColor = String(driver.constructor) in constructorColors
+                        ? constructorColors[driver.constructor as keyof typeof constructorColors]
+                        : '#888';
+
+                      return {
+                        dataKey: driver.driver,
+                        label: labelizeKey(String(driver.driver)),
+                        color: constructorColor,
+                        curve: 'linear',
+                        showMark: false,
+                        highlightScope: { highlight: 'item', fade: 'global' },
+                        connectNulls: true,
+                      };
+                    })}
+                    CustomTooltip={Tooltip}
+                    CustomTooltipHighlight={TooltipHighlight}
+                    margin={{
+                      bottom: state.years[0] === state.years[1] ? 80 : 30,
+                      left: 100,
+                      right: 100,
+                    }}
+                    bottomAxis={{
+                      tickLabelStyle: {
+                        angle: state.years[0] === state.years[1] ? 35 : 0,
+                        textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                      }
+                    }}
+                  />
+                  : <CustomBarChart
+                    datapoints={state.datapoints}
+                    allDrivers={state.allDrivers}
+                    CustomTooltip={Tooltip}
+                    CustomTooltipHighlight={TooltipHighlight}
+                    years={state.years}
+                    displayPoints={false}
+                    selectedGrandPrix={state.selectedGrandPrix}
+                  />
+                }
+
               </div>
               <div
                 style={{
