@@ -34,3 +34,24 @@ export const getGrandPrixDrivers = async (
   const responseJson = await response.json();
   return responseJson.data;
 }
+
+export const getRecordLapTimes = async (
+  yearFrom: number,
+  yearTo: number,
+  grandPrixId: string
+) => {
+  const requestBody: { [key: string]: any } = {
+    from: yearFrom,
+    to: yearTo,
+    grand_prix_id: grandPrixId
+  }
+  const response = await window.fetch(
+    `/api/grand_prix/${grandPrixId}/getFastestLaps`,
+    {
+      method: 'POST',
+      body: JSON.stringify(requestBody)
+    }
+  )
+  const responseJson = await response.json();
+  return responseJson.data;
+}

@@ -6,4 +6,3 @@ export const parseDriverLapTimes = (driverLapTimes: any) => {
         value: record.fastest_lap_time_millis
     }))
 }
-
