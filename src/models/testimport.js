@@ -2,7 +2,7 @@ const fs = require('fs');
 const brain = require('brain.js');
 
 
-const modelData = fs.readFileSync('constructor_years_model.json', 'utf8');
+const modelData = fs.readFileSync('constructor_years_model2.json', 'utf8');
 const loadedModel = JSON.parse(modelData);
 
 

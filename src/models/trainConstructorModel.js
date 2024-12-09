@@ -11,6 +11,15 @@ const trainingData = trainingDataConstructors
           year: data.input.year / maxYear,
           mercedes: data.input.mercedes,
           redbull: data.input.redbull,
+          mclaren: data.input.mclaren,
+          alpine: data.input.alpine,
+          haas: data.input.haas,
+          RB: data.input.RB,
+          kicksauber: data.input.kicksauber,
+          ferrari: data.input.ferrari,
+          williams: data.input.williams,
+          astonmartin: data.input.astonmartin,
+
           points: data.input.points / maxPoints,
         },
         output: {
@@ -23,7 +32,7 @@ const trainingData = trainingDataConstructors
     hiddenLayers: [10, 10], 
     activation: 'relu', 
   });
-
+console.log(normalizedTrainingData)
  
   
   // Train the network
