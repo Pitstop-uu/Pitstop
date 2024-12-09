@@ -16,7 +16,6 @@ import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMulti
 import CustomBarChart from "@/components/CustomBarChart";
 import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
 import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers } from "@/utils/frontend/fastestLapsPage/requests";
-import { getDrivers } from "@/utils/frontend/driverPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
 
 export type ConstructorResult = {
