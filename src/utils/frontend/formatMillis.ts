@@ -6,14 +6,14 @@ const formatMillis = (millis: number) => {
     const result = seconds < 10
         ? milliseconds < 100
             ? milliseconds < 10
-                ? `0${minutes}:0${seconds}:00${milliseconds}`
-                : `0${minutes}:0${seconds}:0${milliseconds}`
-            : `0${minutes}:0${seconds}:${milliseconds}`
+                ? `${minutes}:0${seconds}:00${milliseconds}`
+                : `${minutes}:0${seconds}:0${milliseconds}`
+            : `${minutes}:0${seconds}:${milliseconds}`
         : milliseconds < 100
             ? milliseconds < 10
-                ? `0${minutes}:${seconds}:00${milliseconds}`
-                : `0${minutes}:${seconds}:0${milliseconds}`
-            : `0${minutes}:${seconds}:${milliseconds}`
+                ? `${minutes}:${seconds}:00${milliseconds}`
+                : `${minutes}:${seconds}:0${milliseconds}`
+            : `${minutes}:${seconds}:${milliseconds}`
     return result
 };
 

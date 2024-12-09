@@ -16,12 +16,11 @@ import labelizeKey from "@/utils/frontend/labelizeKey";
 interface DriverDropDownSelectorProps {
     selectableDrivers: { key: string, value: string }[];
     selectedDrivers: string[];
-    record: string[];
     setSelectedDrivers: (selected: string[]) => void;
 }
 
-export default function DriverDropDownSelector({ selectableDrivers, record, selectedDrivers, setSelectedDrivers }: DriverDropDownSelectorProps) {
-    const [mode, setMode] = useState<"record" | "specify">("record");
+export default function DriverDropDownSelector({ selectableDrivers, selectedDrivers, setSelectedDrivers }: DriverDropDownSelectorProps) {
+    const [mode, setMode] = useState<"record" | "specify">("specify");
 
     const limitDriverNames = (driverList: string[]): string => {
         let result = "";
@@ -39,11 +38,14 @@ export default function DriverDropDownSelector({ selectableDrivers, record, sele
     }
 
     const toggleMode = () => {
-        if (mode === "record") {
-            setSelectedDrivers(record);
-        }
+        setMode((prevMode) => {
 
-        setMode((prevMode) => (prevMode === "record" ? "specify" : "record"));
+            prevMode === "specify"
+                ? setSelectedDrivers(["record"])
+                : setSelectedDrivers([]);
+
+            return (prevMode === "record" ? "specify" : "record");
+        });
     };
 
     const noneSelected = selectedDrivers.length === 0;
@@ -74,7 +76,7 @@ export default function DriverDropDownSelector({ selectableDrivers, record, sele
                 </DropdownMenuLabel>
                 {mode === "record"
                     ? <></>
-                    : <div className="text-left pt-1 px-2 w-96 max-h-60 overflow-y-auto grid grid-cols-2 gap-4 bg-[#252525] text-white p-2">
+                    : <div className="text-left w-96 max-h-60 overflow-y-auto grid bg-[#252525] text-white p-2">
                         <DropdownMenuSeparator />
                         {list.map(({ key, value }) => (
                             <DropdownMenuCheckboxItem

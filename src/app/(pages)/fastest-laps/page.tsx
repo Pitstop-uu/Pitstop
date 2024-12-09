@@ -13,8 +13,8 @@ import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 import "@/styles/page.css";
 import "@/styles/drivers.css";
 import CustomBarChart from "@/components/CustomBarChart";
-import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
-import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers } from "@/utils/frontend/fastestLapsPage/requests";
+import { parseDriverLapTimes, parseRecordLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
+import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers, getRecordLapTimes } from "@/utils/frontend/fastestLapsPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
 import DriverDropDownSelector from "@/components/DriverDropDownSelector";
 import { constructorColors } from "@/components/ui/ConstructorColors";
@@ -53,12 +53,28 @@ const fetchGrandPrix = async (years: [number, number]) => {
     .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }));
 }
 
+const fetchRecordLapTimes = async (
+  years: [number, number],
+  grand_prix_id: string
+) => {
+  const datapoints = parseDriverLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id));
+
+  return datapoints.map((point: any) => ({
+    key: point.key,
+    record: point.value
+  }));
+}
+
 const fetchLapTimes = async (
   years: [number, number],
   drivers: string[],
   grand_prix_id: string
 ) => {
-  const datapoints = parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
+  const datapoints = drivers[0] === "record"
+    ? parseRecordLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id))
+    : parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
+
+  console.log("drivers", drivers)
 
   const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
@@ -133,7 +149,7 @@ const initialState = {
   selectableGrandPrix: [],
   selectedGrandPrix: "",
   loading: false,
-  record: true,
+  record: false,
 } as ReducerState;
 
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
@@ -212,7 +228,6 @@ export default function FastestLapsPage() {
           <DriverDropDownSelector
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
-            record={state.selectedDrivers}
             setSelectedDrivers={(drivers: string[]) => {
               onSetSelected(state, drivers);
             }}
@@ -224,19 +239,15 @@ export default function FastestLapsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                {state.record
+                {state.selectedDrivers[0] === "record"
                   ? <CustomLineChart
                     datapoints={state.datapoints}
                     series={state.allDrivers.map((driver: any) => {
 
-                      const constructorColor = String(driver.constructor) in constructorColors
-                        ? constructorColors[driver.constructor as keyof typeof constructorColors]
-                        : '#888';
 
                       return {
                         dataKey: driver.driver,
                         label: labelizeKey(String(driver.driver)),
-                        color: constructorColor,
                         curve: 'linear',
                         showMark: false,
                         highlightScope: { highlight: 'item', fade: 'global' },
@@ -246,14 +257,14 @@ export default function FastestLapsPage() {
                     CustomTooltip={Tooltip}
                     CustomTooltipHighlight={TooltipHighlight}
                     margin={{
-                      bottom: state.years[0] === state.years[1] ? 80 : 30,
+                      bottom: state.selectedDrivers[0] === "record" ? 80 : 30,
                       left: 100,
                       right: 100,
                     }}
                     bottomAxis={{
                       tickLabelStyle: {
-                        angle: state.years[0] === state.years[1] ? 35 : 0,
-                        textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                        angle: state.selectedDrivers[0] === "record" ? 35 : 0,
+                        textAnchor: state.selectedDrivers[0] === "record" ? 'start' : 'middle',
                       }
                     }}
                   />
