@@ -65,26 +65,26 @@ const fetchStandings = async (
       data: {},
     }
   );
-  
-/*   //add predictions
-  if (showPredictions && predictedPoints && years[0] !== years[1]) {
-    const predictionKey = "2025"; // Key for the predicted year
-  
-    // If no specific constructors are selected, use all constructors with predictions
-    const filteredPredictions = (constructors.length > 0 ? constructors : Object.keys(predictedPoints))
-      .reduce((acc: any, constructor_id) => {
-        if (predictedPoints[constructor_id] !== undefined) {
-          acc[constructor_id] = predictedPoints[constructor_id];
-        }
-        return acc;
-      }, {});
-  
-    // Add predictions to the data
-    if (Object.keys(filteredPredictions).length > 0) {
-      data[predictionKey] = { ...filteredPredictions, key: predictionKey };
-      uniqueConstructors.push(...Object.keys(filteredPredictions));
-    }
-  } */
+
+  /*   //add predictions
+    if (showPredictions && predictedPoints && years[0] !== years[1]) {
+      const predictionKey = "2025"; // Key for the predicted year
+    
+      // If no specific constructors are selected, use all constructors with predictions
+      const filteredPredictions = (constructors.length > 0 ? constructors : Object.keys(predictedPoints))
+        .reduce((acc: any, constructor_id) => {
+          if (predictedPoints[constructor_id] !== undefined) {
+            acc[constructor_id] = predictedPoints[constructor_id];
+          }
+          return acc;
+        }, {});
+    
+      // Add predictions to the data
+      if (Object.keys(filteredPredictions).length > 0) {
+        data[predictionKey] = { ...filteredPredictions, key: predictionKey };
+        uniqueConstructors.push(...Object.keys(filteredPredictions));
+      }
+    } */
 
   return {
     data: Object.keys(data).map((key: string) => ({ ...data[key], key })),
@@ -97,7 +97,7 @@ const fetchLatestId = async (constructors: string[]) => {
 }
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors,state.includePredictions);
+  const { data, uniqueConstructors } = await fetchStandings(state.years, state.selectedConstructors, state.includePredictions);
   return { ...state, datapoints: data, allConstructors: uniqueConstructors };
 }
 
@@ -105,7 +105,7 @@ const stateWithSelectableConstructors = async (state: ReducerState) => {
   const selectableConstructors = await fetchConstructors(state.years);
   const selectableConstructorIds = selectableConstructors.map((obj: any) => obj.key);
   const latestConstructorIdMap = await fetchLatestId(selectableConstructorIds);
-  return { 
+  return {
     ...state,
     selectableConstructors,
     latestConstructorIdMap
@@ -172,7 +172,7 @@ export default function ConstructorsPage() {
     console.log("withAll", withAll)
     dispatch({ type: "set", payload: withAll });
   }
-  
+
   return (
     <section>
       <div className="container-constructors container-page" style={{ color: "white" }}>
@@ -200,11 +200,15 @@ export default function ConstructorsPage() {
               control={
                 <Checkbox
                   className="text-white"
-                  onChange={(e) => { handleChange(state) } }
-                  disabled= {state.years[0] === state.years[1] || state.years[1] !== 2024}
+                  onChange={() => { handleChange(state); }}
+                  disabled={state.years[0] === state.years[1] || state.years[1] !== 2024}
                 />
-              } 
-              label="SHOW PREDICTIONS"
+              }
+              label={
+                state.years[0] !== state.years[1] && state.years[1] === 2024
+                  ? "SHOW PREDICTIONS"
+                  : ""
+              }
             />
           </div>
         </div>
@@ -212,20 +216,20 @@ export default function ConstructorsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomLineChart 
+                <CustomLineChart
                   datapoints={state.datapoints}
                   series={state.allConstructors.map((constructor: any) => {
                     const constructorColor = constructor in constructorColors
-                        ? constructorColors[constructor as keyof typeof constructorColors]
-                        : '#888';
-    
+                      ? constructorColors[constructor as keyof typeof constructorColors]
+                      : '#888';
+
                     return {
-                        dataKey: constructor,
-                        label: labelizeKey(constructor),
-                        color: constructorColor,
-                        curve: 'linear',
-                        showMark: false,
-                        highlightScope: { highlight: 'item', fade: 'global' },
+                      dataKey: constructor,
+                      label: labelizeKey(constructor),
+                      color: constructorColor,
+                      curve: 'linear',
+                      showMark: false,
+                      highlightScope: { highlight: 'item', fade: 'global' },
                     };
                   })}
                   CustomTooltip={Tooltip}
@@ -234,11 +238,11 @@ export default function ConstructorsPage() {
                     bottom: state.years[0] === state.years[1] ? 80 : 30,
                     left: 100,
                     right: 100,
-                  }} 
+                  }}
                   bottomAxis={{
                     tickLabelStyle: {
-                        angle: state.years[0] === state.years[1] ? 35 : 0,
-                        textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
+                      angle: state.years[0] === state.years[1] ? 35 : 0,
+                      textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                     }
                   }}
                 />

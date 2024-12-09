@@ -2,6 +2,7 @@ import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { axisClasses, chartsGridClasses, BarChart, lineElementClasses, markElementClasses, HighlightItemData } from "@mui/x-charts";
 import { constructorColors } from "./ui/ConstructorColors";
+import formatMillis from "@/utils/frontend/formatMillis";
 
 interface CustomBarChartProps {
     datapoints: any,
@@ -9,6 +10,8 @@ interface CustomBarChartProps {
     CustomTooltipHighlight: any,
     allDrivers: any,
     years: any,
+    displayPoints: boolean,
+    selectedGrandPrix?: string,
 };
 
 export default function CustomBarChart({
@@ -17,6 +20,8 @@ export default function CustomBarChart({
     CustomTooltipHighlight,
     allDrivers,
     years,
+    displayPoints,
+    selectedGrandPrix,
 }: CustomBarChartProps) {
 
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
@@ -32,6 +37,15 @@ export default function CustomBarChart({
             <CustomTooltipHighlight highlightedItem={highlightedItem} axisValue={axisValue} />
         );
     };
+
+
+    const yAxisMin = (Math.floor(Math.min(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) - 500) / 500) * 500; 
+    
+    const yAxisMax = Math.ceil(Math.max(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500;  
 
     return (
 
@@ -50,7 +64,17 @@ export default function CustomBarChart({
                     scaleType: "band",
                 }
             ]}
-            yAxis={[allDrivers.length ? { min: 0 } : { min: 0, max: 600 }]}
+            yAxis={
+                displayPoints
+                    ? [allDrivers.length
+                        ? { min: 0 }
+                        : { min: 0, max: 600 }
+                    ]
+                    : [allDrivers.length
+                        ? { min:yAxisMin, max: yAxisMax, valueFormatter: (key) => `${formatMillis(key)}` }
+                        : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
+                    ]
+            }
             axisHighlight={{ x: 'band' }}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
             height={480}
@@ -61,9 +85,11 @@ export default function CustomBarChart({
                 legend: {
                     hidden: true,
                 },
-                noDataOverlay: {
-                    message: 'No drivers to display',
-                },
+                noDataOverlay: displayPoints
+                ? { message: 'No drivers to display' }
+                : selectedGrandPrix
+                    ? { message: 'No drivers to display' }
+                    : { message: 'No Grand Prix to display' }
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

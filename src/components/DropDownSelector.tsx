@@ -29,15 +29,16 @@ export default function DropDownSelector({ interval, setInterval }: DropDownSele
     setMode((prevMode) => (prevMode === "range" ? "single" : "range"));
   };
 
+  const displayText = 
+    mode === "range"
+      ? `TIMEFRAME: ${interval[0]}-${interval[1]}`
+      : `YEAR: ${interval[1]}`;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
       <Button variant="outline" className="flex justify-between items-center hover:bg-[#252525] min-w-[350px] text-white">
-        <div className="text-left">
-          {mode === "range"
-            ? `TIMEFRAME: ${interval[0]}-${interval[1]}`
-            : `YEAR: ${interval[0]}`}
-        </div>
+        <div className="text-left">{displayText}</div>
         <span className="rotate-90 mr-2">&gt;</span>
       </Button>
       </DropdownMenuTrigger>
