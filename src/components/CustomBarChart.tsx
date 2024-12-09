@@ -39,9 +39,9 @@ export default function CustomBarChart({
     };
 
 
-    const yAxisMin = Math.floor(Math.min(
+    const yAxisMin = (Math.floor(Math.min(
         ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
-    ) / 500) * 500; 
+    ) - 500) / 500) * 500; 
     
     const yAxisMax = Math.ceil(Math.max(
         ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
