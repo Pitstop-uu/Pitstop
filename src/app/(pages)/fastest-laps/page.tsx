@@ -39,8 +39,11 @@ interface ReducerState {
 }
 
 const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
-  return (await getGrandPrixDrivers(years[0], years[1], grandPrixId))
-    .map((driver: any) => ({ key: driver.driver_id, value: labelizeKey(driver.driver_id) }));
+  const drivers = await getGrandPrixDrivers(years[0], years[1], grandPrixId);
+
+  return drivers
+    .map((driver: any) => ({ key: driver.driver_id, value: labelizeKey(driver.driver_id) }))
+    .sort((a: any, b: any) => a.value.localeCompare(b.value));
 }
 
 const fetchGrandPrix = async (years: [number, number]) => {

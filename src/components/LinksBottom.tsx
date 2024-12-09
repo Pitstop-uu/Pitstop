@@ -12,7 +12,7 @@ const LinksBottom = () => (
       <Link href="/drivers" className="link-button">
         <span>Driver Standings</span> <span className="icon">&gt;</span>
       </Link>
-      <Link href="/fastest-lap" className="link-button">
+      <Link href="/fastest-laps" className="link-button">
         <span>Fastest Laps</span> <span className="icon">&gt;</span>
       </Link>
     </div>
