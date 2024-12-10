@@ -245,6 +245,7 @@ export default function ConstructorsPage() {
                       textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                     }
                   }}
+                  displayPoints={true}
                 />
               </div>
               <div

@@ -223,6 +223,7 @@ export default function DriversPage() {
                         textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                     }
                   }}
+                  displayPoints={true}
                 />
                   : <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} displayPoints={true} />
                 }

@@ -267,6 +267,7 @@ export default function FastestLapsPage() {
                         textAnchor: state.selectedDrivers[0] === "record" ? 'start' : 'middle',
                       }
                     }}
+                    displayPoints={false}
                   />
                   : <CustomBarChart
                     datapoints={state.datapoints}

@@ -1,6 +1,7 @@
 import * as React from "react";
 import labelizeKey from "@/utils/frontend/labelizeKey";
 import { axisClasses, chartsGridClasses, HighlightItemData, LineChart, lineElementClasses, markElementClasses } from "@mui/x-charts";
+import formatMillis from "@/utils/frontend/formatMillis";
 
 interface CustomLineChartProps {
     datapoints: any,
@@ -9,6 +10,7 @@ interface CustomLineChartProps {
     CustomTooltip: any,
     CustomTooltipHighlight: any,
     margin: any,
+    displayPoints: boolean,
 };
 
 export default function CustomLineChart({ 
@@ -18,6 +20,7 @@ export default function CustomLineChart({
     CustomTooltip,
     CustomTooltipHighlight,
     margin,
+    displayPoints,
 }: CustomLineChartProps) {
     const [highlightedItem, setHighlightedItem] = React.useState<HighlightItemData | null>(null);
 
@@ -33,6 +36,14 @@ export default function CustomLineChart({
         );
       };
 
+      const yAxisMin = (Math.floor(Math.min(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) - 500) / 500) * 500; 
+    
+    const yAxisMax = Math.ceil(Math.max(
+        ...datapoints.flatMap((point: any) => Object.values(point).filter(value => typeof value === 'number'))
+    ) / 500) * 500; 
+
     return (
         <LineChart
             dataset={datapoints}
@@ -44,7 +55,17 @@ export default function CustomLineChart({
                     `${labelizeKey(String(key))}`,
             }]}
             bottomAxis={bottomAxis}
-            yAxis={[{ min: 0 }]}
+            yAxis={
+                displayPoints
+                    ? [datapoints.length
+                        ? { min: 0 }
+                        : { min: 0, max: 600 }
+                    ]
+                    : [datapoints.length
+                        ? { min:yAxisMin, max: yAxisMax, valueFormatter: (key) => `${formatMillis(key)}` }
+                        : { min: 0, max: 90000, valueFormatter: (key) => `${formatMillis(key)}` }
+                    ]
+            }
             series={series}
             tooltip={{ trigger: 'axis', axisContent: CustomTooltipContent }}
             axisHighlight={{ x: 'line' }}
