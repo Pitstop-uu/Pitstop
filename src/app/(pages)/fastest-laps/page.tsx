@@ -109,15 +109,10 @@ const stateWithSelectableDrivers = async (state: ReducerState) => {
 
 const stateWithSelectableGrandPrix = async (state: ReducerState) => {
   const selectableGrandPrix = await fetchGrandPrix(state.years);
-  console.log("selectable grand prix", selectableGrandPrix);
   return {
     ...state,
     selectableGrandPrix
   };
-}
-
-const stateWithAll = async (state: ReducerState) => {
-  return await stateWithSelectableGrandPrix(await stateWithSelectableDrivers(await stateWithDatapoints(state)));
 }
 
 const initialState = {
@@ -135,7 +130,11 @@ const initialState = {
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
   const { type } = action;
   switch (type) {
-    case "set":
+    case "setTimeFrame":
+      return { ...initialState, years: action.payload.years, selectableGrandPrix: action.payload.selectableGrandPrix }
+    case "setGrandPrix": 
+      return { ...initialState, years: state.years, selectableGrandPrix: state.selectableGrandPrix, selectedGrandPrix: action.payload.selectedGrandPrix, selectableDrivers: action.payload.selectableDrivers }
+    case "setAll":
       return { ...state, ...action.payload };
     default:
       return state;
@@ -147,25 +146,25 @@ export default function FastestLapsPage() {
 
   useEffect(() => {
     const setInitialState = async () => {
-      const initState = await stateWithAll(initialState);
-      dispatch({ type: "set", payload: initState });
+      const withSelectableGrandPrix = await stateWithSelectableGrandPrix(initialState);
+      dispatch({ type: "setTimeFrame", payload: withSelectableGrandPrix });
     }
     setInitialState();
   }, []);
 
-  const onSetInterval = useCallback(async (currentState: ReducerState, years: [number, number]) => {
-    const withAll = await stateWithAll({ ...currentState, years, selectedDrivers: [] });
-    dispatch({ type: "set", payload: withAll });
+  const onSetTimeFrame = useCallback(async (currentState: ReducerState, years: [number, number]) => {
+    const withSelectableGrandPrix = await stateWithSelectableGrandPrix({ ...currentState, years, selectedGrandPrix: "", selectedDrivers: []})
+    dispatch({ type: "setTimeFrame", payload: withSelectableGrandPrix });
   }, []);
 
-  const onSetSelected = useCallback(async (currentState: ReducerState, drivers: string[]) => {
+  const onSetGrandPrix = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
+    const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix, selectedDrivers: [] })
+    dispatch({ type: "setGrandPrix", payload: withSelectableDrivers });
+  }, []);
+
+  const onDrivers = useCallback(async (currentState: ReducerState, drivers: string[]) => {
     const withDatapoints = await stateWithDatapoints({ ...currentState, selectedDrivers: drivers });
-    dispatch({ type: "set", payload: withDatapoints });
-  }, []);
-
-  const onSetSingle = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
-    const withAll = await stateWithAll({ ...currentState, selectedGrandPrix });
-    dispatch({ type: "set", payload: withAll });
+    dispatch({ type: "setAll", payload: withDatapoints });
   }, []);
 
   const Tooltip = (props: any) => {
@@ -193,7 +192,7 @@ export default function FastestLapsPage() {
           <DropDownSelector
             interval={state.years}
             setInterval={(interval: number[]) => {
-              onSetInterval(state, [interval[0], interval[1]]);
+              onSetTimeFrame(state, [interval[0], interval[1]]);
             }}
           />
 
@@ -201,7 +200,7 @@ export default function FastestLapsPage() {
             selectableGrandPrix={state.selectableGrandPrix}
             selectedGrandPrix={state.selectedGrandPrix}
             setGrandPrix={(grand_prix: string) => {
-              onSetSingle(state, grand_prix);
+              onSetGrandPrix(state, grand_prix);
             }}
           />
 
@@ -209,7 +208,7 @@ export default function FastestLapsPage() {
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
             setSelectedDrivers={(drivers: string[]) => {
-              onSetSelected(state, drivers);
+              onDrivers(state, drivers);
             }}
             years={state.years}
           />
