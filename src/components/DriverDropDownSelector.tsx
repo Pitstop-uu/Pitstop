@@ -20,6 +20,7 @@ interface DriverDropDownSelectorProps {
 }
 
 export default function DriverDropDownSelector({ selectableDrivers, selectedDrivers, setSelectedDrivers }: DriverDropDownSelectorProps) {
+    console.log("selectable drivers", selectableDrivers);
     const [mode, setMode] = useState<"record" | "specify">("specify");
 
     const limitDriverNames = (driverList: string[]): string => {
@@ -71,30 +72,35 @@ export default function DriverDropDownSelector({ selectableDrivers, selectedDriv
             </DropdownMenuTrigger>
             <DropdownMenuContent className="overflow-y-auto bg-[#252525] text-white w-96">
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel onClick={toggleMode} className={mode === "record" ? "cursor-pointer text-white hover:text-[#008080]" : "cursor-pointer text-white hover:text-[#008080] border-b pb-4"}>
+                <DropdownMenuLabel onClick={toggleMode} className={mode === "record" ? "cursor-pointer text-white hover:text-[#008080] pb-4" : "cursor-pointer text-white hover:text-[#008080] border-b pb-4"}>
                     SELECTION METHOD: {mode === "record" ? "RECORDS" : "SPECIFIC DRIVERS"}
                 </DropdownMenuLabel>
                 {mode === "record"
                     ? <></>
                     : <div className="text-left w-96 max-h-60 overflow-y-auto grid bg-[#252525] text-white p-2">
                         <DropdownMenuSeparator />
-                        {list.map(({ key, value }) => (
-                            <DropdownMenuCheckboxItem
-                                key={key}
-                                checked={selectedDrivers.find(item => item === key) !== undefined}
-                                onCheckedChange={(checked) => {
-                                    const newSelected = checked
-                                        ? selectedDrivers.concat(key)
-                                        : selectedDrivers.filter(item => item !== key)
-                                    setSelectedDrivers(newSelected);
-                                }}
-                                onSelect={(event) => {
-                                    event.preventDefault()
-                                }}
-                            >
-                                {value}
-                            </DropdownMenuCheckboxItem>
-                        ))}
+                        {
+                            selectableDrivers.length
+                                ? (list.map(({ key, value }) => (
+                                    <DropdownMenuCheckboxItem
+                                        key={key}
+                                        checked={selectedDrivers.find(item => item === key) !== undefined}
+                                        onCheckedChange={(checked) => {
+                                            const newSelected = checked
+                                                ? selectedDrivers.concat(key)
+                                                : selectedDrivers.filter(item => item !== key)
+                                            setSelectedDrivers(newSelected);
+                                        }}
+                                        onSelect={(event) => {
+                                            event.preventDefault()
+                                        }}
+                                    >
+                                        {value}
+                                    </DropdownMenuCheckboxItem>
+                                ))
+                                )
+                                : <p className="text-center pb-2" >No Grand Prix selected</p>
+                        }
                     </div>
                 }
             </DropdownMenuContent>

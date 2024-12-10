@@ -246,6 +246,7 @@ export default function ConstructorsPage() {
                     }
                   }}
                   displayPoints={true}
+                  emptyXAxis={[]}
                 />
               </div>
               <div

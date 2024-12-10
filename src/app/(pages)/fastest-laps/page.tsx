@@ -170,7 +170,7 @@ export default function FastestLapsPage() {
         ...initialState,
         years: withSelectableGrandPrix.years,
         selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
-        selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectableDrivers : []
+        selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectedDrivers : []
       }});
     }
     setInitialState();
@@ -187,11 +187,17 @@ export default function FastestLapsPage() {
   }, []);
 
   const onSetGrandPrix = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
+    const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix })
     if (currentState.selectedDrivers[0] === "record") {
       const withDatapoints = await stateWithDatapoints({ ...currentState, selectedGrandPrix });
-      dispatch({ type: "setAll", payload: withDatapoints });
+      dispatch({ type: "setAll", payload: {
+        ...withDatapoints,
+        years: withSelectableDrivers.years,
+        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+        selectableDrivers: withSelectableDrivers.selectableDrivers
+      } });
     } else {
-      const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix })
       dispatch({ type: "setAll", payload: {
         ...initialState,
         years: withSelectableDrivers.years,
@@ -282,17 +288,19 @@ export default function FastestLapsPage() {
                     CustomTooltip={LineTooltip}
                     CustomTooltipHighlight={TooltipHighlight}
                     margin={{
-                      bottom: state.selectedDrivers[0] === "record" ? 80 : 30,
+                      bottom: 30,
                       left: 100,
                       right: 100,
                     }}
                     bottomAxis={{
                       tickLabelStyle: {
-                        angle: state.selectedDrivers[0] === "record" ? 35 : 0,
-                        textAnchor: state.selectedDrivers[0] === "record" ? 'start' : 'middle',
+                        angle: 0,
+                        textAnchor: 'middle',
                       }
                     }}
                     displayPoints={false}
+                    selectedGrandPrix={state.selectedGrandPrix}
+                    emptyXAxis={Array.from({ length: state.years[1] - state.years[0] + 1 }, (v, i) => i + state.years[0])}
                   />
                   : <CustomBarChart
                     datapoints={state.datapoints}

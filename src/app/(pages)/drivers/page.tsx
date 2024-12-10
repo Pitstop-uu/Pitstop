@@ -224,6 +224,7 @@ export default function DriversPage() {
                     }
                   }}
                   displayPoints={true}
+                  emptyXAxis={[]}
                 />
                   : <CustomBarChart datapoints={state.datapoints} allDrivers={state.allDrivers} CustomTooltip={Tooltip} CustomTooltipHighlight={TooltipHighlight} years={state.years} displayPoints={true} />
                 }
