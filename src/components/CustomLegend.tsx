@@ -61,7 +61,9 @@ export default function CustomLegend({ constructors, latestConstructorIdMap, all
                             width: `${24 * scaleFactor}px`,
                             height: `${3 * scaleFactor}px`,
                             backgroundColor: allDrivers 
-                            ? `${String(driver.constructor) in constructorColors
+                            ? allDrivers[0].driver === "record"
+                                ? '#008080'
+                                :`${String(driver.constructor) in constructorColors
                                     ? constructorColors[driver.constructor as keyof typeof constructorColors]
                                     : '#888'
                                 }`

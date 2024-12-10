@@ -50,8 +50,11 @@ const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
 }
 
 const fetchGrandPrix = async (years: [number, number]) => {
-  return (await getGrandPrix(years[0], years[1]))
-    .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }));
+  const grandPrix = (await getGrandPrix(years[0], years[1]))
+
+  return grandPrix
+    .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }))
+    .sort((a: any, b: any) => a.value.localeCompare(b.value));
 }
 
 const fetchRecordLapTimes = async (

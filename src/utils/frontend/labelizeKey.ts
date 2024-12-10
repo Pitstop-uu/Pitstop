@@ -28,6 +28,7 @@ const labelizeKey = (key: string): string => {
         'brm': 'BRM',
         'mcguire': 'McGuire',
         'hill': 'Embassy Hill',
+        'record': 'Fastest Lap Record'
     };
 
     if (exceptions[key]) {

@@ -30,7 +30,7 @@ export default function CustomBarTooltip({ drivers, allDrivers, displayPoints }:
             <hr style={{ height: '1px', marginBottom: '2px' }} />
             {
                 Object.entries(rest)
-                    .sort(([, a], [, b]) => Number(a) - Number(b))
+                    .sort(displayPoints ? ([, a], [, b]) => Number(b) - Number(a) : ([, a], [, b]) => Number(a) - Number(b))
                     .map(([key, value], i) => {
 
                         const driver = allDrivers.find(({driver}: { driver: string, constructor: string }) => driver === key) || { driver: '', constructor: '' }
