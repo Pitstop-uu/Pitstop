@@ -80,4 +80,3 @@ function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2023) {
 const predictedPointsForNextYear = predictNextYear(currentPoints, net);
 
 console.log('Predicted Points for Next Year:', predictedPointsForNextYear);
-*/
