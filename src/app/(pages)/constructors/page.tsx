@@ -169,7 +169,6 @@ export default function ConstructorsPage() {
 
   const handleChange = async (currentState: ReducerState) => {
     const withAll = await stateWithAll( { ...currentState, includePredictions: !currentState.includePredictions });
-    console.log("withAll", withAll)
     dispatch({ type: "set", payload: withAll });
   }
 

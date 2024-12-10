@@ -17,7 +17,6 @@ import { parseDriverLapTimes, parseRecordLapTimes } from "@/utils/frontend/faste
 import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers, getRecordLapTimes } from "@/utils/frontend/fastestLapsPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
 import DriverDropDownSelector from "@/components/DriverDropDownSelector";
-import { constructorColors } from "@/components/ui/ConstructorColors";
 import CustomLineChart from "@/components/CustomLineChart";
 import CustomRecordTooltip from "@/components/CustomRecordTooltip";
 
@@ -55,18 +54,6 @@ const fetchGrandPrix = async (years: [number, number]) => {
   return grandPrix
     .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }))
     .sort((a: any, b: any) => a.value.localeCompare(b.value));
-}
-
-const fetchRecordLapTimes = async (
-  years: [number, number],
-  grand_prix_id: string
-) => {
-  const datapoints = parseDriverLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id));
-
-  return datapoints.map((point: any) => ({
-    key: point.key,
-    record: point.value
-  }));
 }
 
 const fetchLapTimes = async (

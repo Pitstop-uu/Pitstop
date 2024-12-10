@@ -41,9 +41,12 @@ export default function DriverDropDownSelector({ selectableDrivers, selectedDriv
     const toggleMode = () => {
         setMode((prevMode) => {
 
-            prevMode === "specify"
-                ? setSelectedDrivers(["record"])
-                : setSelectedDrivers([]);
+            if (prevMode === "specify") {
+                setSelectedDrivers(["record"]);
+            }
+            else {
+                setSelectedDrivers([]);
+            }
 
             return (prevMode === "record" ? "specify" : "record");
         });

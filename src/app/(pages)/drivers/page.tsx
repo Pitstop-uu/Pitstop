@@ -49,8 +49,6 @@ const fetchStandings = async (
     ? parseDriverRaceStandings(await getDriverRaceStandings(years[0], drivers))
     : parseDriverSeasonStandings(await getDriverSeasonStandings(years[0], years[1], drivers));
 
-  console.log("datapoints", datapoints)
-
   const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
     { key, driver_id, constructor_id, value }: any
@@ -161,8 +159,6 @@ export default function DriversPage() {
       displayPoints={true}
     />
   }
-
-  console.log("selectable drivers", state.selectableDrivers)
 
   return (
     <section className="bg-black">

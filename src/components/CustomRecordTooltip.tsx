@@ -1,7 +1,6 @@
 import * as React from "react"
 import Paper from "@mui/material/Paper";
 import labelizeKey from "@/utils/frontend/labelizeKey";
-import { constructorColors } from "./ui/ConstructorColors";
 import formatMillis from "@/utils/frontend/formatMillis";
 
 interface CustomRecordTooltipProps {
