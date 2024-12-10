@@ -57,7 +57,7 @@ export default function CustomTooltipHighlight({ highlightedItem, axisValue, dat
                         const isCurrentKey = entry.key === axisValue;
                         return (
                             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
-                                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isCurrentKey ? constructorColor : 'transparent', marginRight: 5, marginTop: 2, }} />
+                                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: (isCurrentKey ? (allDrivers[0].driver === "record" ? '#008080' : constructorColor) : 'transparent'), marginRight: 5, marginTop: 2, }} />
                                 {displayPoints
                                     ? `${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${entry.value} pts`
                                     : `${labelizeKey(entry.key)} (${labelizeKey(driverConstructors[driverName][entry.key])}): ${formatMillis(entry.value)}`

@@ -19,6 +19,7 @@ import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterS
 import DriverDropDownSelector from "@/components/DriverDropDownSelector";
 import { constructorColors } from "@/components/ui/ConstructorColors";
 import CustomLineChart from "@/components/CustomLineChart";
+import CustomRecordTooltip from "@/components/CustomRecordTooltip";
 
 export type ConstructorResult = {
   year: number;
@@ -74,8 +75,6 @@ const fetchLapTimes = async (
     ? parseRecordLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id))
     : parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
 
-  console.log("drivers", drivers)
-
   const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
     { key, driver_id, constructor_id, value }: any
@@ -128,7 +127,6 @@ const stateWithSelectableDrivers = async (state: ReducerState) => {
 
 const stateWithSelectableGrandPrix = async (state: ReducerState) => {
   const selectableGrandPrix = await fetchGrandPrix(state.years);
-  console.log("selectable grand prix", selectableGrandPrix);
   return {
     ...state,
     selectableGrandPrix
@@ -188,9 +186,14 @@ export default function FastestLapsPage() {
     dispatch({ type: "set", payload: withAll });
   }, []);
 
-  const Tooltip = (props: any) => {
+  const BarTooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
     return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} displayPoints={false} />
+  }
+
+  const LineTooltip = (props: any) => {
+    const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
+    return <CustomRecordTooltip drivers={data} allDrivers={state.allDrivers} driverConstructors={state.driverConstructors} />
   }
 
   const TooltipHighlight = (props: any) => {
@@ -249,12 +252,13 @@ export default function FastestLapsPage() {
                         dataKey: driver.driver,
                         label: labelizeKey(String(driver.driver)),
                         curve: 'linear',
+                        color: '#008080',
                         showMark: false,
                         highlightScope: { highlight: 'item', fade: 'global' },
                         connectNulls: true,
                       };
                     })}
-                    CustomTooltip={Tooltip}
+                    CustomTooltip={LineTooltip}
                     CustomTooltipHighlight={TooltipHighlight}
                     margin={{
                       bottom: state.selectedDrivers[0] === "record" ? 80 : 30,
@@ -272,7 +276,7 @@ export default function FastestLapsPage() {
                   : <CustomBarChart
                     datapoints={state.datapoints}
                     allDrivers={state.allDrivers}
-                    CustomTooltip={Tooltip}
+                    CustomTooltip={BarTooltip}
                     CustomTooltipHighlight={TooltipHighlight}
                     years={state.years}
                     displayPoints={false}
