@@ -162,7 +162,7 @@ export default function FastestLapsPage() {
     dispatch({ type: "setGrandPrix", payload: withSelectableDrivers });
   }, []);
 
-  const onDrivers = useCallback(async (currentState: ReducerState, drivers: string[]) => {
+  const onSetDrivers = useCallback(async (currentState: ReducerState, drivers: string[]) => {
     const withDatapoints = await stateWithDatapoints({ ...currentState, selectedDrivers: drivers });
     dispatch({ type: "setAll", payload: withDatapoints });
   }, []);
@@ -208,7 +208,7 @@ export default function FastestLapsPage() {
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
             setSelectedDrivers={(drivers: string[]) => {
-              onDrivers(state, drivers);
+              onSetDrivers(state, drivers);
             }}
             years={state.years}
           />
