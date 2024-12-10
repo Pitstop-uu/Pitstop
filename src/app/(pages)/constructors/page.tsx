@@ -169,7 +169,6 @@ export default function ConstructorsPage() {
 
   const handleChange = async (currentState: ReducerState) => {
     const withAll = await stateWithAll( { ...currentState, includePredictions: !currentState.includePredictions });
-    console.log("withAll", withAll)
     dispatch({ type: "set", payload: withAll });
   }
 
@@ -245,6 +244,8 @@ export default function ConstructorsPage() {
                       textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                     }
                   }}
+                  displayPoints={true}
+                  emptyXAxis={[]}
                 />
               </div>
               <div

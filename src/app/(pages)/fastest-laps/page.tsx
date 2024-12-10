@@ -12,11 +12,13 @@ import CustomBarTooltip from "@/components/CustomBarTooltip";
 import CustomBarTooltipHighlight from "@/components/CustomBarTooltipHighlight";
 import "@/styles/page.css";
 import "@/styles/drivers.css";
-import DriverDropDownFilterMultiple from "@/components/DriverDropDownFilterMultiple";
 import CustomBarChart from "@/components/CustomBarChart";
-import { parseDriverLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
-import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers } from "@/utils/frontend/fastestLapsPage/requests";
+import { parseDriverLapTimes, parseRecordLapTimes } from "@/utils/frontend/fastestLapsPage/parsers";
+import { getDriverLapTimes, getGrandPrix, getGrandPrixDrivers, getRecordLapTimes } from "@/utils/frontend/fastestLapsPage/requests";
 import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterSingle";
+import DriverDropDownSelector from "@/components/DriverDropDownSelector";
+import CustomLineChart from "@/components/CustomLineChart";
+import CustomRecordTooltip from "@/components/CustomRecordTooltip";
 
 export type ConstructorResult = {
   year: number;
@@ -35,6 +37,7 @@ interface ReducerState {
   selectableGrandPrix: { key: string, value: string }[],
   selectedGrandPrix: string,
   loading: boolean,
+  record: boolean,
 }
 
 const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
@@ -46,8 +49,11 @@ const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
 }
 
 const fetchGrandPrix = async (years: [number, number]) => {
-  return (await getGrandPrix(years[0], years[1]))
-    .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }));
+  const grandPrix = (await getGrandPrix(years[0], years[1]))
+
+  return grandPrix
+    .map((grand_prix: any) => ({ key: grand_prix.grand_prix_id, value: labelizeKey(grand_prix.grand_prix_id) }))
+    .sort((a: any, b: any) => a.value.localeCompare(b.value));
 }
 
 const fetchLapTimes = async (
@@ -55,7 +61,9 @@ const fetchLapTimes = async (
   drivers: string[],
   grand_prix_id: string
 ) => {
-  const datapoints = parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
+  const datapoints = drivers[0] === "record"
+    ? parseRecordLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id))
+    : parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
 
   const { data, encountered, driverConstructorMap } = datapoints.reduce((
     acc: any,
@@ -90,7 +98,7 @@ const fetchLapTimes = async (
 };
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueDrivers,driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
+  const { data, uniqueDrivers, driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
   return { ...state, datapoints: data, allDrivers: uniqueDrivers, driverConstructors: driverConstructorMap };
 }
 
@@ -109,15 +117,10 @@ const stateWithSelectableDrivers = async (state: ReducerState) => {
 
 const stateWithSelectableGrandPrix = async (state: ReducerState) => {
   const selectableGrandPrix = await fetchGrandPrix(state.years);
-  console.log("selectable grand prix", selectableGrandPrix);
   return {
     ...state,
     selectableGrandPrix
   };
-}
-
-const stateWithAll = async (state: ReducerState) => {
-  return await stateWithSelectableGrandPrix(await stateWithSelectableDrivers(await stateWithDatapoints(state)));
 }
 
 const initialState = {
@@ -130,12 +133,17 @@ const initialState = {
   selectableGrandPrix: [],
   selectedGrandPrix: "",
   loading: false,
+  record: false,
 } as ReducerState;
 
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
   const { type } = action;
   switch (type) {
-    case "set":
+    case "setTimeFrame":
+      return { ...initialState, ...action.payload }
+    case "setGrandPrix": 
+      return { ...initialState, years: state.years, selectableGrandPrix: state.selectableGrandPrix, selectedGrandPrix: action.payload.selectedGrandPrix, selectableDrivers: action.payload.selectableDrivers }
+    case "setAll":
       return { ...state, ...action.payload };
     default:
       return state;
@@ -147,30 +155,62 @@ export default function FastestLapsPage() {
 
   useEffect(() => {
     const setInitialState = async () => {
-      const initState = await stateWithAll(initialState);
-      dispatch({ type: "set", payload: initState });
+      const withSelectableGrandPrix = await stateWithSelectableGrandPrix(initialState);
+      dispatch({ type: "setAll", payload: {
+        ...initialState,
+        years: withSelectableGrandPrix.years,
+        selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+        selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectedDrivers : []
+      }});
     }
     setInitialState();
   }, []);
 
-  const onSetInterval = useCallback(async (currentState: ReducerState, years: [number, number]) => {
-    const withAll = await stateWithAll({ ...currentState, years, selectedDrivers: [] });
-    dispatch({ type: "set", payload: withAll });
+  const onSetTimeFrame = useCallback(async (currentState: ReducerState, years: [number, number]) => {
+    const withSelectableGrandPrix = await stateWithSelectableGrandPrix({ ...currentState, years })
+    dispatch({ type: "setAll", payload: {
+      ...initialState,
+      years: withSelectableGrandPrix.years,
+      selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+      selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : []
+    }});
   }, []);
 
-  const onSetSelected = useCallback(async (currentState: ReducerState, drivers: string[]) => {
+  const onSetGrandPrix = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
+    const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix })
+    if (currentState.selectedDrivers[0] === "record") {
+      const withDatapoints = await stateWithDatapoints({ ...currentState, selectedGrandPrix });
+      dispatch({ type: "setAll", payload: {
+        ...withDatapoints,
+        years: withSelectableDrivers.years,
+        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+        selectableDrivers: withSelectableDrivers.selectableDrivers
+      } });
+    } else {
+      dispatch({ type: "setAll", payload: {
+        ...initialState,
+        years: withSelectableDrivers.years,
+        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+        selectableDrivers: withSelectableDrivers.selectableDrivers
+      }});
+    }
+  }, []);
+
+  const onSetDrivers = useCallback(async (currentState: ReducerState, drivers: string[]) => {
     const withDatapoints = await stateWithDatapoints({ ...currentState, selectedDrivers: drivers });
-    dispatch({ type: "set", payload: withDatapoints });
+    dispatch({ type: "setAll", payload: withDatapoints });
   }, []);
 
-  const onSetSingle = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
-    const withAll = await stateWithAll({ ...currentState, selectedGrandPrix });
-    dispatch({ type: "set", payload: withAll });
-  }, []);
-
-  const Tooltip = (props: any) => {
+  const BarTooltip = (props: any) => {
     const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
     return <CustomBarTooltip drivers={data} allDrivers={state.allDrivers} displayPoints={false} />
+  }
+
+  const LineTooltip = (props: any) => {
+    const data = state.datapoints.find((entry: any) => entry.key === props.axisValue);
+    return <CustomRecordTooltip drivers={data} allDrivers={state.allDrivers} driverConstructors={state.driverConstructors} />
   }
 
   const TooltipHighlight = (props: any) => {
@@ -193,7 +233,7 @@ export default function FastestLapsPage() {
           <DropDownSelector
             interval={state.years}
             setInterval={(interval: number[]) => {
-              onSetInterval(state, [interval[0], interval[1]]);
+              onSetTimeFrame(state, [interval[0], interval[1]]);
             }}
           />
 
@@ -201,17 +241,16 @@ export default function FastestLapsPage() {
             selectableGrandPrix={state.selectableGrandPrix}
             selectedGrandPrix={state.selectedGrandPrix}
             setGrandPrix={(grand_prix: string) => {
-              onSetSingle(state, grand_prix);
+              onSetGrandPrix(state, grand_prix);
             }}
           />
 
-          <DriverDropDownFilterMultiple
+          <DriverDropDownSelector
             selectableDrivers={state.selectableDrivers}
             selectedDrivers={state.selectedDrivers}
             setSelectedDrivers={(drivers: string[]) => {
-              onSetSelected(state, drivers);
+              onSetDrivers(state, drivers);
             }}
-            years={state.years}
           />
 
         </div>
@@ -220,15 +259,50 @@ export default function FastestLapsPage() {
           !state.loading && (
             <div style={{ display: "flex", flexDirection: "column", flex: "1" }}>
               <div style={{ minHeight: "300px" }}>
-                <CustomBarChart 
-                  datapoints={state.datapoints} 
-                  allDrivers={state.allDrivers} 
-                  CustomTooltip={Tooltip} 
-                  CustomTooltipHighlight={TooltipHighlight} 
-                  years={state.years} 
-                  displayPoints={false} 
-                  selectedGrandPrix={state.selectedGrandPrix} 
-                />
+                {state.selectedDrivers[0] === "record"
+                  ? <CustomLineChart
+                    datapoints={state.datapoints}
+                    series={state.allDrivers.map((driver: any) => {
+
+
+                      return {
+                        dataKey: driver.driver,
+                        label: labelizeKey(String(driver.driver)),
+                        curve: 'linear',
+                        color: '#008080',
+                        showMark: false,
+                        highlightScope: { highlight: 'item', fade: 'global' },
+                        connectNulls: true,
+                      };
+                    })}
+                    CustomTooltip={LineTooltip}
+                    CustomTooltipHighlight={TooltipHighlight}
+                    margin={{
+                      bottom: 30,
+                      left: 100,
+                      right: 100,
+                    }}
+                    bottomAxis={{
+                      tickLabelStyle: {
+                        angle: 0,
+                        textAnchor: 'middle',
+                      }
+                    }}
+                    displayPoints={false}
+                    selectedGrandPrix={state.selectedGrandPrix}
+                    emptyXAxis={Array.from({ length: state.years[1] - state.years[0] + 1 }, (v, i) => i + state.years[0])}
+                  />
+                  : <CustomBarChart
+                    datapoints={state.datapoints}
+                    allDrivers={state.allDrivers}
+                    CustomTooltip={BarTooltip}
+                    CustomTooltipHighlight={TooltipHighlight}
+                    years={state.years}
+                    displayPoints={false}
+                    selectedGrandPrix={state.selectedGrandPrix}
+                  />
+                }
+
               </div>
               <div
                 style={{

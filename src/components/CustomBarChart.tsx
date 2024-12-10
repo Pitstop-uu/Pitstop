@@ -88,8 +88,8 @@ export default function CustomBarChart({
                 noDataOverlay: displayPoints
                 ? { message: 'No drivers to display' }
                 : selectedGrandPrix
-                    ? { message: 'No drivers to display' }
-                    : { message: 'No Grand Prix to display' }
+                    ? { message: 'No drivers selected' }
+                    : { message: 'No Grand Prix selected' }
             }}
             sx={() => ({
                 [`.${axisClasses.root}`]: {

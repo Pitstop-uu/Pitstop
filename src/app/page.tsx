@@ -177,6 +177,8 @@ export default function HomePage() {
                   textAnchor: state.years[0] === state.years[1] ? 'start' : 'middle',
                 }
               }}
+              displayPoints={true}
+              emptyXAxis={[]}
             />
             <CustomLegend
               constructors={state.datapoints}
