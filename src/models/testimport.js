@@ -1,8 +1,8 @@
-/* const fs = require('fs');
+const fs = require('fs');
 const brain = require('brain.js');
 
 
-const modelData = fs.readFileSync('constructor_years_model.json', 'utf8');
+const modelData = fs.readFileSync('constructor_years_model2.json', 'utf8');
 const loadedModel = JSON.parse(modelData);
 
 
@@ -10,16 +10,16 @@ const net = new brain.NeuralNetwork();
 net.fromJSON(loadedModel);
 
 const currentPoints={
-  mercedes: 446,
-  redbull: 581,
-  alpine: 59,
-  haas: 54,
-  mclaren: 640,
+  mercedes: 468,
+  redbull: 589,
+  alpine: 65,
+  haas: 58,
+  mclaren: 666,
   RB: 46,
   kicksauber: 4,
-  ferrari: 619,
+  ferrari: 652,
   williams: 17,
-  astonmartin: 92,
+  astonmartin: 94,
 
 }
 
@@ -43,7 +43,7 @@ const testInput = {
   const predictedPoints = normalizedPrediction.nextYearPoints * 860; // De-normalize prediction
   
   //console.log('Predicted Next Year Points:', predictedPoints);
-export function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2022) {
+function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2023) {
   const year = 2024; // Current year
   const predictions = {};
 

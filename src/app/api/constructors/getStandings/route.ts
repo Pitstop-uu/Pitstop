@@ -50,16 +50,16 @@ export async function POST(req: NextRequest) {
 		year ASC`;
 
 	const predictedPoints =[
-		{ year: 2025, constructor_id: "mercedes", points: 424 },
-		{ year: 2025, constructor_id: "red-bull", points: 758 },
-		{ year: 2025, constructor_id: "alpine", points: 89 },
-		{ year: 2025, constructor_id: "haas", points: 83 },
-		{ year: 2025, constructor_id: "mclaren", points: 468 },
-		{ year: 2025, constructor_id: "rb", points: 70 },
-		{ year: 2025, constructor_id: "kick-sauber", points: 19 },
-		{ year: 2025, constructor_id: "ferrari", points: 453 },
-		{ year: 2025, constructor_id: "williams", points: 30 },
-		{ year: 2025, constructor_id: "aston-martin", points: 119 },	
+		{ year: 2025, constructor_id: "mercedes", points: 465 },
+		{ year: 2025, constructor_id: "red-bull", points: 757 },
+		{ year: 2025, constructor_id: "alpine", points: 86 },
+		{ year: 2025, constructor_id: "haas", points: 29 },
+		{ year: 2025, constructor_id: "mclaren", points: 399 },
+		{ year: 2025, constructor_id: "rb", points: 47 },
+		{ year: 2025, constructor_id: "kick-sauber", points: 14 },
+		{ year: 2025, constructor_id: "ferrari", points: 408 },
+		{ year: 2025, constructor_id: "williams", points: 21 },
+		{ year: 2025, constructor_id: "aston-martin", points: 162 },	
 	]
 	const filteredPredictedPoints = selectedConstructors.length > 0
 		? predictedPoints.filter((point) => selectedConstructors.includes(point.constructor_id))
