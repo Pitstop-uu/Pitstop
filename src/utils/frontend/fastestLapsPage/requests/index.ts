@@ -28,6 +28,8 @@ export const getGrandPrixDrivers = async (
   yearTo: number,
   grandPrixId: string
 ) => {
+  if (!grandPrixId) return [];
+
   const response = await window.fetch(
     `/api/grand_prix/${grandPrixId}/drivers/?from=${yearFrom}&to=${yearTo}`
   );
@@ -40,6 +42,8 @@ export const getRecordLapTimes = async (
   yearTo: number,
   grandPrixId: string
 ) => {
+  if (!grandPrixId) return [];
+
   const requestBody: { [key: string]: any } = {
     from: yearFrom,
     to: yearTo,

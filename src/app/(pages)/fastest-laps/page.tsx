@@ -150,7 +150,7 @@ const reducer = (state: ReducerState, action: { type: string, payload: any }) =>
   const { type } = action;
   switch (type) {
     case "setTimeFrame":
-      return { ...initialState, years: action.payload.years, selectableGrandPrix: action.payload.selectableGrandPrix }
+      return { ...initialState, ...action.payload }
     case "setGrandPrix": 
       return { ...initialState, years: state.years, selectableGrandPrix: state.selectableGrandPrix, selectedGrandPrix: action.payload.selectedGrandPrix, selectableDrivers: action.payload.selectableDrivers }
     case "setAll":
@@ -166,19 +166,40 @@ export default function FastestLapsPage() {
   useEffect(() => {
     const setInitialState = async () => {
       const withSelectableGrandPrix = await stateWithSelectableGrandPrix(initialState);
-      dispatch({ type: "setTimeFrame", payload: withSelectableGrandPrix });
+      dispatch({ type: "setAll", payload: {
+        ...initialState,
+        years: withSelectableGrandPrix.years,
+        selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+        selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectableDrivers : []
+      }});
     }
     setInitialState();
   }, []);
 
   const onSetTimeFrame = useCallback(async (currentState: ReducerState, years: [number, number]) => {
-    const withSelectableGrandPrix = await stateWithSelectableGrandPrix({ ...currentState, years, selectedGrandPrix: "", selectedDrivers: []})
-    dispatch({ type: "setTimeFrame", payload: withSelectableGrandPrix });
+    const withSelectableGrandPrix = await stateWithSelectableGrandPrix({ ...currentState, years })
+    dispatch({ type: "setAll", payload: {
+      ...initialState,
+      years: withSelectableGrandPrix.years,
+      selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+      selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : []
+    }});
   }, []);
 
   const onSetGrandPrix = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
-    const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix, selectedDrivers: [] })
-    dispatch({ type: "setGrandPrix", payload: withSelectableDrivers });
+    if (currentState.selectedDrivers[0] === "record") {
+      const withDatapoints = await stateWithDatapoints({ ...currentState, selectedGrandPrix });
+      dispatch({ type: "setAll", payload: withDatapoints });
+    } else {
+      const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix })
+      dispatch({ type: "setAll", payload: {
+        ...initialState,
+        years: withSelectableDrivers.years,
+        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+        selectableDrivers: withSelectableDrivers.selectableDrivers
+      }});
+    }
   }, []);
 
   const onSetDrivers = useCallback(async (currentState: ReducerState, drivers: string[]) => {
