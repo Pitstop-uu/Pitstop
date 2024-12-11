@@ -1,8 +1,8 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest } from "next/server";
 import response from '@/utils/api/jsonResponse';
+import stringIsNr from '@/utils/api/stringIsNr';
 
-const stringIsNr = (str: string) => str.match(/^\d+$/);
 export async function GET(req: NextRequest, { params }: { params: Promise<{ grandPrixId: string }> }) {
     const searchParams = req.nextUrl.searchParams;
     const searchParamFrom = searchParams.get('from');
