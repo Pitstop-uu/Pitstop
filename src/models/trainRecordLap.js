@@ -38,7 +38,7 @@ Object.keys(circuitMap).forEach(circuitId => {
     for (let i = 0; i < circuitLaps.length - 1; i++) {
         const currentLap = circuitLaps[i];
         const nextLap = circuitLaps[i + 1];
-        
+        if (currentLap.year < 2019) continue;
         // Encode all 25 circuits
         const circuitEncoding = encodeCircuitId(currentLap.grand_prix_id);
         
@@ -47,28 +47,28 @@ Object.keys(circuitMap).forEach(circuitId => {
                 las_vegas: circuitEncoding[0], 
                 spain: circuitEncoding[1], 
                 austria: circuitEncoding[2],
-                sakhir: circuitEncoding[3], 
-                bahrain: circuitEncoding[4], 
-                saudi_arabia: circuitEncoding[5],
-                australia: circuitEncoding[6],
-                japan: circuitEncoding[7],
-                china: circuitEncoding[8],
-                miami: circuitEncoding[9],
-                emilia_romagna: circuitEncoding[10],
-                monaco: circuitEncoding[11],
-                canada: circuitEncoding[12],
-                great_britain: circuitEncoding[13],
-                hungary: circuitEncoding[14],
-                belgium: circuitEncoding[15],
-                netherlands: circuitEncoding[16],
-                italy: circuitEncoding[17],
-                azerbaijan: circuitEncoding[18],
-                singapore: circuitEncoding[19],
-                united_states: circuitEncoding[20],
-                mexico: circuitEncoding[21],
-                brazil: circuitEncoding[22],
-                qatar: circuitEncoding[23],
-                abu_dhabi: circuitEncoding[24],
+            
+                bahrain: circuitEncoding[3], 
+                saudi_arabia: circuitEncoding[4],
+                australia: circuitEncoding[5],
+                japan: circuitEncoding[6],
+                china: circuitEncoding[7],
+                miami: circuitEncoding[8],
+                emilia_romagna: circuitEncoding[9],
+                monaco: circuitEncoding[10],
+                canada: circuitEncoding[11],
+                great_britain: circuitEncoding[12],
+                hungary: circuitEncoding[13],
+                belgium: circuitEncoding[14],
+                netherlands: circuitEncoding[15],
+                italy: circuitEncoding[16],
+                azerbaijan: circuitEncoding[17],
+                singapore: circuitEncoding[18],
+                united_states: circuitEncoding[19],
+                mexico: circuitEncoding[20],
+                brazil: circuitEncoding[21],
+                qatar: circuitEncoding[22],
+                abu_dhabi: circuitEncoding[23],
                 year: currentLap.year / 2023, // Normalize the year
                 fastest_lap_time_millis: currentLap.fastest_lap_time_millis / maxLapTime, // Normalize lap time
             },
@@ -79,12 +79,12 @@ Object.keys(circuitMap).forEach(circuitId => {
     }
 });
 
-
+console.log(trainingData)
 
 
 function encodeCircuitId(circuitId) {
     const circuitIds = [
-        'las-vegas', 'spain', 'austria', 'sakhir', 'bahrain', 'saudi-arabia', 'australia', 'japan', 'china',
+        'las-vegas', 'spain', 'austria', 'bahrain', 'saudi-arabia', 'australia', 'japan', 'china',
         'miami', 'emilia-romagna', 'monaco', 'canada', 'great-britain', 'hungary', 'belgium', 'netherlands', 'italy',
         'azerbaijan', 'singapore', 'united-states', 'mexico', 'brazil', 'qatar', 'abu-dhabi'
     ];
@@ -102,6 +102,7 @@ function encodeCircuitId(circuitId) {
 // Initialize the neural network
 const net = new brain.NeuralNetwork();
 //const net = new brain.recurrent.LSTM()
+
 
 // Train the network
 net.train(trainingData, {

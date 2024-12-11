@@ -110,11 +110,6 @@
         "fastest_lap_time_millis":67694
     },
     {
-        "year":2020,
-        "grand_prix_id":"sakhir",
-        "fastest_lap_time_millis":55404
-    },
-    {
         "year":2015,
         "grand_prix_id":"bahrain",
         "fastest_lap_time_millis":96311
@@ -818,6 +813,26 @@
         "year":2019,
         "grand_prix_id":"brazil",
         "fastest_lap_time_millis":70698
+    },
+    {
+        "year":2021,
+        "grand_prix_id":"brazil",
+        "fastest_lap_time_millis":71010
+    },
+    {
+        "year":2022,
+        "grand_prix_id":"brazil",
+        "fastest_lap_time_millis":73785
+    },
+    {
+        "year":2023,
+        "grand_prix_id":"brazil",
+        "fastest_lap_time_millis":72486
+    },
+    {
+        "year":2024,
+        "grand_prix_id":"brazil",
+        "fastest_lap_time_millis":80472
     },
     {
         "year":2021,
