@@ -40,14 +40,16 @@ export const getGrandPrixDrivers = async (
 export const getRecordLapTimes = async (
   yearFrom: number,
   yearTo: number,
-  grandPrixId: string
+  grandPrixId: string,
+  includePredictions: boolean
 ) => {
   if (!grandPrixId) return [];
 
   const requestBody: { [key: string]: any } = {
     from: yearFrom,
     to: yearTo,
-    grand_prix_id: grandPrixId
+    grand_prix_id: grandPrixId,
+    includePredictions
   }
   const response = await window.fetch(
     `/api/grand_prix/${grandPrixId}/getFastestLaps`,
