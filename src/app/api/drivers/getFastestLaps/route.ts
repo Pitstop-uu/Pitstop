@@ -55,8 +55,6 @@ export async function POST(req: NextRequest){
 			? { ...record, constructor_id: constructorMapping.other_constructor_id }
 			: record;
 	}, []);
-	
-	console.log(fastestLaps);
 
 	return response(true, 200, fastestLaps);
 }

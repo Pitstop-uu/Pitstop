@@ -7,7 +7,6 @@ import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
 
 export async function POST(req: NextRequest) {
 	const requestBody = await req.json();
-	console.log(requestBody);
 	if (
 		!('from' in requestBody && typeof requestBody.from === 'number') ||
 		!('to' in requestBody && typeof requestBody.to === 'number')
