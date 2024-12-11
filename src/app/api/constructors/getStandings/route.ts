@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
 import getConstructorAliasMap from '@/utils/api/constructorAliasMap';
-import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
+import mapToLatestConstructor from '@/utils/api/mapToLatestConstructor';
 
 export async function POST(req: NextRequest) {
 	const requestBody = await req.json();
@@ -48,6 +48,14 @@ export async function POST(req: NextRequest) {
 	ORDER BY
 		year ASC`;
 
+	// Each data point's related constructor is mapped
+	// to that constructor's latest representation in the selected timespan.
+	// For example, "alfa-romeo" will be mapped to "kick-sauber", if
+	// the name change from Alfa Romeo to Kick Sauber occured in the selected timespan.
+	//TODO: Fix so that the 'full_name' property is updated. 
+	//      Currently, only 'constructor_id' is updated correctly.
+	const constructorStandings = mapToLatestConstructor(queryResult, constructorChronologies)
+
 	const predictedPoints =[
 		{ year: 2025, constructor_id: "mercedes", points: 465 },
 		{ year: 2025, constructor_id: "red-bull", points: 757 },
@@ -63,21 +71,6 @@ export async function POST(req: NextRequest) {
 	const filteredPredictedPoints = selectedConstructors.length > 0
 		? predictedPoints.filter((point) => selectedConstructors.includes(point.constructor_id))
 		: predictedPoints
-
-	// Each data point's related constructor is mapped
-	// to that constructor's latest representation in the selected timespan.
-	// For example, "alfa-romeo" will be mapped to "kick-sauber", if
-	// the name change from Alfa Romeo to Kick Sauber occured in the selected timespan.
-	//TODO: Fix so that the 'full_name' property is updated. 
-	//      Currently, only 'constructor_id' is updated correctly.
-	const latestConstructorMap = getLatestConstructorMap(constructorChronologies);
-	const constructorStandings = queryResult.map((record) => {
-		const constructorMapping = latestConstructorMap[record.constructor_id];
-		return constructorMapping
-			? { ...record, constructor_id: constructorMapping.other_constructor_id }
-			: record;
-	}, []);
-
 	const result =  requestBody.includePredictions === true && requestBody.to === 2024
 		? constructorStandings.concat(filteredPredictedPoints)
 		: constructorStandings;
