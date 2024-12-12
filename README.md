@@ -48,7 +48,7 @@ The application provides a range of filter options to customize the data display
 
 2. Selection Method:
     * Pressing the *SELECTION METHOD: INTERVAL* button toggles the selection method between *INTERVAL* and *SPECIFIC* 
-    * In *INTERVAL* mode, the graph displays constructors progression over a range of years.A
+    * In *INTERVAL* mode, the graph displays constructors progression over a range of years.
     * In *SPECIFIC* mode, the graph highlights constructors performance during a single year, detailing results for individual circuits (race tracks).
 
 3. Constructor Selection:
@@ -63,9 +63,14 @@ The linechart includes several interactive features to enhance data exploration:
 #### Predictions
 The application includes a feature to display predictions for future performance (2025):
 
-1. Ensure the *SELECTION METHOD
+1. Ensure the *SELECTION METHOD* is set to *INTERVAL*.
+2. Set the timeframe *FROM (1958-2023)* and *TO* (2024).
+3. The *SHOW PREDICTIONS* button will appear.
+4. Press this button to view the predicted results for 2025.
+5. You can adjust the timeframe *(FROM (1958-2023))* and constructor selection freely to refine the prediction view. 
 
-To access predictions (2025), have the *SELECTION METHOD: INTERVAL* active, with a timeframe *FROM* (1958-2023) and *TO* (2024) set. The *SHOW PREDICTIONS* button should pop-up. By pressing the button, the predicted results for 2025 is shown. You can also freely change timeframe (*FROM* (1958-2023)) and selection of constructors.
+
+By using these features, you can efficiently explore historical data, compare constructors and assess future projections.
 
 #### Constructor Standings Demo Tasks:
 
@@ -73,26 +78,54 @@ To access predictions (2025), have the *SELECTION METHOD: INTERVAL* active, with
 Task 1:
 
 The current top constructors are Ferrari, McLaren, Mercedes and Red Bull. Set the time frame to 1998-2024 and then select the mentioned top constructors as well as Alpine in the constructor filter. Also, enable the predictions (click on 'SHOW PREDICTIONS'). Now, the line chart presents all of the teams that has won the Constructors' Championship since 1998. Try to answer the following questions:
-- Look at who won the 2024 season. What year did they last win prior to 2024?
-- What team do you think has been most dominant within the timeframe?
-- Do you think the predictions for 2025 are reasonable based on the history?
+- A) Look at who won the 2024 season. What year did they last win prior to 2024?
+- B) What team do you think has been most dominant within the timeframe?
+- C) Do you think the predictions for 2025 are reasonable based on the history?
 ---
 Task 2:
 
 The current "bottom" constructors are Alpine, Aston Martin, Haas, Kick Sauber, RB and Williams. Set the timeframe to 2015-2023 and select the mentioned "bottom" constructors in the constructor filter. Notice how Kick Sauber and RB have different names when the last year is set to 2023. 
-- What was Kick Sauber called 2023?
-- What was RB called 2023?
+- A) What was Kick Sauber called 2023?
+- B) What was RB called 2023?
 
 ---
 Task 3:
 
 The two previous tasks looked at a time interval. Now it is time to look at a single year. In the timeframe filter, click on "SELECTION METHOD" to change the filter type from interval to specific. Then, select the year 2024. Notice how the x-axis shows the locations for 2024 instead of the years selected. 
--  At which location did McLaren take the lead in the Constructors' Championship? 
-- It did not go very well for all of the teams. At what location did Kick Sauber gain their first points, and how many points did they finish with?
+- A) At which location did McLaren take the lead in the Constructors' Championship? 
+- B) It did not go very well for all of the teams. At what location did Kick Sauber gain their first points, and how many points did they finish with?
 
 ---
 
 ### [Driver Standings](#DriverStandings)
+
+The driver standings page visualizes the standings similar to the [constructors standings page](#ConstructorStandings), but for the drivers.
+
+#### Filter Options
+The application provides a range of filter options to customize the data displayed in the graph. These accessible via buttons locatied on the top left of the interface:
+
+1. Timeframe Selection:
+    * The button labeled *TIMEFRAME: 2020-2024* reflects the drivers progression within the selected time interval, displayed in a barchart below. 
+    * Clicking this button opens a dropdown menu. Select *TIMEFRAME: 2020-2024* to adjust the interval to any range between 1950 and 2024. The barchart updates to reflect your chosen timeframe. 
+
+2. Selection Method:
+    * Pressing the *SELECTION METHOD: INTERVAL* button toggles the selection method between *INTERVAL* and *SPECIFIC* 
+    * In *INTERVAL* mode, the barchart displays drivers progression over a range of years. 
+    * In *SPECIFIC* mode, the linechart highlights drivers performance during a single year, detailing results for individual circuits (race tracks).
+
+3. Driver Selection:
+    * The *SELECT DRIVERS: NONE* button allows you to refine the data by selecting specific drivers. Note that you need to select at least one driver for the graph to visualise.
+    * Clicking this button opens a list of drivers relevant to the chosen timeframe or year. Select specific drivers to focus on their data.
+
+#### Features within the Linechart & Barchart
+The linechart includes several interactive features to enhance data exploration:
+* Tooltip: Hovering over the graph displays a tooltip, showing the driver standings for the selected year or circuit.
+* Tooltip Highlight: Hovering over a drivers's line/bar emphasizes their data, displaying all results for that driver within the chosen timeframe. 
+
+#### Predictions
+NOTE: The application does not include any feature to display predictions for future performance (2025)
+
+By using these features, you can efficiently explore historical data and compare drivers.
 
 #### Driver Standings Demo Tasks:
 
@@ -100,17 +133,111 @@ The two previous tasks looked at a time interval. Now it is time to look at a si
 Task 1:
 
 The Driver Standings are very similar to the Constructor Standings. However, this page utilizes bar chart rather than a line chart. Select the timeframe 2020-2024. In the driver filter, select ALL of the drivers.
-- What two persons has won a driver championship in the selected interval? 
-- Based on the trends, who do you think will win the Driver's Championship 2025?
+- A) What two persons has won a driver championship in the selected interval? 
+- B) Based on the trends, who do you think will win the Driver's Championship 2025?
 ---
 Task 2: 
 
 The sport has had some controversial moments. Change the selection method of the timeframe from interval to specific, and choose the year 1994. This final of the drivers' championship was determined by a crash (https://www.youtube.com/watch?v=91JoW4mSiZo). Crashing in the sport can often lead to the need of retiring a car, which means no points can be gained.
-- Who was involved in the crash?
-- Can you see why the leader of the driver's championship would gain an advantage by crashing into the driver in the second place?
+- A) Who was involved in the crash?
+- B) Can you see why the leader of the driver's championship would gain an advantage by crashing into the driver with second most points?
 ---
 
 ### [Fastest Laps](#FastestLaps)
+The fastest laps page visualizes the fastest laps set by drivers throughout the history of Formula 1. 
+
+#### Filter Options
+The application provides a range of filter options to customize the data displayed in the graph. These accessible via buttons locatied on the top left of the interface:
+
+1. Timeframe Selection:
+    * The button labeled *TIMEFRAME: 2020-2024* reflects the fastest laps progression within the selected time interval, displayed in the graph below. 
+    * Clicking this button opens a dropdown menu. Select *TIMEFRAME: 2020-2024* to adjust the interval to any range between 1950 and 2024. The graph updates to reflect your chosen timeframe. 
+
+2. Selection Method (Timeframe):
+    * Pressing the *SELECTION METHOD: INTERVAL* button toggles the selection method between *INTERVAL* and *SPECIFIC* 
+    * In *INTERVAL* mode, the graph displays fastest laps progression over a range of years.
+    * In *SPECIFIC* mode, the graph highlights fastest laps performance during a single year, detailing results for individual circuits (race tracks).
+
+3. Grand Prix Selection:
+    * The *SELECT GRAND PRIX:* button allows you to refine the data by selecting specific grand prix.
+    * Clicking this button opens a list of grand prix relevant to the chosen timeframe or year. Select a specific grand prix to focus on their data.
+
+4. Driver Selection:
+    * The *SELECT DRIVERS: NONE* button allows you to refine the data by selecting specific drivers. Note that you need to select at least one driver for the graph to visualise.
+    * Clicking this button opens a list of drivers relevant to the chosen timeframe or year. Select specific drivers to focus on their data.
+
+5. Selection Method (Drivers):
+    * Pressing the *SELECTION METHOD: SPECIFIC DRIVERS* button toggles the selection method between *SPECIFIC DRIVERS* and *RECORDS*
+    * In *SPECIFIC DRIVERS* mode, the graph displays a barchart for the fastest laps progression over a range of years or during a single year.
+    * In *RECORDS* mode, the graph displays a linechart for the record for the fastest laps performance overall over a range of years or during a single year.
+ 
+
+#### Features within the Linechart
+The linechart includes several interactive features to enhance data exploration:
+* Tooltip: Hovering over the graph displays a tooltip, showing the constructor standings for the selected year or circuit.
+* Tooltip Highlight: Hovering over a constructor's line emphasizes their data, displaying all results for that constructor within the chosen timeframe. 
+
+#### Predictions
+The application includes a feature to display predictions for future performance (2025):
+
+1. Set the timeframe *TO* (2024) or *YEAR: 2024*.
+2. The *SHOW PREDICTIONS* button will appear.
+3. Select a Grand Prix in the *SELECT GRAND PRIX:*.
+4. Press this button to view the predicted results for 2025.
+
+
+By using these features, you can efficiently explore historical data, compare fastest laps times and records, in addition with future projections.
+
+
+#### Fastest Laps Demo Tasks:
+---
+Task 1:
+
+The Fastest Laps can in many cases show what pace the drivers are able to reach for a certain race. Set the timeframe to only show the year 2024. In the Grand Prix filter, select the location Azerbaijan. In the driver filter, select the drivers Carlos Sainz Jr, Charles Leclerc, Lando Norris, Max Verstappen, Oscar Piastri, and Sergio Perez. Notice how the y-axis no longer show the points, but instead the time for the fastest laps the drivers managed to drive during the race.
+- A) You have now selected the drivers from Ferrari, McLaren and Red Bull. Recall Task 3 from the Constructor Standings demo tasks. The location you have selected (Azerbaijan), was the Grand Prix where McLaren took the lead. Which driver had the fastest lap for this Grand Prix, and what team did he drive for?
+---
+Task 2:
+
+Monaco is one of the most iconic Formula 1 locations. In the timeframe, select the interval 1950-2024. In the Grand Prix filter, select Monaco as the location. In the Driver filter, change the selection method from specific drivers to record. Also, enable the predictions by clicking "SHOW PREDICTIONS".
+- A) Who has the record for the fastest lap ever driven in Monaco, and what year was it?
+- B) Do you think that the prediction for the fastest lap time 2025 is resonable?
+- C) In Formula 1, the weather conditions can really affect the cars' grip. This means that if it is raining, the lap times can be severely worse compared to other years. Since 1950, the trend is that the fastest laps are getting faster, but can you spot at least three years where it has been raining? 
+
+
+### Demo Tasks Answers
+
+#### Constructor Standings Answers
+Task 1 Answers:
+- A) McLaren won the 2024 season's Constructors' Championship. Their last win was 1998.
+- B) No answer.
+- C) No answer.
+
+Task 2 Answers:
+- A) Kick Sauber was called Alfa Romeo in 2023.
+- B) RB was called AlphaTauri in 2023.
+
+Task 3 Answers:
+- A) McLaren took the lead of the Constructors' Championship in Azerbaijan.
+- B) Kick Sauber gained their first points in the second to last Grand Prix in Qatar. Qatar was the only Grand Prix they gained points on, which lead to them finishing with only 4 points.
+
+#### Driver Standings Answers
+Task 1 Answers:
+- A) Lewis Hamilton and Max Verstappen has won championships between the years 2020 and 2024.
+- B) No answer.
+
+Task 2 Answers:
+- A) Michael Schumacher and Damon Hill collided.
+- B) Neither Michael Schumacher nor Damon Hill gained any points due to the crash, which means that Michael Schumacher won since he had more points before the final race.
+
+#### Fastest Laps Answers
+Task 1 Answers:
+- A) Lando Norris had the fastest lap time, and he drove for McLaren.
+
+Task 2 Answers:
+- A) Lewis Hamilton currently holds the record for the fastest lap ever driven in Monaco, in the year 2021 (https://www.youtube.com/watch?v=zkvoT__bfI8).
+- B) No answer.
+- C) Three examples of when it was raining in Monaco is the years 1972, 1984, and 1997.
+
 
 ## Glossary
 
