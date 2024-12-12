@@ -1,63 +1,67 @@
 const brain = require('brain.js');
+const fs = require('fs');
 
-// Helper functions for normalization
-function normalize(value, min, max) {
-    return (value - min) / (max - min);
-}
+const rawData = fs.readFileSync('trainingData/fastestLapRecordData.json');
+const lapData = JSON.parse(rawData);
 
-function denormalize(value, min, max) {
-    return value * (max - min) + min;
-}
+const latestTimes = {
+    "las-vegas": 94876,
+    "spain": 77115,
+    "austria": 67694,
+    "bahrain": 92608,
+    "saudi-arabia": 91632,
+    "australia": 79813,
+    "japan": 93706,
+    "china": 97810,
+    "miami": 90634,
+    "emilia-romagna": 78589,
+    "monaco": 74165,
+    "canada": 74856,
+    "great-britain": 88293,
+    "hungary": 80305,
+    "belgium": 104701,
+    "netherlands": 73817,
+    "italy": 81432,
+    "azerbaijan": 105255,
+    "singapore": 94486,
+    "united-states": 97330,
+    "mexico": 78336,
+    "brazil": 80724,
+    "qatar": 82384,
+    "abu-dhabi": 85637,
+};
 
-// Original training data
-const rawTrainingData = [
-    { input: { points: [319, 585.5, 759, 860] }, output: [589] },
-];
+const circuitMap = lapData.reduce((acc, entry) => {
+    if (!acc[entry.grand_prix_id]) {
+        acc[entry.grand_prix_id] = [];
+    }
+    acc[entry.grand_prix_id].push(entry);
+    return acc;
+}, {});
 
-// Find the min and max values for normalization
-const inputValues = rawTrainingData.flatMap(d => [
-    ...d.input.points,
-    ...d.output
-]);
-const minInput = Math.min(...inputValues);
-const maxInput = Math.max(...inputValues);
+const maxYear = 2023;
+const predictions = {};
 
-// Normalize the training data
-const trainingData = rawTrainingData.map(data => ({
-    input: [
-        ...data.input.points.map(value => normalize(value, minInput, maxInput)),
-    ],
-    output: data.output.map(value => normalize(value, minInput, maxInput)),
-}));
+Object.keys(circuitMap).forEach(circuitId => {
+    const circuitLaps = circuitMap[circuitId].sort((a, b) => a.year - b.year);
+    const trainingData = circuitLaps.map(lap => lap.fastest_lap_time_millis / Math.max(...circuitLaps.map(l => l.fastest_lap_time_millis)));
 
-// Initialize the LSTMTimeStep model
-const config = {
-    inputSize: 20,
-    inputRange: 20,
-    hiddenLayers: [20, 20],
-    outputSize: 20,
-    learningRate: 0.01,
-    decayRate: 0.999,
-  };
+    const net = new brain.recurrent.LSTMTimeStep();
 
-// Create a simple recurrent neural network
-const net = new brain.recurrent.RNN(config);
+    // Train the LSTM
+    net.train([trainingData], {
+        iterations: 3000,
+        learningRate: 0.02,
+        log: false,
+        logPeriod: 100,
+    });
 
-// Train the model
-net.train(trainingData);
+    // Predict the next year's lap time
+    const lastNormalizedTime = latestTimes[circuitId] / Math.max(...circuitLaps.map(l => l.fastest_lap_time_millis));
+    const predictedTimeNormalized = net.run([lastNormalizedTime]);
+    const predictedTime = (predictedTimeNormalized * Math.max(...circuitLaps.map(l => l.fastest_lap_time_millis))).toFixed(0);
 
-// Normalize a sample input for prediction
-const sampleInput = { points: [585.5,759,860,589] };
-const normalizedSampleInput = [
-    ...sampleInput.points.map(value => normalize(value, minInput, maxInput)),
+    predictions[circuitId] = parseFloat(predictedTime);
+});
 
-];
-
-// Run the model and get normalized output
-const normalizedOutput = net.run(normalizedSampleInput);
-
-// If needed, denormalize the output
-const output = denormalize(normalizedOutput, minInput, maxInput);
-
-console.log('Normalized Output:', normalizedOutput);
-console.log('Denormalized Output:', output);
+console.log(predictions);

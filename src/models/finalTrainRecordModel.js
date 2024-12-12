@@ -65,7 +65,7 @@ Object.keys(circuitMap).forEach(circuitId => {
     for (let i = 0; i < circuitLaps.length - 1; i++) {
         const currentLap = circuitLaps[i];
         const nextLap = circuitLaps[i + 1];
-        if (currentLap.year < 2019) continue;
+        //if (currentLap.year < 2019) continue;
 
         trainingData.push({
             input: {
