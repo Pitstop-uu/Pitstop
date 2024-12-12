@@ -1,4 +1,4 @@
-const brain = require('brain.js');
+/* const brain = require('brain.js');
 
 // Helper functions for normalization
 function normalize(value, min, max) {
@@ -60,4 +60,4 @@ const normalizedOutput = net.run(normalizedSampleInput);
 const output = denormalize(normalizedOutput, minInput, maxInput);
 
 console.log('Normalized Output:', normalizedOutput);
-console.log('Denormalized Output:', output);
+console.log('Denormalized Output:', output); */

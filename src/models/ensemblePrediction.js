@@ -1,4 +1,4 @@
-const brain = require('brain.js');
+/* const brain = require('brain.js');
 const { trainingDataConstructors } = require('./trainingData/constructorData');
 const maxYear = 2023; // Maximum year 
 const maxPoints = 860; // Maximum points 
@@ -41,3 +41,4 @@ for (let i = 0; i < numModels; i++) {
     console.log(`Model ${i + 1} successfully trained with error: ${trainingStatus.error}`);
 }
 
+ */

@@ -35,7 +35,7 @@ export default function CustomBarTooltip({ drivers, allDrivers, driverConstructo
                     .map(([k, value], i) => {
 
                         const driver = allDrivers.find(({driver}: { driver: string, constructor: string }) => driver === k) || { driver: '', constructor: '' }
-
+                        
                         return (
                             <p key={i} style={{ display: 'flex', alignItems: 'center' }}>
                                 <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#008080', marginRight: 5, marginTop: 2, }} />
