@@ -138,15 +138,15 @@ export default function HomePage() {
       <section>
         <div className="content-section">
           <div className="content">
-            <span> <span className="highlight">WHAT IS PITSTOP?</span> <span className="text-white">PITSTOP IS AN INNOVATIVE FORMULA 1 TOOL DESIGNED TO BRING THE SPORT&apos;S RICH HISTORY TO LIFE. THROUGH DYNAMIC DATA VISUALIZATIONS COVERING EVERY SEASON SINCE F1 BEGAN IN 1950, PITSTOP LETS YOU EXPLORE THE EVOLUTION OF FORMULA 1 IN A COMPLETELY NEW WAY.</span></span>
+            <span> <span className="highlight">What is Pitstop?</span> <span className="text-white">Pitstop is an innovative Formula 1 tool designed to bring the sport&apos;s rich history to life. Through dynamic data visualizations covering every season since F1 began in 1950, Pitstop lets you explore the evolution of Formula 1 in a completely new way.</span></span>
           </div>
-          <span className="content-description-text"> DISCOVER HISTORICAL DATA SUCH AS FASTEST LAP TIMES FOR EACH DRIVER ON SPECIFIC CIRCUITS ACROSS ALL SEASONS. DIVE DEEP INTO PERFORMANCE TRENDS, TRACK RECORDS, AND THE EVOLUTION OF SPEED, PRECISION, AND COMPETITION IN FORMULA 1—ALL IN ONE INTUITIVE PLATFORM.</span>
+          <span className="content-description-text"> Discover historical data such as fastest lap times for each driver on specific circuits across all seasons. Dive deep into performance trends, track records, and the evolution of speed, precision, and competition in Formula 1—all in one intuitive platform.</span>
         </div>
       </section>
 
       <section>
         <div className="preview-section">
-          <span className="preview-title">SEARCH. DISCOVER. COMPARE.</span>
+          <span className="preview-title">Search. Discover. Compare.</span>
           <div>
             <CustomLineChart
               datapoints={state.datapoints}

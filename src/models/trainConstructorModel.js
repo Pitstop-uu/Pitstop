@@ -1,4 +1,4 @@
-const brain = require('brain.js');
+/* const brain = require('brain.js');
 const fs = require('fs');
 const { trainingDataConstructors } = require('./trainingData/constructorData');
 const maxYear = 2023; // Maximum year 
@@ -84,4 +84,4 @@ console.log(normalizedTrainingData)
 
 
   
-  
+   */

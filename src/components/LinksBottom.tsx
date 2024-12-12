@@ -4,7 +4,7 @@ import "@/styles/links.css";
 
 const LinksBottom = () => (
     <div className="link-section">
-    <span className="link-title">GET STARTED NOW</span>
+    <span className="link-title">Get Started Now</span>
     <div className="link-bottom">
       <Link href="/constructors" className="link-button">
         <span>Constructors Standings</span> <span className="icon">&gt;</span>

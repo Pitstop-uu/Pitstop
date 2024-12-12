@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button"
 interface DropDownSingleProps {
   interval: number[];
   setInterval: (selected: number[]) => void;
+  minYear: number;
 }
 
-export default function DropDownSingle({ interval, setInterval }: DropDownSingleProps) {
-  const minYear = 1958;
+export default function DropDownSingle({ interval, setInterval, minYear }: DropDownSingleProps) {
   const maxYear = 2024;
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i);
 

@@ -19,6 +19,7 @@ import GrandPrixDropDownFilterSingle from "@/components/GrandPrixDropDownFilterS
 import DriverDropDownSelector from "@/components/DriverDropDownSelector";
 import CustomLineChart from "@/components/CustomLineChart";
 import CustomRecordTooltip from "@/components/CustomRecordTooltip";
+import { Checkbox, FormControlLabel } from "@mui/material";
 
 export type ConstructorResult = {
   year: number;
@@ -38,6 +39,7 @@ interface ReducerState {
   selectedGrandPrix: string,
   loading: boolean,
   record: boolean,
+  includePredictions: boolean,
 }
 
 const fetchDrivers = async (years: [number, number], grandPrixId: string) => {
@@ -59,10 +61,11 @@ const fetchGrandPrix = async (years: [number, number]) => {
 const fetchLapTimes = async (
   years: [number, number],
   drivers: string[],
-  grand_prix_id: string
+  grand_prix_id: string,
+  includePredictions: boolean,
 ) => {
   const datapoints = drivers[0] === "record"
-    ? parseRecordLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id))
+    ? parseRecordLapTimes(await getRecordLapTimes(years[0], years[1], grand_prix_id, includePredictions))
     : parseDriverLapTimes(await getDriverLapTimes(years[0], years[1], drivers, grand_prix_id));
 
   const { data, encountered, driverConstructorMap } = datapoints.reduce((
@@ -98,7 +101,7 @@ const fetchLapTimes = async (
 };
 
 const stateWithDatapoints = async (state: ReducerState) => {
-  const { data, uniqueDrivers, driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix);
+  const { data, uniqueDrivers, driverConstructorMap } = await fetchLapTimes(state.years, state.selectedDrivers, state.selectedGrandPrix, state.includePredictions);
   return { ...state, datapoints: data, allDrivers: uniqueDrivers, driverConstructors: driverConstructorMap };
 }
 
@@ -134,6 +137,7 @@ const initialState = {
   selectedGrandPrix: "",
   loading: false,
   record: false,
+  includePredictions: false,
 } as ReducerState;
 
 const reducer = (state: ReducerState, action: { type: string, payload: any }) => {
@@ -141,7 +145,7 @@ const reducer = (state: ReducerState, action: { type: string, payload: any }) =>
   switch (type) {
     case "setTimeFrame":
       return { ...initialState, ...action.payload }
-    case "setGrandPrix": 
+    case "setGrandPrix":
       return { ...initialState, years: state.years, selectableGrandPrix: state.selectableGrandPrix, selectedGrandPrix: action.payload.selectedGrandPrix, selectableDrivers: action.payload.selectableDrivers }
     case "setAll":
       return { ...state, ...action.payload };
@@ -156,45 +160,53 @@ export default function FastestLapsPage() {
   useEffect(() => {
     const setInitialState = async () => {
       const withSelectableGrandPrix = await stateWithSelectableGrandPrix(initialState);
-      dispatch({ type: "setAll", payload: {
-        ...initialState,
-        years: withSelectableGrandPrix.years,
-        selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
-        selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectedDrivers : []
-      }});
+      dispatch({
+        type: "setAll", payload: {
+          ...initialState,
+          years: withSelectableGrandPrix.years,
+          selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+          selectedDrivers: withSelectableGrandPrix.selectedDrivers[0] === "record" ? withSelectableGrandPrix.selectedDrivers : []
+        }
+      });
     }
     setInitialState();
   }, []);
 
   const onSetTimeFrame = useCallback(async (currentState: ReducerState, years: [number, number]) => {
     const withSelectableGrandPrix = await stateWithSelectableGrandPrix({ ...currentState, years })
-    dispatch({ type: "setAll", payload: {
-      ...initialState,
-      years: withSelectableGrandPrix.years,
-      selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
-      selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : []
-    }});
+    dispatch({
+      type: "setAll", payload: {
+        ...initialState,
+        years: withSelectableGrandPrix.years,
+        selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
+        selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : []
+      }
+    });
   }, []);
 
   const onSetGrandPrix = useCallback(async (currentState: ReducerState, selectedGrandPrix: string) => {
     const withSelectableDrivers = await stateWithSelectableDrivers({ ...currentState, selectedGrandPrix })
     if (currentState.selectedDrivers[0] === "record") {
       const withDatapoints = await stateWithDatapoints({ ...currentState, selectedGrandPrix });
-      dispatch({ type: "setAll", payload: {
-        ...withDatapoints,
-        years: withSelectableDrivers.years,
-        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
-        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
-        selectableDrivers: withSelectableDrivers.selectableDrivers
-      } });
+      dispatch({
+        type: "setAll", payload: {
+          ...withDatapoints,
+          years: withSelectableDrivers.years,
+          selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+          selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+          selectableDrivers: withSelectableDrivers.selectableDrivers
+        }
+      });
     } else {
-      dispatch({ type: "setAll", payload: {
-        ...initialState,
-        years: withSelectableDrivers.years,
-        selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
-        selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
-        selectableDrivers: withSelectableDrivers.selectableDrivers
-      }});
+      dispatch({
+        type: "setAll", payload: {
+          ...initialState,
+          years: withSelectableDrivers.years,
+          selectedGrandPrix: withSelectableDrivers.selectedGrandPrix,
+          selectableGrandPrix: withSelectableDrivers.selectableGrandPrix,
+          selectableDrivers: withSelectableDrivers.selectableDrivers
+        }
+      });
     }
   }, []);
 
@@ -224,6 +236,11 @@ export default function FastestLapsPage() {
     />
   }
 
+  const handleChange = async (currentState: ReducerState) => {
+    const withAll = await stateWithDatapoints( { ...currentState, includePredictions: !currentState.includePredictions });
+    dispatch({ type: "setAll", payload: withAll });
+  }
+
   return (
     <section className="bg-black">
       <div className="container-drivers container-page" style={{ color: "white", backgroundColor: "black" }}>
@@ -235,6 +252,7 @@ export default function FastestLapsPage() {
             setInterval={(interval: number[]) => {
               onSetTimeFrame(state, [interval[0], interval[1]]);
             }}
+            minYear={1950}
           />
 
           <GrandPrixDropDownFilterSingle
@@ -252,6 +270,23 @@ export default function FastestLapsPage() {
               onSetDrivers(state, drivers);
             }}
           />
+
+          <div>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  className="text-white"
+                  onChange={() => { handleChange(state); }}
+                  disabled={state.selectedDrivers[0] !== "record" || state.years[1] !== 2024}
+                />
+              }
+              label={
+                state.selectedDrivers[0] === "record"
+                  ? "SHOW PREDICTIONS"
+                  : ""
+              }
+            />
+          </div>
 
         </div>
 
