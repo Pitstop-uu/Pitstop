@@ -43,7 +43,11 @@ const maxYear = 2023;
 const predictions = {};
 
 Object.keys(circuitMap).forEach(circuitId => {
-    const circuitLaps = circuitMap[circuitId].sort((a, b) => a.year - b.year);
+    //const circuitLaps = circuitMap[circuitId].sort((a, b) => a.year - b.year);
+    const circuitLaps = circuitMap[circuitId]
+    .filter(lap => lap.year >= 2019)
+    .sort((a, b) => a.year - b.year);
+    console.log(circuitLaps)
     const trainingData = circuitLaps.map(lap => lap.fastest_lap_time_millis / Math.max(...circuitLaps.map(l => l.fastest_lap_time_millis)));
 
     const net = new brain.recurrent.LSTMTimeStep();
