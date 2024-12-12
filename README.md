@@ -37,7 +37,78 @@ Upon opening the web application, you are located at the homepage, where you can
 
 ### [Constructor Standings](#ConstructorStandings)
 
+The constructor standings page visualizes the standings of the [constructors](#constructors) within the [Constructors' Championship](#constructors-championship) throughout the history of Formula 1. 
+
+#### Filter Options
+The application provides a range of filter options to customize the data displayed in the graph. These accessible via buttons locatied on the top left of the interface:
+
+1. Timeframe Selection:
+    * The button labeled *TIMEFRAME: 2020-2024* reflects the constructors progression within the selected time interval, displayed in the graph below. 
+    * Clicking this button opens a dropdown menu. Select *TIMEFRAME: 2020-2024* to adjust the interval to any range between 1958 and 2024. The graph updates to reflect your chosen timeframe. 
+
+2. Selection Method:
+    * Pressing the *SELECTION METHOD: INTERVAL* button toggles the selection method between *INTERVAL* and *SPECIFIC* 
+    * In *INTERVAL* mode, the graph displays constructors progression over a range of years.A
+    * In *SPECIFIC* mode, the graph highlights constructors performance during a single year, detailing results for individual circuits (race tracks).
+
+3. Constructor Selection:
+    * The *SELECT CONSTRUCTORS: ALL* button allows you to refine the data by selecting  pecific constructors.
+    * Clicking this button opens a list of constructors relevant to the chosen timeframe or year. Select specific constructors to focus on their data. Leaving all constructors unselected displays results for all constructors.
+
+#### Features within the Linechart
+The linechart includes several interactive features to enhance data exploration:
+* Tooltip: Hovering over the graph displays a tooltip, showing the constructor standings for the selected year or circuit.
+* Tooltip Highlight: Hovering over a constructor's line emphasizes their data, displaying all results for that constructor within the chosen timeframe. 
+
+#### Predictions
+The application includes a feature to display predictions for future performance (2025):
+
+1. Ensure the *SELECTION METHOD
+
+To access predictions (2025), have the *SELECTION METHOD: INTERVAL* active, with a timeframe *FROM* (1958-2023) and *TO* (2024) set. The *SHOW PREDICTIONS* button should pop-up. By pressing the button, the predicted results for 2025 is shown. You can also freely change timeframe (*FROM* (1958-2023)) and selection of constructors.
+
+#### Constructor Standings Demo Tasks:
+
+---
+Task 1:
+
+The current top constructors are Ferrari, McLaren, Mercedes and Red Bull. Set the time frame to 1998-2024 and then select the mentioned top constructors as well as Alpine in the constructor filter. Also, enable the predictions (click on 'SHOW PREDICTIONS'). Now, the line chart presents all of the teams that has won the Constructors' Championship since 1998. Try to answer the following questions:
+- Look at who won the 2024 season. What year did they last win prior to 2024?
+- What team do you think has been most dominant within the timeframe?
+- Do you think the predictions for 2025 are reasonable based on the history?
+---
+Task 2:
+
+The current "bottom" constructors are Alpine, Aston Martin, Haas, Kick Sauber, RB and Williams. Set the timeframe to 2015-2023 and select the mentioned "bottom" constructors in the constructor filter. Notice how Kick Sauber and RB have different names when the last year is set to 2023. 
+- What was Kick Sauber called 2023?
+- What was RB called 2023?
+
+---
+Task 3:
+
+The two previous tasks looked at a time interval. Now it is time to look at a single year. In the timeframe filter, click on "SELECTION METHOD" to change the filter type from interval to specific. Then, select the year 2024. Notice how the x-axis shows the locations for 2024 instead of the years selected. 
+-  At which location did McLaren take the lead in the Constructors' Championship? 
+- It did not go very well for all of the teams. At what location did Kick Sauber gain their first points, and how many points did they finish with?
+
+---
+
 ### [Driver Standings](#DriverStandings)
+
+#### Driver Standings Demo Tasks:
+
+---
+Task 1:
+
+The Driver Standings are very similar to the Constructor Standings. However, this page utilizes bar chart rather than a line chart. Select the timeframe 2020-2024. In the driver filter, select ALL of the drivers.
+- What two persons has won a driver championship in the selected interval? 
+- Based on the trends, who do you think will win the Driver's Championship 2025?
+---
+Task 2: 
+
+The sport has had some controversial moments. Change the selection method of the timeframe from interval to specific, and choose the year 1994. This final of the drivers' championship was determined by a crash (https://www.youtube.com/watch?v=91JoW4mSiZo). Crashing in the sport can often lead to the need of retiring a car, which means no points can be gained.
+- Who was involved in the crash?
+- Can you see why the leader of the driver's championship would gain an advantage by crashing into the driver in the second place?
+---
 
 ### [Fastest Laps](#FastestLaps)
 
@@ -59,7 +130,7 @@ In more detail, the web application provides functionality of visualizing a time
 
 The application also consists of the functionality of viewing what predictions a neural network model have made based on previous year's data. Currently, this functionality is present on the Constructor Standings page and Fastest Laps page when looking at a time interval ending in 2024.
 
-### Constructors
+### [Constructors](#constructors)
 In Formula 1, a "Constructor" refers to the team that designs, builds, and enters a car in the championship. Unlike most sports, where teams are primarily about the players or athletes, F1 teams—constructors—are deeply involved in engineering and innovation. A constructor must create both the chassis (the car's body and structure) and choose or develop the engine that powers it.
 
 Each constructor fields two cars driven by two different drivers. Big names like Ferrari, Mercedes, and Red Bull Racing are famous constructors, competing not only to win individual races but also for the prestigious Constructors' Championship. This title is awarded to the team that scores the most points across the season, based on the combined results of their two cars.
