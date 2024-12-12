@@ -16,9 +16,10 @@ import { Button } from "@/components/ui/button"
 interface DropDownSelectorProps {
   interval: number[];
   setInterval: (selected: number[]) => void;
+  minYear: number;
 }
 
-export default function DropDownSelector({ interval, setInterval }: DropDownSelectorProps) {
+export default function DropDownSelector({ interval, setInterval, minYear }: DropDownSelectorProps) {
   const [mode, setMode] = useState<"range" | "single">("range");
 
   const toggleMode = () => {
@@ -49,9 +50,9 @@ export default function DropDownSelector({ interval, setInterval }: DropDownSele
         </DropdownMenuLabel>
         <div className="text-left pt-1">
         {mode === "range" ? (
-          <FilterInterval interval={interval} setInterval={setInterval}/>
+          <FilterInterval interval={interval} setInterval={setInterval} minYear={minYear}/>
         ) : (
-          <DropDownSingle interval={interval} setInterval={setInterval} />
+          <DropDownSingle interval={interval} setInterval={setInterval} minYear={minYear} />
         )}
         </div>
       </DropdownMenuContent>

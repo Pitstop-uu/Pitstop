@@ -252,6 +252,7 @@ export default function FastestLapsPage() {
             setInterval={(interval: number[]) => {
               onSetTimeFrame(state, [interval[0], interval[1]]);
             }}
+            minYear={1950}
           />
 
           <GrandPrixDropDownFilterSingle

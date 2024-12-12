@@ -8,10 +8,10 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 interface FilterIntervalProps {
   interval: number[];
   setInterval: (selected:number[]) => void;
+  minYear: number,
 }
 
-export default function FilterInterval({interval, setInterval}: FilterIntervalProps) {
-  const minYear = 1958;
+export default function FilterInterval({interval, setInterval, minYear}: FilterIntervalProps) {
   const maxYear = 2024;
   const years = Array.from({ length: maxYear - minYear + 1 }, (_, i) => maxYear - i)
 

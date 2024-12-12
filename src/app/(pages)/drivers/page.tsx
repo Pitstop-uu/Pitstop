@@ -171,6 +171,7 @@ export default function DriversPage() {
             setInterval={(interval: number[]) => {
               onSetInterval(state, [interval[0], interval[1]]);
             }}
+            minYear={1950}
           />
 
           <DriverDropDownFilterMultiple
