@@ -1,6 +1,5 @@
 
 .link-section {
-    height: 50vh;
     background-color: black;
 }
 
@@ -48,4 +47,14 @@
 
 .link-button:hover .icon {
     transform: translateX(5px); 
+}
+
+.database-link {
+    transition: ease-in 0.2s;
+    color: white;
+}
+
+.database-link:hover {
+    transition: ease-in 0.2s;
+    color: #006666; 
 }

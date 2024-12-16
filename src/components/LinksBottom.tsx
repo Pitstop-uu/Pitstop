@@ -16,6 +16,7 @@ const LinksBottom = () => (
         <span>Fastest Laps</span> <span className="icon">&gt;</span>
       </Link>
     </div>
+    <p style={{margin: '40px', textAlign: 'center' }}><a className='database-link' href="https://github.com/f1db/f1db">Database link (F1DB)</a></p>
   </div>
   );
 
