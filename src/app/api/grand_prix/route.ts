@@ -1,12 +1,12 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest } from "next/server";
 import response from '@/utils/api/jsonResponse';
+import stringIsNr from '@/utils/api/stringIsNr';
 
 export async function GET(req: NextRequest) {
     const params = req.nextUrl.searchParams;
     const from = params.get('from');
     const to = params.get('to');
-    const stringIsNr = (str: string) => str.match(/^\d+$/)
     if (!(from && stringIsNr(from)) || !(to && stringIsNr(to))) {
         return response(false, 400, []);
     }

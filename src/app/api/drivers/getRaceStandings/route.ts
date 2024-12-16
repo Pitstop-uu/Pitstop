@@ -43,7 +43,5 @@ export async function POST(req: NextRequest) {
 	ORDER BY
 		race.date ASC`;
 
-	console.log(queryResult);
-
 	return response(true, 200, queryResult);
 }

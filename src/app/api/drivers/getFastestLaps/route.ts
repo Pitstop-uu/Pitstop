@@ -2,7 +2,7 @@ import { PrismaClient, Prisma } from '@prisma/client'
 import { NextRequest } from 'next/server';
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
-import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
+import mapToLatestConstructor from '@/utils/api/mapToLatestConstructor';
 
 export async function POST(req: NextRequest){
     const requestBody = await req.json();
@@ -48,15 +48,7 @@ export async function POST(req: NextRequest){
 		race.date ASC`;
 
 	const constructorChronologies = await getConstructorChronologies(prisma, requestBody.from, requestBody.to);
-	const latestConstructorMap = getLatestConstructorMap(constructorChronologies);
-	const fastestLaps = queryResult.map((record) => {
-		const constructorMapping = latestConstructorMap[record.constructor_id];
-		return constructorMapping
-			? { ...record, constructor_id: constructorMapping.other_constructor_id }
-			: record;
-	}, []);
-	
-	console.log(fastestLaps);
+	const fastestLaps = mapToLatestConstructor(queryResult, constructorChronologies);
 
 	return response(true, 200, fastestLaps);
 }

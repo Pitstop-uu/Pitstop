@@ -2,11 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import { NextRequest } from 'next/server';
 import response from '@/utils/api/jsonResponse';
 import getConstructorChronologies from '@/utils/api/constructorChronologies';
-import getLatestConstructorMap from '@/utils/api/latestConstructorMap';
+import mapToLatestConstructor from '@/utils/api/mapToLatestConstructor';
 
 export async function POST(req: NextRequest) {
 	const requestBody = await req.json();
-	console.log("req body",  requestBody);
 	if (
 		!('from' in requestBody && typeof requestBody.from === 'number') ||
 		!('to' in requestBody && typeof requestBody.to === 'number') ||
@@ -42,7 +41,10 @@ export async function POST(req: NextRequest) {
 	ORDER BY
 		race.date ASC`;
 
-	const fastestLaps = Object.values(queryResult.reduce((acc: any, record: FastestLapsRecord) => {
+	const fastestLaps = Object.values(queryResult.reduce((
+		acc: { [key: string]: FastestLapsRecord },
+		record: FastestLapsRecord
+	) => {
 		const currentRecord = acc[record.year]
 		if (record.fastest_lap_time_millis < (currentRecord?.fastest_lap_time_millis || Infinity)) {
 			return { ...acc, [record.year]: record }
@@ -50,6 +52,9 @@ export async function POST(req: NextRequest) {
 			return acc
 		}
 	}, {}));
+
+	const constructorChronologies = await getConstructorChronologies(prisma, requestBody.from, requestBody.to);
+	const withLatestConstructor = mapToLatestConstructor(fastestLaps, constructorChronologies);
 
 	const predictedLapTimes = [
 		{ year: 2025, grand_prix_id: 'las-vegas', fastest_lap_time_millis: 94552, driver_id: 'record', constructor_id: 'predicted' },
@@ -77,23 +82,10 @@ export async function POST(req: NextRequest) {
 		{ year: 2025, grand_prix_id: 'qatar', fastest_lap_time_millis: 84548, driver_id: 'record', constructor_id: 'predicted' },
 		{ year: 2025, grand_prix_id: 'abu-dhabi', fastest_lap_time_millis: 91324, driver_id: 'record', constructor_id: 'predicted' },
 	]
-
 	const filteredPredictedPoints = predictedLapTimes.filter(({ grand_prix_id }) => selectedGrandPrix === grand_prix_id)
-
-	const constructorChronologies = await getConstructorChronologies(prisma, requestBody.from, requestBody.to);
-	const latestConstructorMap = getLatestConstructorMap(constructorChronologies);
-	const fastestLapsResult = fastestLaps.map((record: any) => {
-		const constructorMapping = latestConstructorMap[record.constructor_id];
-		return constructorMapping
-			? { ...record, constructor_id: constructorMapping.other_constructor_id }
-			: record;
-	}, []);
-
 	const result =  requestBody.includePredictions === true && requestBody.to === 2024
-		? fastestLapsResult.concat(filteredPredictedPoints)
-		: fastestLapsResult;
-
-	console.log(result);
+		? withLatestConstructor.concat(filteredPredictedPoints)
+		: withLatestConstructor;
 
 	return response(true, 200, result);
 }
