@@ -179,7 +179,8 @@ export default function FastestLapsPage() {
         ...initialState,
         years: withSelectableGrandPrix.years,
         selectableGrandPrix: withSelectableGrandPrix.selectableGrandPrix,
-        selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : []
+        selectedDrivers: currentState.selectedDrivers[0] === "record" ? currentState.selectedDrivers : [],
+        includePredictions: false
       }
     });
   }, []);
@@ -277,6 +278,7 @@ export default function FastestLapsPage() {
                 <Checkbox
                   className="text-white"
                   onChange={() => { handleChange(state); }}
+                  checked={state.includePredictions}
                   disabled={state.selectedDrivers[0] !== "record" || state.years[1] !== 2024}
                 />
               }
