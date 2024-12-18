@@ -11,6 +11,8 @@ import {
 import FilterInterval from "@/components/FilterInterval";
 import DropDownSingle from "@/components/DropDownSingle";
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@radix-ui/react-dropdown-menu";
 
 
 interface DropDownSelectorProps {
@@ -45,15 +47,37 @@ export default function DropDownSelector({ interval, setInterval, minYear }: Dro
       </DropdownMenuTrigger>
       <DropdownMenuContent className="overflow-y-auto bg-[#252525] text-white w-96">
       <DropdownMenuSeparator />
-        <DropdownMenuLabel onClick={toggleMode} className=" cursor-pointer text-white hover:text-[#008080] border-b pb-4">
-          SELECTION METHOD: {mode === "range" ? "INTERVAL" : "SPECIFIC"}
-        </DropdownMenuLabel>
+      <DropdownMenuLabel className="text-white items-center text-center">
+            Selection Method
+      </DropdownMenuLabel>
+      <div className="flex justify-evenly items-center border-b pb-4">
+          <Label
+            className={` ${
+              mode === "range" ? "text-white font-bold" : "text-gray-400"
+            }`}
+          >
+            Interval
+          </Label>
+          <Switch
+            checked={mode === "single"}
+            onCheckedChange={toggleMode}
+          />
+          <Label
+          className={`${
+              mode === "single" ? "text-white font-bold" : "text-gray-400"
+            }`}
+          >
+            Specific
+          </Label>
+        </div>
         <div className="text-left pt-1">
         {mode === "range" ? (
           <FilterInterval interval={interval} setInterval={setInterval} minYear={minYear}/>
         ) : (
           <DropDownSingle interval={interval} setInterval={setInterval} minYear={minYear} />
         )}
+        
+
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

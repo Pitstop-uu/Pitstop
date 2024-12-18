@@ -20,6 +20,8 @@ import DriverDropDownSelector from "@/components/DriverDropDownSelector";
 import CustomLineChart from "@/components/CustomLineChart";
 import CustomRecordTooltip from "@/components/CustomRecordTooltip";
 import { Checkbox, FormControlLabel } from "@mui/material";
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@radix-ui/react-dropdown-menu";
 
 export type ConstructorResult = {
   year: number;

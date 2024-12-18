@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button"
 import labelizeKey from "@/utils/frontend/labelizeKey";
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@radix-ui/react-dropdown-menu";
 
 
 interface DriverDropDownSelectorProps {
@@ -75,9 +77,27 @@ export default function DriverDropDownSelector({ selectableDrivers, selectedDriv
             </DropdownMenuTrigger>
             <DropdownMenuContent className="overflow-y-auto bg-[#252525] text-white w-96">
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel onClick={toggleMode} className={mode === "record" ? "cursor-pointer text-white hover:text-[#008080] pb-4" : "cursor-pointer text-white hover:text-[#008080] border-b pb-4"}>
-                    SELECTION METHOD: {mode === "record" ? "RECORDS" : "SPECIFIC DRIVERS"}
+                <DropdownMenuLabel className="text-white items-center text-center">
+                    Selection Method
                 </DropdownMenuLabel>
+                <div className="flex justify-evenly items-center border-b pb-4">
+                    <Label
+                        className={` ${mode === "record" ? "text-white font-bold" : "text-gray-400"
+                            }`}
+                    >
+                        Records
+                    </Label>
+                    <Switch
+                        checked={mode === "specify"}
+                        onCheckedChange={toggleMode}
+                    />
+                    <Label
+                        className={`${mode === "specify" ? "text-white font-bold" : "text-gray-400"
+                            }`}
+                    >
+                        Drivers
+                    </Label>
+                </div>
                 {mode === "record"
                     ? <></>
                     : <div className="text-left w-96 max-h-60 overflow-y-auto grid bg-[#252525] text-white p-2">
