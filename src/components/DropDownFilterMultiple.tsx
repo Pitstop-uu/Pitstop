@@ -29,7 +29,6 @@ export function DropdownMenuMultiple({list, title, selected, setSelected}: DropD
       <DropdownMenuContent
         className="w-96 max-h-60 overflow-y-auto bg-[#252525] text-white"
       >
-        <DropdownMenuLabel>SELECTION METHOD: SPECIFIED</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {list.map(({key, value}) => (
           <DropdownMenuCheckboxItem
