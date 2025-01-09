@@ -168,7 +168,7 @@ export default function ConstructorsPage() {
   }
 
   const handleChange = async (currentState: ReducerState) => {
-    const withAll = await stateWithAll( { ...currentState, includePredictions: !currentState.includePredictions });
+    const withAll = await stateWithAll({ ...currentState, includePredictions: !currentState.includePredictions });
     dispatch({ type: "set", payload: withAll });
   }
 
@@ -196,20 +196,23 @@ export default function ConstructorsPage() {
           />
 
           <div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  className="text-white"
-                  onChange={() => { handleChange(state); }}
-                  disabled={state.years[0] === state.years[1] || state.years[1] !== 2024}
-                />
-              }
-              label={
-                state.years[0] !== state.years[1] && state.years[1] === 2024
-                  ? "SHOW PREDICTIONS"
-                  : ""
-              }
-            />
+            {state.years[0] !== state.years[1] && state.years[1] === 2024
+              ? <FormControlLabel
+                control={
+                  <Checkbox
+                    className="text-white"
+                    onChange={() => { handleChange(state); }}
+                    disabled={state.years[0] === state.years[1] || state.years[1] !== 2024}
+                  />
+                }
+                label={
+                  state.years[0] !== state.years[1] && state.years[1] === 2024
+                    ? "SHOW PREDICTIONS"
+                    : ""
+                }
+              />
+              : <></>
+            }
           </div>
         </div>
         {

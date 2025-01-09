@@ -16,3 +16,19 @@
 .css-rizt0-MuiTypography-root {
     font-family: 'KoHo', sans-serif !important;
 }
+
+.css-d771x4.Mui-checked, .css-d771x4.MuiCheckbox-indeterminate {
+    color: white !important;
+}
+
+.css-d771x4 {
+    color: white !important;
+}
+
+.css-imrjgg-MuiButtonBase-root-MuiCheckbox-root.Mui-checked, .css-imrjgg-MuiButtonBase-root-MuiCheckbox-root.MuiCheckbox-indeterminate {
+    color: white !important;
+}
+
+.css-fyswvn {
+    font-family: 'KoHo', sans-serif !important;
+}

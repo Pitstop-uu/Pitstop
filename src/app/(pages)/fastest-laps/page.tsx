@@ -238,7 +238,7 @@ export default function FastestLapsPage() {
   }
 
   const handleChange = async (currentState: ReducerState) => {
-    const withAll = await stateWithDatapoints( { ...currentState, includePredictions: !currentState.includePredictions });
+    const withAll = await stateWithDatapoints({ ...currentState, includePredictions: !currentState.includePredictions });
     dispatch({ type: "setAll", payload: withAll });
   }
 
@@ -272,24 +272,27 @@ export default function FastestLapsPage() {
             }}
           />
 
-          <div>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  className="text-white"
-                  onChange={() => { handleChange(state); }}
-                  checked={state.includePredictions}
-                  disabled={state.selectedDrivers[0] !== "record" || state.years[1] !== 2024}
-                />
-              }
-              label={
-                state.selectedDrivers[0] === "record"
-                  ? "SHOW PREDICTIONS"
-                  : ""
-              }
-            />
-          </div>
 
+          <div>
+            {state.selectedDrivers[0] === "record"
+              ? <FormControlLabel
+                control={
+                  <Checkbox
+                    className="text-white"
+                    onChange={() => { handleChange(state); }}
+                    checked={state.includePredictions}
+                    disabled={state.selectedDrivers[0] !== "record" || state.years[1] !== 2024}
+                  />
+                }
+                label={
+                  state.selectedDrivers[0] === "record"
+                    ? "SHOW PREDICTIONS"
+                    : ""
+                }
+              />
+              : <></>
+            }
+          </div>
         </div>
 
         {
