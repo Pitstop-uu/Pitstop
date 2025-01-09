@@ -150,6 +150,7 @@ export default function DriversPage() {
   }
   
   const TooltipHighlight = (props: any) => {
+    console.log(props.highlightedItem)
     return <CustomBarTooltipHighlight
       highlightedItem={props.highlightedItem}
       axisValue={props.axisValue}
@@ -203,7 +204,7 @@ export default function DriversPage() {
                         color: constructorColor,
                         curve: 'linear',
                         showMark: false,
-                        highlightScope: { highlight: 'item', fade: 'global' },
+                        highlightScope: { highlight: 'series', fade: 'global' },
                         connectNulls: true,
                     };
                   })}

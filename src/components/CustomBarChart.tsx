@@ -121,7 +121,7 @@ export default function CustomBarChart({
                     color: constructorColor,
                     curve: 'linear',
                     showMark: false,
-                    highlightScope: { highlight: 'item', fade: 'global' },
+                    highlightScope: { highlight: 'series', fade: 'global' },
                 };
             })}
             margin={{
