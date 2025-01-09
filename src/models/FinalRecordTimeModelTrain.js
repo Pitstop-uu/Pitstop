@@ -39,7 +39,7 @@ const circuitMap = lapData.reduce((acc, entry) => {
     return acc;
 }, {});
 
-const maxYear = 2023;
+
 const predictions = {};
 
 Object.keys(circuitMap).forEach(circuitId => {

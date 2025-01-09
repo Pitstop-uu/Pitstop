@@ -23,26 +23,21 @@ const currentPoints={
 
 }
 
-const testInput = {
-    year: 2023 / 2022, // Normalized year
-    mercedes: 0,
-    redbull: 0,
-    alpine: 0,
-    haas: 0,
-    mclaren: 0,
-    RB: 0,
-    kicksauber: 0,
-    ferrari: 1,
-    williams: 0,
-    astonmartin: 0,
-    points: 406 / 860, // Normalized points
-  };
+//const testInput = {
+//    year: 2023 / 2022, // Normalized year
+//    mercedes: 0,
+//    redbull: 0,
+//    alpine: 0,
+//    haas: 0,
+//    mclaren: 0,
+//    RB: 0,
+//    kicksauber: 0,
+//    ferrari: 1,
+//    williams: 0,
+//    astonmartin: 0,
+//    points: 406 / 860, // Normalized points
+//  };
   
-  // Run the model with the test input
-  const normalizedPrediction = net.run(testInput);
-  const predictedPoints = normalizedPrediction.nextYearPoints * 860; // De-normalize prediction
-  
-  //console.log('Predicted Next Year Points:', predictedPoints);
 function predictNextYear(currentPoints, net, maxPoints = 860, maxYear = 2023) {
   const year = 2024; // Current year
   const predictions = {};
