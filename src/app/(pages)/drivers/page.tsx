@@ -107,7 +107,7 @@ const initialState = {
   years: [2020, 2024],
   datapoints: [],
   selectableDrivers: [],
-  selectedDrivers: [],
+  selectedDrivers: ['alexander-albon', 'carlos-sainz-jr', 'charles-leclerc', 'daniel-ricciardo', 'esteban-ocon', 'george-russell', 'kevin-magnussen', 'lance-stroll', 'lando-norris', 'lewis-hamilton', 'max-verstappen', 'nico-hulkenberg', 'pierre-gasly', 'sergio-perez', 'valtteri-bottas', 'fernando-alonso', 'yuki-tsunoda', 'guanyu-zhou', 'logan-sargeant', 'oscar-piastri'],
   allDrivers: [],
   driverConstructors: {},
   loading: false,
