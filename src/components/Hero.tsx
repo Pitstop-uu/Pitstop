@@ -2,18 +2,20 @@
 
 import React from "react";
 import Image from "next/image";
-import hero from "@/../../public/banner.jpg"
 import logo from "@/../../public/pitstop_logo_white.png";
 import "@/styles/hero.css";
 
 const Hero = () => (
-    <div className="hero">
-      <Image src={hero} alt="Banner" quality={100} sizes="100vw" className="heroImage opacity-0" onLoad={(e) => (e.target as HTMLImageElement).classList.remove("opacity-0")}/>
-        <div className="logoWrapper">
-          <Image quality={100} src={logo} alt="Logo" width={200} height={100} />
-        </div>
-    </div>
-  );
+  <div className="hero">
+    <div className="overlay"></div>
+    <video autoPlay loop muted id='video'>
+      <source src="pitstop.mp4" type='video/mp4' />
+    </video>
+    <div className="logoWrapper">
+        <Image quality={100} src={logo} alt="Logo" width={300} height={200} className="transition opacity-0" onLoad={(e) => (e.target as HTMLImageElement).classList.remove("opacity-0")}/>
+      </div>
+  </div>
+);
 
 export default Hero
 
