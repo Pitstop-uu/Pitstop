@@ -8,7 +8,7 @@ export const useSmoothScroller = () => useContext(SmoothScrollerContext)
 
 export default function ScrollContext({ children }) {
     const [lenisRef, setLenis] = useState(null);
-    const [rafState, setRaf] = useState(null);
+    const [, setRaf] = useState(null);
     
     useEffect(() => {
         const scroller = new Lenis();
@@ -22,12 +22,14 @@ export default function ScrollContext({ children }) {
         setRaf(rf);
         setLenis(scroller);
 
-    return () => {
-        if (lenisRef) {
-            cancelAnimationFrame(rafState)
-            lenisRef.destroy();
-        }
-    };
+        return () => {
+            if (rf) {
+              cancelAnimationFrame(rf);
+            }
+            if (scroller) {
+              scroller.destroy();
+            }
+          };
     }, []);
     return <SmoothScrollerContext.Provider value={lenisRef}>
         {children}
