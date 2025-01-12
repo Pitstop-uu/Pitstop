@@ -1,4 +1,4 @@
-/* const brain = require('brain.js');
+const brain = require('brain.js');
 const fs = require('fs');
 const { trainingDataConstructors } = require('./trainingData/constructorData');
 const maxYear = 2023; // Maximum year 
@@ -74,7 +74,7 @@ console.log(normalizedTrainingData)
     const trainedModel = net.toJSON();
     
     // Save the model to a file
-    const filePath = 'constructor_years_model2.json';
+    const filePath = 'constructor_years_model3.json';
     fs.writeFileSync(filePath, JSON.stringify(trainedModel), 'utf8');
     
     console.log(`Model successfully trained and saved to ${filePath}`);
@@ -84,4 +84,4 @@ console.log(normalizedTrainingData)
 
 
   
-   */
+  
