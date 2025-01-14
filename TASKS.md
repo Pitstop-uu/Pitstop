@@ -27,7 +27,7 @@ The two previous tasks looked at a time interval. Now it is time to look at a si
 
 Task 4:
 
-The Driver Standings are very similar to the Constructor Standings. However, this page utilizes bar chart rather than a line chart. **Select the timeframe *2020-2024***. In the driver filter, **select *ALL* of the drivers**.
+The Driver Standings are very similar to the Constructor Standings. However, this page utilizes bar chart rather than a line chart. Leave both filters untouched.
 - A) What two persons has won a driver championship in the selected interval? 
 - B) Based on the trends, who do you think will win the Driver's Championship 2025?
 
